@@ -1,0 +1,751 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'
+	'
+
+# NOTE: This script generates repo files (.cursorrules + docs/*).
+# Source of truth is SPEC_POC_v1.5.md + committed docs/* + prompts/*.
+
+mkdir -p docs
+
+cat > .cursorrules <<'EOF'
+You are coding a multi-tenant privacy-first POC described in SPEC_POC_v1.5.md.
+Obey these repository rules strictly.
+
+# 0) Sources of truth (SoT)
+- SPEC_POC_v1.5.md is the single source of truth for product/tech POC perimeter.
+- .cursorrules + docs/* are implementation derivatives generated from SPEC.
+- prompts/ contains the Hugo AFEST prompt (source of truth for conversational behaviour).
+- Any conflict between .docx and SPEC_POC_v1.5.md -> SPEC (.md) wins.
+
+# 1) Golden rules
+- Use self-hosted Mistral inference (CPU-only) or OVH AI Endpoints API.
+- Never log raw chat verbatim (learner or tutor messages). Logs must contain only metadata (ids, timings, statuses, errors).
+- Implement multi-tenant isolation using Postgres RLS + app-level checks. RLS is mandatory.
+- Work in small, incremental changes. No large refactors. Touch only files needed for the current slice.
+- All IDs are UUIDv4. All timestamps are UTC ISO-8601.
+- Respect privacy-first: share_summary, share_evidence, share_verbatim are false by default.
+- Performance expectations from SPEC_POC_v1.5: latency target ~3s; occasional spikes up to ~15s are acceptable in POC (punctual use).
+
+# 2) Product scope (POC vs POST-POC)
+- POC is centred on Hugo (AFEST reflective assistant).
+- IN POC:
+  - Multi-tenant OF isolation (RLS Postgres).
+  - Hugo: chat + learner history + structured trace (trace_rich_v1).
+  - RAG question-driven on class library (docs ACTIVE only).
+  - Manual RNCP/RS import via referential_import_v2 (JSON).
+  - Evidence photos with EXIF stripped, GPS opt-in.
+  - Minimal class dashboard (class/learner/time/competences).
+  - Exports: trace_rich_v1 JSON + Felix-ready CSV.
+  - Qualiopi audit lite: evidence-bundle ZIP (endpoint in POC).
+- POST-POC (prepare architecture, do NOT implement now):
+  - Julia (import/normalisation référentiels, mapping LMS/SIRH).
+  - Felix bot (guided Qualiopi, planning exports).
+  - Hector (documental assistant).
+  - Jérémy (planning séances/ressources sous contraintes, snapshots immuables, change sets).
+  - Full Qualiopi coverage (32 indicators), SSO, SCIM, xAPI, LTI, etc.
+- No dedicated /julia/*, /felix/*, /hector/*, /jeremy/* endpoints in POC: assistants will call existing métier endpoints later (e.g. referentials, exports, schedules).
+
+# 3) Tech stack (fixed)
+- Backend: FastAPI
+- Frontend: Next.js + TypeScript (service web), PWA installable, no offline guarantee in POC
+- ORM: SQLAlchemy 2.0 Async
+- Migrations: Alembic
+- Auth: JWT access+refresh (bearer tokens)
+- DB: PostgreSQL 15+ with RLS enabled; pgvector for embeddings
+- Storage: MinIO (S3-compatible)
+- Reverse proxy: Nginx (TLS + HTTP Basic gate + rate limiting)
+- Background jobs: simple async worker (indexing, exports, learner_state updates); no Kubernetes, no Kafka
+
+# 4) Repository structure (fixed)
+Use an app/ package:
+- app/main.py
+- app/core/         (settings, security, logging)
+- app/db/           (engine, session, alembic helpers)
+- app/models/       (SQLAlchemy models)
+- app/schemas/      (Pydantic request/response)
+- app/services/     (business logic)
+- app/routers/      (FastAPI routers)
+- app/workers/      (indexing, exports, learner_state updates)
+- tests/            (pytest)
+
+# 5) Multi-tenant + RLS rules (fixed)
+- Every business table MUST have organisation_id UUID NOT NULL (unless explicitly global like rare static enum tables; avoid globals in this POC).
+- At the start of each request after authentication, set tenant context per transaction:
+  - execute "SET LOCAL app.organisation_id = :org_id"
+- All RLS policies must use:
+  - organisation_id = current_setting('app.organisation_id', true)::uuid
+  Using the (.., true) form to avoid exceptions when unset (returns NULL).
+- Add cross-tenant tests early (two orgs A/B). Any A->B access must be rejected.
+
+# 6) Privacy & sharing (fixed)
+- Learner can see all their verbatim, traces and evidence.
+- Tutor/trainer/coordinator can ONLY access what the learner shared explicitly:
+  - share_summary, share_evidence, share_verbatim flags
+- Defaults: share_summary=false, share_evidence=false, share_verbatim=false.
+- Implement authorization checks in services/routers, not only in UI.
+- No raw hugo_message.content in logs; only metadata and status.
+
+# 7) Hugo + RAG rules (fixed)
+- Hugo must ask exactly 1 question per message (guardrail).
+- Messages should be concise (no essay-style answers).
+- RAG is question-driven: retrieved chunks are used to craft situated follow-up questions, not to teach full lessons.
+- For Hugo POC: only class library ACTIVE documents attached to the class group are searchable.
+- For POST-POC (Jeremy): effective library for a cohort = ACTIVE docs of parent group (site/programme) ∪ ACTIVE docs of cohort group, with override by cohort based on (purpose, key) fields on group_document (see SPEC_POC_v1.5 section 10.4).
+- Prefer procedure/checklist/securite/qualite tags when risk/compliance intent is detected.
+- Store rag_citation for each Hugo message that uses RAG chunks.
+
+# 8) Extraction (best effort)
+- Supported strongly for POC: PDF text.
+- Scanned PDFs without OCR: mark LOW_TEXT and show an actionable message to provide OCR/text version.
+- DOCX/PPTX may be supported best-effort but POC guarantees only PDF text.
+- Track indexing quality: extracted_chars, chunks_count, quality_flag (OK | LOW_TEXT | ERROR).
+
+# 9) Qualiopi & compliance (awareness, POC lite IN SCOPE)
+- trace_rich_v1 must include evaluation_criteria, evaluation_modalities, expected_evidence.
+- audit_log must cover all critical actions (validation, sharing, exports).
+- Exports must be timestamped, traceable, and RGPD-compliant.
+- POC must implement:
+  - POST /quality/qualiopi/evidence-bundle
+  - Evidence-bundle ZIP minimal but exploitable (CSV/JSON traces, audit_log subset, referentials+overlays, ACTIVE docs + RAG citations).
+- Full 32-indicator mapping, complaints module, surveys, etc. are POST-POC (architecture only).
+
+# 10) Integrations (POST-POC awareness)
+- Export CSV must be configurable (separator, encoding, column mapping).
+- Prepare for:
+  - SSO OIDC/SAML
+  - SCIM provisioning
+  - xAPI statements to an LRS
+  - LTI 1.3 launch from LMS
+- Keep referential_mapping, export_template, external_identity tables in mind for POST-POC, but do not over-design now.
+
+# 11) Output discipline
+- Before writing code for a slice: propose a file list + implementation plan.
+- After writing: include tests and a short verification checklist.
+- Do not introduce additional services or infra beyond what SPEC_POC_v1.5.md describes without explicit justification in PR.
+EOF
+
+cat > docs/IMPLEMENTATION_PLAN.md <<'EOF'
+# Implementation Plan (POC to March 20, 2026)
+
+This plan must be executed in slices as per SPEC_POC_v1.5. Each slice ends with tests passing.
+
+## Notes (SPEC-aligned)
+- Performance (POC): latency target ~3 seconds; occasional spikes up to ~15 seconds are acceptable for punctual use.
+- Planning: slice duration estimates are indicative; SPEC_POC_v1.5 remains the source of truth in case of mismatch.
+
+## Slice S0 — Infra skeleton (1 day)
+Deliverables:
+- docker-compose.yml with services: nginx, web, api, postgres, minio, llm, worker
+- nginx config: TLS placeholders, HTTP Basic gate, rate limiting (login + chat), upload limits
+- FastAPI app starts and exposes /health
+- Postgres reachable only on internal network (not publicly exposed)
+
+Definition of Done:
+- `docker compose up` -> /health returns 200 behind basic auth
+- Postgres is NOT exposed publicly
+- Nginx serves the frontend (GET / returns the webapp) and proxies the API (e.g. /api/*), both behind HTTP Basic gate
+
+## Slice S1 — DB + RLS + Auth (critical) (1–2 days senior involvement)
+Deliverables:
+- Alembic configured
+- Base tables: organisation, user, audit_log
+- JWT login (manual user creation only)
+- Tenant context setter: SET LOCAL app.organisation_id per request/transaction
+- RLS enabled + policies for at least: organisation, user, audit_log (and reused for future business tables)
+- Tests: cross-tenant isolation A/B
+
+Definition of Done:
+- Create two orgs A and B, users in each
+- Any attempt by A to read or write B data fails (tests)
+
+## Slice S2 — Groups + tutor-learner links (1–2 days)
+Deliverables:
+- group, group_membership, tutor_learner_link tables + endpoints
+- RBAC for trainer/coordinator vs learner/tutor
+
+Definition of Done:
+- Trainer can create a class (group) and assign members
+- Tutor sees only linked learners (RLS + app-level checks)
+
+## Slice S3 — Hugo chat + learner history (2–3 days)
+Deliverables:
+- hugo_session, hugo_message tables
+- endpoints to start session and post messages
+- guardrail: 1 question per Hugo response
+- learner history endpoints (sessions + messages) scoped to learner
+
+Definition of Done:
+- Learner can chat with Hugo and reload prior sessions and messages
+- Guardrail tests: Hugo never returns more than 1 question per reply
+
+## Slice S4 — Trace + validation + sharing + learner_state (2–4 days)
+Deliverables:
+- trace table: payload_structured (trace_rich_v1), payload_human
+- learner_state cache table (recomputed on each trace validation):
+  - skills_matrix
+  - missing_coverage
+  - open_action_items
+  - summary (<= 25 lines)
+- workflow validation (learner -> tutor/trainer)
+- share flags: summary/evidence/verbatim default false
+- audit_log entries for validate/share
+
+Definition of Done:
+- Tutor sees nothing unless learner shares (tests on share_* flags)
+- JSON export of trace_rich_v1 works
+- learner_state updated correctly on validation
+
+## Slice S5 — Evidence photo + GPS opt-in (1–2 days)
+Deliverables:
+- evidence table + MinIO storage wiring
+- upload endpoint: resize + thumbnail
+- EXIF removed by default, GPS kept only if opt-in and stored in structured meta
+
+Definition of Done:
+- Evidence appears linked to a trace and respects sharing flags
+- EXIF stripped in stored images; GPS present only when opt-in=true
+
+## Slice S6 — Referential import v2 + overlays + scale (2–4 days)
+Deliverables:
+- POST /referentials/import-v2 endpoint
+- Store evaluation_criteria, evaluation_modalities, expected_evidence, source_ref
+- overlay per group per item (referential_item_overlay)
+- default scale: apprécie / participe / réalise / maîtrise (tables scale + scale_level)
+- referential_config per group
+
+Definition of Done:
+- Trainer imports RNCP/RS JSON (2 RNCP + 2 RS for demos) and configures group items
+- Default scale usable and override per class via config
+
+## Slice S7 — Class library + RAG indexing/search + citations (3–6 days)
+Deliverables:
+- document, group_document, document_chunk, rag_citation tables
+- extraction best effort; LOW_TEXT status for low text content (especially scanned PDFs)
+- chunking profiles (course vs procedure/sécurité)
+- embeddings local CPU (static multilingual model, dim 512 configurable 256/512)
+- pgvector search filtered to ACTIVE class docs
+- lexical rerank and tag preference
+- rag_citation stored when used
+
+Definition of Done:
+- Anti-absurd procedure test: >= 8/10 procedure-focused queries retrieve a useful procedure/sécurité chunk in top-5
+- Hugo uses retrieved chunks only to craft concrete follow-up questions
+
+## Slice S8 — Exports CSV + dashboard + Qualiopi lite (1–3 days)
+Deliverables:
+- CSV export run for a group/date range; ';' separator; UTF-8 BOM default (configurable via include_bom); ISO dates
+- minimal dashboard: class -> learner list -> learner timeline -> competences view
+- POST /quality/qualiopi/evidence-bundle endpoint producing a minimal but exploitable ZIP:
+  - CSV/JSON exports (traces, validations, evidence) for a period
+  - filtered audit_log
+  - referentials + overlays
+  - list of ACTIVE documents + RAG citations
+
+Definition of Done:
+- Trainer can download CSV and use it in Excel (basic pivot)
+- Dashboard shows last session, validation status, coverage stats
+- UI responsive + PWA: LEARNER (mobile) can chat/upload evidence/validate+share; TUTOR/TRAINER (desktop) can use dashboard; app is installable as PWA; offline is not supported in POC (show an explicit "network required" message when offline)
+- Qualiopi evidence bundle ZIP passes a basic AFEST audit sanity check
+
+## Optional Slice P1 — Situation templates + generation (only if time)
+Deliverables:
+- situation_template table
+- basic generation of suggested situations from referential/overlay (+ doc tags)
+
+Definition of Done:
+- Hugo can propose ~3 example situations when learner is stuck (config-driven, no heavy reasoning)
+
+## POST-POC Priorities (not in POC scope, but prepare architecture)
+- Full Qualiopi mapping (32 indicators) and advanced evidence bundles.
+- SSO OIDC/SAML: /auth/oidc/*, /auth/saml/*.
+- SCIM provisioning: /scim/v2/Users, /scim/v2/Groups.
+- xAPI statements: /webhooks/xapi.
+- LTI 1.3 provider: /lti/launch, /lti/jwks.
+- Export templates configurables: export_template with column_mapping.
+EOF
+
+cat > docs/DB_RLS.md <<'EOF'
+# Postgres RLS & Tenant Context
+
+## Goal
+Guarantee hard isolation between organisations (OF) in the same database, as required by SPEC_POC_v1.5.
+
+## Tenant context mechanism (mandatory)
+For every request after authentication, for every DB transaction:
+- Execute: `SET LOCAL app.organisation_id = '<org_uuid>'`
+
+Important:
+- `SET LOCAL` is scoped to the current transaction.
+- Ensure you set it for each transaction or session lifecycle.
+
+## RLS policy pattern
+Use `current_setting` with the safe form:
+- `current_setting('app.organisation_id', true)`
+
+Reason:
+- Without the second argument, `current_setting()` can throw if parameter is not set.
+- With `true`, it returns NULL instead.
+
+### Example policy snippet
+For a table with `organisation_id`:
+
+```sql
+ALTER TABLE my_table ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY my_table_tenant_isolation
+ON my_table
+USING (organisation_id = current_setting('app.organisation_id', true)::uuid)
+WITH CHECK (organisation_id = current_setting('app.organisation_id', true)::uuid);
+```
+
+## Which tables must have RLS
+All business tables (POC scope):
+- organisation, user, audit_log
+- group, group_membership, tutor_learner_link
+- hugo_session, hugo_message
+- trace, evidence
+- document, group_document, document_chunk, rag_citation
+- referential, referential_item, scale, scale_level, referential_config, referential_item_overlay
+- learner_state
+- export_template, export_run
+
+POST-POC (to be RLS-protected when added):
+- qualiopi_indicator_mapping, qualiopi_evidence_bundle
+- referential_mapping, export_template (extended with column_mapping), external_identity
+- schedule_proposal, schedule_event, resource_booking, schedule_change_set, schedule_event_log
+- webhook_subscription, webhook_delivery (if introduced)
+
+## Cross-tenant tests (required)
+Test scenario:
+- Create org A + org B.
+- Create one object in each (e.g., group, trace).
+- Authenticate as A user.
+- Verify:
+  - cannot read B objects
+  - cannot create objects with organisation_id=B
+- Repeat for sensitive endpoints (traces, evidence, documents, exports, audit_log).
+
+## Performance note
+RLS adds overhead; keep organisation_id indexed.
+Keep policies simple and add indexes if needed.
+EOF
+
+cat > docs/RAG_CONFIG.md <<'EOF'
+# RAG Configuration (Class Library, Question-Driven)
+
+## Scope
+- RAG uses ONLY ACTIVE documents attached to a class (group library).
+- RAG supports:
+  - long course materials (majority)
+  - critical procedures/checklists/sécurité (anti-absurd tests)
+
+## Document tagging (required)
+Allowed tags (normalize to lowercase):
+- cours
+- procedure
+- checklist
+- securite
+- qualite
+- reglementaire
+
+## Extraction (best effort)
+Strongly supported (POC guarantee):
+- PDF text (selectable text), extracted via pypdf or equivalent.
+
+Scanned PDFs without OCR:
+- likely LOW_TEXT -> set quality_flag=LOW_TEXT and show an actionable message to provide an OCR/text version.
+
+DOCX / PPTX:
+- Best-effort support allowed, but not required for POC acceptance tests.
+
+## Indexing quality metrics
+Compute per document:
+- extracted_chars
+- chunks_count
+- quality_flag: OK | LOW_TEXT | ERROR
+
+Threshold suggestion:
+- extracted_chars < 1500 => LOW_TEXT
+
+## Chunking profiles
+Course docs (tag=cours):
+- chunk_size_tokens ~ 1200
+- overlap_tokens ~ 150
+- keep headings if possible
+
+Procedures/safety (tags: procedure/checklist/securite/qualite):
+- chunk_size_tokens ~ 350
+- overlap_tokens ~ 50
+- preserve numbered steps, warnings, control points
+
+## Embeddings
+Model (local CPU):
+- sentence-transformers/static-similarity-mrl-multilingual-v1
+- truncate_dim: 512 default (configurable 256/512)
+
+Storage:
+- document_chunk.embedding (pgvector) + metadata (page/slide, tag, title)
+
+## Retrieval policy (question-driven)
+Inputs:
+- group_id
+- query_text
+- optional risk flags (keywords)
+- optional missing referential item ids
+
+Steps:
+1) Determine preferred tags:
+- if risk keywords or compliance/safety intent -> prefer procedure/checklist/securite/qualite
+- else -> prefer cours
+
+2) Vector search:
+- top_k = 20
+- filter to:
+  - organisation_id
+  - docs ACTIVE for group_id
+
+3) Lexical rerank (light hybrid):
+- rerank top 20 by keyword overlap with query (+ heading/step matches)
+
+4) Injection:
+- inject top 1–3 chunks
+- instruct Hugo: use chunks only to craft a concrete follow-up question, not a full course
+
+Logging:
+- store rag_citation entries for each chunk used (doc_id, chunk_id, score, meta)
+
+## Anti-absurd acceptance test
+- 2 procedure docs tagged procedure/securite
+- 10 procedure-focused queries
+- Pass if >= 8/10 have a useful procedure/sécurité chunk in top-5
+EOF
+
+cat > docs/OPENAPI_MIN.md <<'EOF'
+# OpenAPI Minimal (POC)
+
+This is a minimal contract to remove ambiguity, aligned with SPEC_POC_v1.5.
+It is not full OpenAPI YAML yet.
+
+## Auth
+POST /auth/login
+Request:
+- email: string
+- password: string
+Response:
+- access_token: string
+- refresh_token: string
+- token_type: "bearer"
+
+GET /me
+
+## Admin (manual user creation)
+POST /admin/organisations
+POST /admin/users
+Note (POC):
+- No direct audit log read endpoint in POC.
+- Audit trail is available via exports and via `POST /quality/qualiopi/evidence-bundle` (includes filtered `audit_log` entries).
+
+
+## Groups
+POST /groups
+GET /groups
+POST /groups/{group_id}/members
+POST /groups/{group_id}/tutor-links
+
+## Hugo sessions/messages
+POST /hugo/sessions
+Request:
+- group_id: uuid
+Response:
+- session_id: uuid
+
+POST /hugo/sessions/{session_id}/messages
+Request:
+- content: string
+Response:
+- hugo_message: string
+- rag_citations?: array (doc_id, chunk_id, score, meta)
+
+GET /hugo/sessions/{session_id}
+
+## Trace generation / validation / sharing
+POST /hugo/sessions/{session_id}/generate-trace
+Response:
+- trace_id: uuid
+- payload_structured: trace_rich_v1
+- payload_human: string
+
+POST /traces/{trace_id}/validate
+Request:
+- by: "learner" | "tutor" | "trainer"
+
+POST /hugo/sessions/{session_id}/share
+Request:
+- share_summary: bool
+- share_evidence: bool
+- share_verbatim: bool
+
+## Learner history
+GET /learners/sessions?from=&to=&competence_item_ids=
+GET /learners/traces?from=&to=&competence_item_ids=
+GET /learners/evidence
+
+## Documents & class library
+POST /documents (multipart)
+POST /documents/{document_id}/index
+POST /groups/{group_id}/library
+PUT /groups/{group_id}/library/{group_document_id}
+GET /groups/{group_id}/library
+
+## Referential import v2 + overlays
+POST /referentials/import-v2 (body = referential_import_v2)
+PUT /groups/{group_id}/referential-config
+PUT /groups/{group_id}/referentials/{ref_id}/items/{item_id}/overlay
+
+## Exports
+POST /exports/run
+Request:
+- group_id: uuid
+- from: date
+- to: date
+Response:
+- run_id: uuid
+- download_url: string
+
+GET /exports/download/{run_id}
+
+## Dashboard
+GET /dashboard/groups/{group_id}/learners
+GET /dashboard/groups/{group_id}/learners/{learner_id}/timeline
+GET /dashboard/groups/{group_id}/competences
+
+## Internal (prep B + debug)
+POST /internal/rag/search
+GET /internal/learners/{learner_id}/verbatim-window?limit_messages=N
+
+## Qualiopi
+POC:
+- POST /quality/qualiopi/evidence-bundle
+
+POST-POC:
+- GET /quality/qualiopi/indicators
+
+## POST-POC endpoints (not implemented in POC, prepare architecture)
+SSO:
+- GET /auth/oidc/login
+- GET /auth/oidc/callback
+- GET /auth/saml/metadata
+- POST /auth/saml/acs
+
+SCIM:
+- POST /scim/v2/Users
+- GET /scim/v2/Users/{id}
+- PATCH /scim/v2/Users/{id}
+- DELETE /scim/v2/Users/{id}
+- POST /scim/v2/Groups
+
+xAPI:
+- POST /webhooks/xapi
+
+LTI:
+- POST /lti/launch
+- GET /lti/jwks
+
+Planning (Jérémy — POST-POC, design only):
+- POST /schedules/proposals
+- POST /schedules/proposals/{proposal_id}/accept
+- POST /schedules/proposals/{proposal_id}/revoke
+- POST /schedules/change-sets
+- POST /schedules/change-sets/{change_set_id}/approve
+- POST /schedules/change-sets/{change_set_id}/apply
+- GET  /schedules/proposals/{proposal_id}
+- GET  /groups/{group_id}/library-effective?for=jeremy
+
+EOF
+
+cat > docs/QUALIOPI_COMPLIANCE.md <<'EOF'
+# Qualiopi Compliance (RNQ) — POC lite + POST-POC
+
+## Context
+Hugo is designed for AFEST (Action de Formation En Situation de Travail), which requires Qualiopi certification for French OF (Organismes de Formation) to access public/mutualized funding.
+
+Regulatory reference:
+- Décret n° 2019-565 (6 juin 2019) — Référentiel National Qualité (RNQ)
+
+## Key indicators for AFEST (SPEC_POC_v1.5 section 19)
+In POC (lite): provide a minimal evidence bundle ZIP export:
+- CSV + JSON (trace_rich_v1)
+- filtered audit_log
+- referentials + overlays
+- ACTIVE documents list + RAG citations
+
+Critical indicators Hugo must help support (AFEST focus):
+- Indicator 7
+- Indicator 11
+- Indicator 18
+- Indicator 20
+- Indicator 22
+
+## POC coverage
+Hugo POC produces:
+- trace_rich_v1 with evaluation_criteria, evaluation_modalities, expected_evidence
+- learner_state (skills matrix, missing coverage, action items, summary)
+- audit_log (all critical actions timestamped, scoped by organisation_id)
+- Evidence photos with GPS opt-in
+- Exports CSV/JSON with timestamps and organisation_id
+
+## Evidence bundle (POC lite)
+Endpoint:
+- POST /quality/qualiopi/evidence-bundle
+
+Input parameters (see SPEC_POC_v1.5 section 19.4):
+- organisation_id
+- indicator_ids
+- period (from/to)
+- group_ids
+- anonymize (bool)
+
+ZIP content (per indicator in POC lite):
+- traces/validations/evidence (CSV/JSON)
+- CSV pivot (learner × competence × date × status)
+- ACTIVE documents and RAG citations for the period
+- filtered audit_log
+- summary report with counts and coverage (if time allows)
+
+## POST-POC priorities
+- Full 32-indicator mapping:
+  - Table: qualiopi_indicator_mapping (indicator_id + source tables/fields + SQL query)
+- Evidence bundle advanced:
+  - Table: qualiopi_evidence_bundle (run_id, params, created_at, minio_path)
+- Complaint module:
+  - Table: complaint (id, organisation_id, reporter_id, type, description, status, resolution)
+- Satisfaction surveys:
+  - Tables: survey, survey_response
+
+## Architecture notes
+- All evidence-related tables must have organisation_id and RLS enabled.
+- audit_log must cover complaint submissions and survey responses.
+- export_template must support Qualiopi-specific formats (CSV variants, PDF if added later).
+
+## Testing checklist (POST-POC)
+- Evidence bundle generated for all relevant RNQ indicators.
+- Anonymization works (learner names replaced by IDs when anonymize=true).
+- ZIP includes all required proof documents.
+- Complaint workflow traced in audit_log.
+- Survey responses linked to traces/groups where applicable.
+EOF
+
+cat > docs/INTEGRATIONS_LMS_SIRH.md <<'EOF'
+# LMS/SIRH Integrations & Side Effects — POST-POC
+
+## Context
+Hugo is not a replacement for existing tools (ERP OF, LMS, SIRH). It is an "AFEST reflective + evidence" module that integrates into existing ecosystems.
+
+See SPEC_POC_v1.5 section 21 for full integration strategy.
+
+## Key integration points
+
+### 1) Export CSV/JSON (POC ready)
+- Configurable separator (default ';', param: separator)
+- Encoding UTF-8 with BOM by default (param: include_bom)
+- Column mapping via export_template (POST-POC enrichment)
+
+### 2) SSO (POST-POC)
+- OIDC (OpenID Connect): Keycloak, Auth0, Entra ID, etc.
+- SAML 2.0 (if required by client)
+- Effort (SPEC_POC_v1.5):
+- Note: These effort estimates are indicative summaries; SPEC_POC_v1.5 remains the source of truth in case of mismatch.
+  - OIDC: 3–5j
+  - SAML: ~5j
+
+### 3) Provisioning (POST-POC)
+- SCIM 2.0 for user/group synchronization from SIRH/directory
+- Effort: ~5j
+
+### 4) xAPI (POST-POC)
+- Emit xAPI statements to a Learning Record Store (LRS)
+- Statements when learner completes AFEST traces
+- Effort (SPEC_POC_v1.5): 5–8j
+
+### 5) LTI 1.3 (POST-POC)
+- Launch Hugo from LMS with SSO + context (group, referential, learner)
+- Effort (SPEC_POC_v1.5): 5–8j
+
+## Side effects identified (SPEC_POC_v1.5 section 21.2)
+
+### A) Double data entry (learners, groups)
+Mitigation POC:
+- Manual CSV import (bulk import endpoint)
+
+Mitigation POST-POC:
+- SCIM 2.0 provisioning (auto sync)
+
+### B) Referential divergence (competencies)
+Mitigation POC:
+- Import official RNCP/RS referentials (referential_import_v2)
+
+Mitigation POST-POC:
+- referential_mapping table (Hugo ↔ LMS/SIRH)
+
+### C) Privacy-first vs proof need conflict
+Mitigation POC:
+- Guided sharing workflow: learner sees explicit message at validation
+
+Mitigation POST-POC:
+- Sharing profiles per device (e.g. AFEST entreprise: summary mandatory, verbatim optional)
+
+### D) Document duplication (class library vs LMS/GED)
+Mitigation POC:
+- MinIO storage limited to class docs
+
+Mitigation POST-POC:
+- GED integration (links to LMS/SharePoint docs instead of duplication)
+
+### E) Export format incompatibility (CSV Hugo ≠ CSV SIRH/ERP)
+Mitigation POC:
+- Flexible CSV export (separator, encoding)
+
+Mitigation POST-POC:
+- export_template table (configurable column mapping)
+
+### F) Multiple authentication (separate accounts Hugo/LMS/SIRH)
+Mitigation POST-POC:
+- SSO OIDC/SAML (single login)
+
+## Tables to add (POST-POC) — see SPEC_POC_v1.5 section 21.7
+- referential_mapping (harmonise RNCP/RS/LMS/SIRH)
+- export_template (configurable exports, with column_mapping JSONB)
+- external_identity (SCIM provisioning)
+- webhook_subscription, webhook_delivery (if real-time sync added)
+
+## Pre-deployment checklist (client integration)
+- Export CSV configured (separator, columns, encoding)
+- SSO OIDC configured (client IdP)
+- CSV import tested (learners, groups)
+- Referential mapping validated (client nomenclature)
+- Cross-tenant isolation tested (multi-subsidiary SI)
+- Data retention policy validated (RGPD compliance)
+- Synchronization API documented (if SIRH/LMS expects notifications)
+- Progression webhooks configured (if LMS/SIRH awaits events)
+EOF
+
+
+# Sanity checks (fail fast if generation is incomplete)
+required_files=(
+  .cursorrules
+  docs/IMPLEMENTATION_PLAN.md
+  docs/DB_RLS.md
+  docs/RAG_CONFIG.md
+  docs/OPENAPI_MIN.md
+  docs/QUALIOPI_COMPLIANCE.md
+  docs/INTEGRATIONS_LMS_SIRH.md
+)
+for f in "${required_files[@]}"; do
+  if [[ ! -f "$f" ]]; then
+    echo "ERROR: missing generated file: $f" >&2
+    exit 1
+  fi
+done
+echo "Files generated: .cursorrules + docs/*.md"
+echo "Next: commit them, then ask Cursor Agent to read .cursorrules + docs/* + SPEC_POC_v1.5.md + prompts/* and implement slices S0–S2 first."

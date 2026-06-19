@@ -1,0 +1,148 @@
+You are coding a multi-tenant privacy-first POC described in SPEC_POC_v1.5.md.
+Obey these repository rules strictly.
+
+# 0) Sources of truth (SoT)
+- SPEC_POC_v1.5.md is the single source of truth for product/tech POC perimeter.
+- .cursorrules + docs/* are implementation derivatives generated from SPEC.
+- prompts/ contains the Hugo AFEST prompt (source of truth for conversational behaviour).
+- Any conflict between .docx and SPEC_POC_v1.5.md -> SPEC (.md) wins.
+
+# 1) Golden rules
+- Use self-hosted Mistral inference (CPU-only) or OVH AI Endpoints API.
+- Never log raw chat verbatim (learner or tutor messages). Logs must contain only metadata (ids, timings, statuses, errors).
+- Implement multi-tenant isolation using Postgres RLS + app-level checks. RLS is mandatory.
+- Work in small, incremental changes. No large refactors. Touch only files needed for the current slice.
+- All IDs are UUIDv4. All timestamps are UTC ISO-8601.
+- Respect privacy-first: share_summary, share_evidence, share_verbatim are false by default.
+- Performance expectations from SPEC_POC_v1.5: latency target ~3s; occasional spikes up to ~15s are acceptable in POC (punctual use).
+
+# 2) Product scope (POC vs POST-POC)
+- POC is centred on Hugo (AFEST reflective assistant).
+- IN POC:
+  - Multi-tenant OF isolation (RLS Postgres).
+  - Hugo: chat + learner history + structured trace (trace_rich_v1).
+  - RAG question-driven on class library (docs ACTIVE only).
+  - Manual RNCP/RS import via referential_import_v2 (JSON).
+  - Evidence photos with EXIF stripped, GPS opt-in.
+  - Minimal class dashboard (class/learner/time/competences).
+  - Exports: trace_rich_v1 JSON + Felix-ready CSV.
+  - Qualiopi audit lite: evidence-bundle ZIP (endpoint in POC).
+- POST-POC (prepare architecture, do NOT implement now):
+  - Julia (import/normalisation r�f�rentiels, mapping LMS/SIRH).
+  - Felix bot (guided Qualiopi, planning exports).
+  - Hector (documental assistant).
+  - Full Qualiopi coverage (32 indicators), SSO, SCIM, xAPI, LTI, etc.
+- No dedicated /julia/*, /felix/*, /hector/* endpoints in POC: assistants will call existing m�tier endpoints later.
+
+# 3) Tech stack (fixed)
+- Backend: Django (Django REST Framework)
+- Auth: JWT access+refresh (bearer tokens)
+  - Use a well-known DRF JWT library (e.g., SimpleJWT) with rotation and blacklist as per SPEC needs.
+- ORM: Django ORM
+- Migrations: Django migrations
+- DB: PostgreSQL 15+ with RLS enabled; pgvector for embeddings
+- Storage: MinIO (S3-compatible) via django-storages (S3 backend)
+- Reverse proxy: Nginx (TLS + HTTP Basic gate + rate limiting)
+- Background jobs: simple worker (Celery OR Django-Q OR custom management command runner) for indexing/exports/learner_state updates
+  - Keep it simple: no Kubernetes, no Kafka.
+- Frontend: Vue 3 (Vite)
+  - State: Pinia
+  - Routing: Vue Router
+  - HTTP client: fetch/axios
+  - UI: minimal, focus on privacy & clarity (no over-design)
+
+# 4) Repository structure (fixed)
+Use a backend/ and frontend/ split:
+
+backend/
+- manage.py
+- config/                 (settings, urls, wsgi/asgi)
+- app_core/               (settings helpers, security, logging, middleware)
+- app_db/                 (db helpers, rls helpers, postgres functions)
+- apps/
+  - accounts/             (users, orgs, roles, auth)
+  - hugo/                 (chat, traces, sharing rules)
+  - library/              (docs, indexing, rag citations)
+  - referentials/         (RNCP/RS imports, overlays)
+  - quality/              (qualiopi evidence-bundle, audit_log)
+  - exports/              (csv/json exports)
+- tests/                  (pytest-django)
+
+frontend/
+- src/
+  - main.ts
+  - router/
+  - stores/
+  - api/
+  - views/
+  - components/
+- tests/                  (vitest/cypress if present)
+
+# 5) Multi-tenant + RLS rules (fixed)
+- Every business table MUST have organisation_id UUID NOT NULL (unless explicitly global like rare static enum tables; avoid globals in this POC).
+- RLS is enforced in PostgreSQL, not simulated.
+- At the start of each request after authentication, set tenant context per DB transaction:
+  - execute: "SET LOCAL app.organisation_id = %s"
+- Implement this via Django middleware + DB cursor execution, ensuring it runs:
+  - AFTER authentication
+  - BEFORE any ORM queries in the request
+- All RLS policies must use:
+  - organisation_id = current_setting('app.organisation_id', true)::uuid
+  Using the (.., true) form to avoid exceptions when unset (returns NULL).
+- Add cross-tenant tests early (two orgs A/B). Any A->B access must be rejected.
+- App-level checks remain mandatory (defence in depth), especially on write paths.
+
+# 6) Privacy & sharing (fixed)
+- Learner can see all their verbatim, traces and evidence.
+- Tutor/trainer/coordinator can ONLY access what the learner shared explicitly:
+  - share_summary, share_evidence, share_verbatim flags
+- Defaults: share_summary=false, share_evidence=false, share_verbatim=false.
+- Implement authorization checks in Django services (domain layer) and DRF permissions, not only in UI.
+- No raw hugo_message.content in logs; only metadata and status.
+
+# 7) Hugo + RAG rules (fixed)
+- Hugo must ask exactly 1 question per message (guardrail).
+- Messages should be concise (no essay-style answers).
+- RAG is question-driven: retrieved chunks are used to craft situated follow-up questions, not to teach full lessons.
+- Only class library ACTIVE documents are searchable.
+- Prefer procedure/checklist/securite/qualite tags when risk/compliance intent is detected.
+- Store rag_citation for each Hugo message that uses RAG chunks.
+
+# 8) Extraction (best effort)
+- Supported strongly for POC: PDF text.
+- Scanned PDFs without OCR: mark LOW_TEXT and show an actionable message to provide OCR/text version.
+- DOCX/PPTX may be supported best-effort but POC guarantees only PDF text.
+- Track indexing quality: extracted_chars, chunks_count, quality_flag (OK | LOW_TEXT | ERROR).
+
+# 9) Qualiopi & compliance (awareness, POC lite IN SCOPE)
+- trace_rich_v1 must include evaluation_criteria, evaluation_modalities, expected_evidence.
+- audit_log must cover all critical actions (validation, sharing, exports).
+- Exports must be timestamped, traceable, and RGPD-compliant.
+- POC must implement:
+  - POST /quality/qualiopi/evidence-bundle
+  - Evidence-bundle ZIP minimal but exploitable (CSV/JSON traces, audit_log subset, referentials+overlays, ACTIVE docs + RAG citations).
+- Full 32-indicator mapping, complaints module, surveys, etc. are POST-POC (architecture only).
+
+# 10) Integrations (POST-POC awareness)
+- Export CSV must be configurable (separator, encoding, column mapping).
+- Prepare for:
+  - SSO OIDC/SAML
+  - SCIM provisioning
+  - xAPI statements to an LRS
+  - LTI 1.3 launch from LMS
+- Keep referential_mapping, export_template, external_identity tables in mind for POST-POC, but do not over-design now.
+
+# 11) Frontend rules (Vue 3)
+- Vue app must enforce privacy defaults in UI (all share_* toggles off by default).
+- Do not rely on UI for security: backend remains source of truth.
+- Keep screens minimal:
+  - Login
+  - Class dashboard (class/learner/time/competences)
+  - Learner view (chat, traces, evidence, sharing controls)
+  - Tutor view (only shared items)
+- Use typed API clients and centralize auth token handling (refresh flow).
+
+# 12) Output discipline
+- Before writing code for a slice: propose a file list + implementation plan.
+- After writing: include backend tests (pytest-django) and a short verification checklist.
+- Do not introduce additional services or infra beyond what SPEC_POC_v1.5.md describes without explicit justification in PR.

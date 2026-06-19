@@ -1,0 +1,209 @@
+You are coding the Hugo-only multi-tenant POC described in the patched spec.
+Obey these repository rules strictly.
+
+# 0) Canonical source of truth
+- The canonical product/technical source of truth is the patched POC-Hugo spec committed in the repo as `SPEC Hugo 1.6.2 – Noyau d’état prioritaire et décision conversationnelle.md`.
+- `.cursorrules`, and documents in the `specs` folder, docs, ADRs, prompts, tests and implementation notes are derivatives of the spec.
+- If a document conflicts with the patched spec, the patched spec wins.
+- If repository reality conflicts with an older document, align code and docs to the patched spec and to the existing Django backend, not to the obsolete FastAPI design.
+
+# 1) Mission and scope
+- Scope is the Hugo POC only.
+- Do not design or implement Julia, Félix, Hector, Jérémy or any other post-POC assistant.
+- Do not create `/julia/*`, `/felix/*`, `/hector/*`, `/jeremy/*` endpoints or dedicated apps for them.
+- Stay focused on Hugo conversation orchestration, learner traces, evidence, exports and the minimal class/tutor workflows already in scope.
+- Prefer extending the existing backend incrementally over introducing parallel architectures.
+
+# 2) Golden rules
+- Use Django + DRF + Django ORM + Django migrations.
+- Use local CPU inference and/or OVH AI Endpoints. Every time the spec says CPU-only, read it as "CPU-only or OVH AI Endpoints".
+- OpenAI is out of scope.
+- Respect multi-tenant isolation with PostgreSQL RLS plus app-level permission checks. RLS is mandatory.
+- Work in small, incremental slices. No speculative rewrites. Touch only files needed for the current slice.
+- Preserve backwards compatibility where possible for existing endpoints, serializers and DB models already used by the backend.
+- All IDs are UUIDv4 unless the existing code already defines otherwise for a specific table.
+- All timestamps are UTC ISO-8601.
+- Privacy defaults remain strict for shared learner content: `share_summary=false`, `share_evidence=false`, `share_verbatim=false`.
+- Latency target is around 3 seconds; occasional spikes up to about 15 seconds are acceptable in the POC.
+
+# 3) Existing runtime model: do not regress it
+- The backend already contains an orchestration layer in `apps/hugo/services/`.
+- Existing building blocks such as `context_builder`, `teaching_plan_builder`, `phase_decider`, `prompt_renderer`, `hugo_orchestrator`, `TutorPrompt`, `HugoSession` and related tests are assets to extend, not replace casually.
+- Treat `TutorPrompt` as the runtime configuration and rendering layer for Hugo.
+- Treat conversation strategy as a backend orchestration concern, not as a prompt-only concern.
+- Do not reintroduce a separate central `hugo_config` abstraction if the same need can be handled by `TutorPrompt`, group defaults, session overrides or small additive fields.
+- When a new conversational rule is needed, prefer wiring it into the existing orchestration pipeline rather than adding a second pipeline.
+
+# 4) Hugo conversation doctrine (Hugo 1.6.2 aligned)
+- Hugo is governed by state-aware orchestration, not by static prompting alone.
+- Conversation decisions must be driven by a bounded turn state plus deterministic local rules before prompt rendering.
+- The target runtime flow is:
+  1. build context
+  2. analyze learner turn
+  3. compute local tutoring decision
+  4. render prompt from `TutorPrompt`
+  5. call LLM (CPU local and/or OVH AI Endpoints)
+  6. post-process and persist artifacts
+- Keep the conversation focused on the learner's current situation and progress.
+- Avoid repetitive looping questions.
+- Avoid broad generic coaching output when a narrower tutoring move is available.
+
+# 5) Question policy: updated rule
+- The obsolete rule "exactly 1 question per message" is no longer the governing rule.
+- The governing rule is: 1 regulation objective per tutor message.
+- Default behavior for the POC remains conservative: prefer 1 question.
+- Up to 2 short questions may be allowed only when they serve the same micro-objective and do not materially increase cognitive load.
+- Fall back to a single question whenever cognitive load is high, interaction risk is high, clarity is low, or the learner seems blocked.
+- Do not generate long multi-question interrogations.
+- Do not mix several different pedagogical objectives in a single tutor turn.
+
+# 6) P0 state kernel and decision engine
+- New conversation work must align with the Hugo 1.6.2 P0 state kernel and decision logic.
+- Additive implementation is preferred: introduce bounded state analysis and decision services, then plug them into the existing orchestrator.
+- Keep the state explicit, inspectable and testable.
+- Prefer deterministic decision rules for P0 over opaque prompt instructions.
+- The state analysis output should be structured data, not just prose.
+- The decision layer should decide at least:
+  - current tutoring move / regulation objective
+  - whether a question is needed
+  - whether a micro-explanation is allowed
+  - whether memory / referential / RAG support is allowed
+  - whether closure is possible
+- Any new state field must have a clear use in downstream decision-making or testing.
+
+# 7) TutorPrompt rules
+- `TutorPrompt` is the configurable prompt profile for Hugo.
+- Keep prompt rendering separated from state analysis and decision logic.
+- Store prompt templates, rendering parameters and model/provider settings in `TutorPrompt` or closely related existing models when useful.
+- Use group/session level prompt selection and override mechanisms before inventing new config systems.
+- If provider/model selection must vary, prefer additive fields on existing prompt/session/provider models.
+- Do not hard-code organization-specific prompt text in services.
+- Prompt changes should be testable and traceable.
+
+# 8) Logging and debugging policy for the POC
+- During development and sandbox phases, logging/persisting rendered prompts, LLM request payloads and LLM raw responses is allowed for debugging and regression analysis.
+- Do not remove existing debug payload persistence without an explicit reason.
+- If you add debug logging, keep it tenant-scoped and easy to disable later.
+- Distinguish clearly between:
+  - business-visible shared artifacts
+  - internal technical debug artifacts
+- Avoid leaking debug payloads into learner/tutor UI or general business exports.
+- When possible, isolate debug persistence behind flags, settings or clearly named fields.
+- Production retention/purge hardening is not the priority in this POC unless explicitly requested.
+
+# 9) Multi-tenant and RLS rules
+- Every business table should carry `organisation_id` unless it is truly global and explicitly justified.
+- RLS must be enforced in PostgreSQL, not simulated in application code only.
+- At request start, after authentication and before ORM access, set tenant context per DB transaction with:
+  - `SET LOCAL app.organisation_id = %s`
+- Implement or preserve this via middleware / DB helpers consistent with the current backend.
+- All RLS policies should use:
+  - `organisation_id = current_setting('app.organisation_id', true)::uuid`
+- App-level authorization checks remain mandatory, especially for writes and shared-content reads.
+- Add or preserve cross-tenant tests early. Any A->B read or write must fail.
+
+# 10) Privacy and sharing rules
+- Learners can access their own full history, traces and evidence.
+- Tutors, trainers and coordinators can access only what the learner explicitly shared.
+- Defaults remain:
+  - `share_summary=false`
+  - `share_evidence=false`
+  - `share_verbatim=false`
+- Enforce authorization in services and DRF permissions, not only in UI.
+- Keep learner-private content and tutor-visible shared content distinct in serializers and querysets.
+
+# 11) RAG and document rules
+- RAG remains question-driven and situation-driven.
+- Use retrieved chunks to support a precise tutoring move, not to dump lessons.
+- Only ACTIVE class library documents are searchable.
+- Prefer procedure / checklist / safety / quality material when the learner context implies risk, compliance or operational correctness.
+- Preserve or extend citation storage when a tutor message relies on retrieved content.
+- Extraction guarantees for the POC remain best-effort with strong support for text PDFs.
+- For scanned PDFs without OCR, mark low extraction quality and surface an actionable status instead of pretending the content is usable.
+
+# 12) Tech stack rules
+- Backend stack is fixed: Django, DRF, Django ORM, Django migrations, PostgreSQL 15+, pgvector, MinIO or compatible S3 storage, Nginx, simple worker.
+- Inference stack is CPU local and/or OVH AI Endpoints depending on configuration.
+- Do not reintroduce FastAPI, SQLAlchemy or Alembic patterns.
+- Do not add Kubernetes, Kafka, microservices or heavy infra for this POC.
+- Use the simplest implementation that fits the current backend style.
+
+# 13) Repository and code organization
+- Respect the existing Django project layout.
+- Prefer changes inside the existing Django apps rather than creating new top-level frameworks.
+- Hugo-specific logic belongs primarily in `apps/hugo/`.
+- Put orchestration, state analysis and decision services under `apps/hugo/services/` unless a very clear better fit already exists in the repository.
+- Keep serializers, views, services and model responsibilities separated.
+- Avoid moving many files around unless there is a strong maintenance reason.
+
+# 14) API and endpoint discipline
+- Extend existing Hugo endpoints when possible.
+- Do not proliferate narrowly scoped experimental endpoints if the existing session/message flows can carry the feature.
+- When adding internal/debug endpoints, keep them clearly marked and protected.
+- Maintain object-level permissions and tenant scoping on every endpoint.
+- Keep request/response contracts stable unless the current change explicitly includes the contract migration.
+
+# 15) Data model discipline
+- Prefer additive schema changes over destructive rewrites.
+- Reuse existing `HugoSession`, `HugoMessage`, `TutorPrompt`, provider models and trace models where possible.
+- New fields should support either:
+  - state analysis
+  - decision runtime
+  - provider configuration
+  - testing / observability
+  - business requirements already in the POC
+- Do not add tables for hypothetical post-POC assistants.
+- Keep migrations explicit and reversible.
+
+# 16) Provider and model selection
+- Support local inference and/or OVH AI Endpoints through existing provider abstractions.
+- Prefer configuration over hard-coded provider branching.
+- A group/session/prompt may select the effective model/provider if the current backend already follows that pattern.
+- Keep provider-specific behavior isolated from tutoring strategy.
+- Fallback behavior should be explicit and testable.
+
+# 17) Frontend discipline
+- Only touch frontend code if the current slice really requires it.
+- If frontend work is required, follow the stack already present in the repository rather than inventing a new frontend architecture from the spec alone.
+- Keep screens minimal and privacy-first.
+- Do not rely on the UI for security.
+- Do not spend time on post-POC screens or assistant-specific UIs outside Hugo.
+
+# 18) Testing rules
+- Every non-trivial change must include tests.
+- Prioritize pytest / pytest-django tests aligned with the current backend test style.
+- Preserve and extend existing tests around:
+  - tutor prompt selection/rendering
+  - phase progression and decision
+  - learner/tutor access control
+  - session/message guardrails
+  - cross-tenant isolation
+- New Hugo 1.6.2 logic should add focused tests for cases such as:
+  - low episode clarity
+  - no concrete actions yet
+  - high cognitive load
+  - high interaction risk
+  - micro-explanation allowed vs forbidden
+  - single-question fallback
+  - closure allowed vs not allowed
+- Prefer small deterministic tests over brittle end-to-end prompt snapshots.
+
+# 19) Output discipline for Cursor
+- Before coding a slice, propose the minimal file list to touch and the intended implementation path.
+- After coding, summarize:
+  - files changed
+  - migrations added
+  - tests added/updated
+  - verification steps
+  - open risks or assumptions
+- Do not claim a feature is implemented if tests are missing or if the implementation path is only partial.
+- Flag any mismatch you discover between the patched spec and repository reality.
+
+# 20) Anti-patterns to avoid
+- Do not rebuild the backend around an obsolete FastAPI design.
+- Do not create a second orchestration system parallel to the existing Hugo services.
+- Do not use prompts alone to implement logic that should be deterministic in code.
+- Do not hard-wire future assistant architecture into the POC.
+- Do not over-abstract for integrations that are not in this phase.
+- Do not remove useful debug observability in development without a replacement.
+- Do not broaden scope from Hugo POC to platform roadmap work.

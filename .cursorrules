@@ -1,0 +1,165 @@
+# Cursor Rules — projet Hugo convergence
+
+## 1. Contexte de travail
+
+- Le projet Hugo est travaillé localement dans :
+  - `~/Desktop/zone de travail hugo/docs-workspace`
+  - `~/Desktop/zone de travail hugo/hugo_back`
+  - `~/Desktop/zone de travail hugo/hugo-hugolucia`
+  - `~/Desktop/zone de travail hugo/hugo-main`
+- L’objectif n’est pas de réinventer Hugo, mais de converger proprement à partir du réel audité vers la cible Hugo 2.0, lot par lot.
+
+Quand tu analyses, génères du code ou de la doc, considère toujours que le **réel observé** prime sur les souvenirs de specs ou de fils précédents.
+
+---
+
+## 2. Ordre de lecture et sources à privilégier
+
+Avant toute conclusion ou refactor, applique l’ordre suivant :
+
+1. Pour la méthode et les règles de vérité  
+   - `docs-workspace/00_HIERARCHIE_DOCUMENTAIRE.md`  
+   - `docs-workspace/DOC_METHODO_REFERENCE_CONVERGENCE_HUGO_REVISE.md`
+
+2. Pour le réel  
+   - `docs-workspace/01_CARTOGRAPHIE_WORKSPACE_REEL.md`  
+   - `docs-workspace/02_ETAT_MOTEUR_REEL.md`  
+   - `docs-workspace/03_ETAT_PRODUIT_REEL.md`  
+   - `docs-workspace/05_ECARTS_DOC_CODE_PRODUIT.md`  
+   - `docs-workspace/07_RUNTIME_DEMO_REFERENCE.md`  
+   - `docs-workspace/08_FLAGS_ET_ENVIRONNEMENT_DEMO.md`  
+   - `docs-workspace/09_PARCOURS_DEMO_ET_SCENARIOS.md`  
+   - `docs-workspace/10_FICHE_RUNTIME_PROD_ENCOORS.md`
+
+3. Pour le vocabulaire d’alignement  
+   - `docs-workspace/glossaire_alignement_hugo_reel_vs_spec.md`  
+   (pont de vocabulaire, jamais preuve à lui seul)
+
+4. Pour un domaine précis  
+   - `docs-workspace/ecarts — 20_memoire_gouvernee.md`  
+   - `docs-workspace/ecarts — 30_referentiel_documentaire_rag.md`  
+   - `docs-workspace/ecarts — 70_evaluation_traces_preuves.md`  
+   - `docs-workspace/ecarts — 80_observabilite_qualite_conversationnelle.md`
+
+Ne pars pas d’une vieille note isolée si un fichier `ecarts — <domaine>.md` existe déjà.
+
+---
+
+## 3. Règles de méthode obligatoires
+
+Quand tu réponds dans ce repo (analyse, doc, prompt d’audit, mini-spec, backlog), tu dois :
+
+- Séparer explicitement :
+  - réel observé ;
+  - cible 2.0 ;
+  - écarts confirmés ;
+  - points `AVERIFIER` ;
+  - hypothèses de convergence éventuelles.
+- Ne jamais utiliser la spec 2.0 comme preuve que quelque chose est déjà livré.
+- Utiliser le glossaire uniquement comme **pont de vocabulaire**, jamais comme preuve d’implémentation.
+- Partir du backend pour décrire un comportement : code `hugo_back`, tests, UIState, puis documents `docs-workspace`. Le front n’est pas la source de vérité moteur.
+
+Patron minimal de réponse (même dans un commentaire ou une note technique) :
+
+- Sources mobilisées
+- Réel confirmé
+- Cible 2.0
+- Écarts
+- AVERIFIER
+- Prochaine sortie utile
+
+---
+
+## 4. Règle mémoire spécifique au lot courant
+
+Pour tout ce qui touche la mémoire dans ce lot :
+
+- La cible **implémentée** visée maintenant = mémoire gouvernée **intra-conversation** uniquement.
+- La mémoire inter-sessions reste préparée doctrinalement et dans les contrats, mais **hors périmètre d’implémentation immédiat**.
+- La mémoire utile du fil courant doit être un résumé gouverné côté backend, pas un verbatim brut.
+
+Conséquences pratiques dans tes réponses et ton code :
+
+- Ne pas présenter `LearnerThemeMemory` comme déjà injecté dans le runtime de tour si ce n’est pas prouvé par audit.
+- Ne pas décrire une mémoire inter-sessions active tant que le code et les docs de domaine ne la montrent pas clairement.
+- Ne jamais proposer d’exposer un historique brut ou des champs P0 au front comme “mémoire”.
+- Si tu prends exemple sur des interfaces type Perplexity, tu le fais **au niveau UX intra-conversation**, pas comme preuve d’architecture Hugo.
+
+---
+
+## 5. Ce que tu peux faire avec Cursor
+
+Tu es autorisé à :
+
+- Lire et citer explicitement les docs de `docs-workspace` pour cadrer un chantier.
+- Proposer des prompts d’audit ciblés pour :
+  - `hugo_back` (services, modèles, endpoints, orchestrateur) ;
+  - `hugo-hugolucia` (front apprenant réel, UIState, CTA, flux d’évaluation).
+- Générer :
+  - des notes d’analyse courtes structurées selon le patron méthodo ;
+  - des matrices d’écarts (objet / cible / réel / statut / action) ;
+  - des mini-specs front ou backend ancrées sur le réel ;
+  - des backlogs (DOC / CODE / OPS) courts mais actionnables.
+
+À chaque fois, ancre-toi dans les fichiers de domaine `ecarts — <domaine>.md` quand ils existent.
+
+---
+
+## 6. Ce que tu ne dois pas faire
+
+Tu ne dois pas :
+
+- Deduire le réel à partir de la seule spec 2.0.
+- Prendre un nom doctrinal (par exemple `EvaluationTrace`, `LearnerThemeMemory`, `PersistentObjects`) comme preuve qu’un objet équivalent existe déjà dans le code.
+- Recentrer la vérité comportementale sur le front ou sur un seul écran, un seul endpoint, un seul prompt.
+- Exposer, proposer d’exposer ou documenter au front :
+  - des champs P0 bruts ;
+  - un verbatim complet comme “mémoire” ;
+  - des diagnostics internes non validés.
+- Présenter une évaluation automatique comme certification autonome : la validation finale reste humaine.
+- Présenter un comportement distant (runtime prod, flags, variantes) comme acquis sans le marquer `AVERIFIER`.
+
+---
+
+## 7. Formats de sortie privilégiés
+
+Selon le contexte :
+
+- **Réponse courte / commentaire de PR**  
+  Utilise le patron :
+  - Sources mobilisées
+  - Réel confirmé
+  - Cible 2.0
+  - Écarts
+  - AVERIFIER
+  - Prochaine sortie utile
+
+- **Travail de domaine**  
+  Préfère la chaîne :
+  1. 00_rapport d’écarts (narratif structuré)
+  2. 01_matrice d’écarts
+  3. 02_décisions documentaires
+  4. 03_backlog d’actions (DOC / CODE / OPS)
+
+- **Contrats cibles minimaux pour dev**  
+  Écrire des contrats courts, codables, mais prudents :
+  - contrat mémoire intra-conversation (schéma JSON minimal, rubriques autorisées, interdits, service producteur/consommateur) ;
+  - contrat CTA synthèse/évaluation (états backend, blocages visibles, champs UIState) ;
+  - note RAG lexical (rôle exact, limites, anti-survente) ;
+  - contrat conceptuel minimal d’`EvaluationTrace` (sans prétendre qu’il est déjà livré).
+
+---
+
+## 8. Posture générale à respecter
+
+Dans ce repo, tu adoptes systématiquement la posture suivante :
+
+> Décrire juste, borner juste, raccorder juste, puis backloguer juste.
+
+Concrètement :
+
+- Tu pars des documents qui font foi et du code réel.
+- Tu dis ce qui est réel sans l’étendre.
+- Tu dis ce qui est cible sans le présenter comme déjà livré.
+- Tu utilises le glossaire pour réduire les collisions de vocabulaire, pas pour “prouver” quoi que ce soit.
+- Tu transformes les constats en contrats, matrices, décisions et backlogs utilisables par un CTO ou un dev, pas en spéculation abstraite.

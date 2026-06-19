@@ -1,0 +1,19 @@
+{
+  "base_url": "https://hugoback.encoors.com",
+  "auth": {
+    "mode": "jwt",
+    "login_path": "/auth/login/",
+    "username_env": "ENCOORS_USERNAME",
+    "password_env": "ENCOORS_PASSWORD"
+  },
+  "notes": [
+    "Copy to encoors_config.local.json (gitignored) or export env vars.",
+    "Never commit real credentials.",
+    "CORS: front demo must run from https://hugo.encoors.com, not localhost:5173."
+  ],
+  "scenarios": ["EVAL1", "O1"],
+  "optional_env": {
+    "ENCOORS_SESSION_ID": "UUID session for EVAL1 replay",
+    "ENCOORS_ORACLE_OUT": "path to write JSON results"
+  }
+}

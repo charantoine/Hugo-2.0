@@ -1,0 +1,288 @@
+{
+  "name": "BAC PRO - Métiers de l'électricité et de ses environnements connectés",
+  "source_ref": "RNCP38878",
+  "items": [
+    {
+      "code": "BC01",
+      "title": "Préparation des opérations à réaliser",
+      "evaluation_criteria": [
+        "Analyser les conditions de l'opération et son contexte",
+        "Définir une installation à l'aide de solutions préétablies",
+        "Exploiter les outils numériques dans le contexte professionnel",
+        "Compléter les documents liés aux opérations"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation (CCF)",
+        "Épreuve ponctuelle pratique (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Documents de préparation (schémas, planning)" },
+        { "type": "OBS", "label": "Observation de l'analyse du contexte" }
+      ],
+      "source_ref": "RNCP38878BC01"
+    },
+    {
+      "code": "BC02",
+      "title": "Réalisation et mise en service d'une installation",
+      "evaluation_criteria": [
+        "Organiser l'opération dans son contexte",
+        "Réaliser une installation de manière éco-responsable",
+        "Contrôler les grandeurs caractéristiques de l'installation",
+        "Régler, paramétrer les matériels de l'installation",
+        "Valider le fonctionnement de l'installation",
+        "Communiquer entre professionnels sur l'opération",
+        "Communiquer avec le client/usager sur l'opération"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation (CCF)",
+        "Épreuve ponctuelle pratique (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "PHOTO", "label": "Photos de l'installation réalisée" },
+        { "type": "DOC", "label": "Rapport de mise en service, relevés" },
+        { "type": "OBS", "label": "Observation en situation de réalisation" }
+      ],
+      "source_ref": "RNCP38878BC02"
+    },
+    {
+      "code": "BC03",
+      "title": "Maintenance d'une installation",
+      "evaluation_criteria": [
+        "Diagnostiquer un dysfonctionnement",
+        "Remplacer un matériel électrique"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation (CCF)",
+        "Épreuve ponctuelle pratique (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Compte-rendu de diagnostic" },
+        { "type": "PHOTO", "label": "Preuve d'intervention (avant/après)" },
+        { "type": "OBS", "label": "Observation du diagnostic et du remplacement" }
+      ],
+      "source_ref": "RNCP38878BC03"
+    },
+    {
+      "code": "BC04",
+      "title": "Économie - gestion",
+      "evaluation_criteria": [
+        "Comprendre et analyser une situation d'entreprise",
+        "Exploiter et analyser des documents économiques, juridiques ou de gestion",
+        "Justifier une réponse en sélectionnant le cas échéant des informations au sein d'un ou plusieurs documents",
+        "Rédiger une réponse structurée à une problématique donnée en mobilisant les savoirs associés et le vocabulaire spécifique adéquat"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Production écrite structurée" }
+      ],
+      "source_ref": "RNCP38878BC04"
+    },
+    {
+      "code": "BC05",
+      "title": "Prévention santé environnement",
+      "evaluation_criteria": [
+        "Mettre en œuvre une démarche d'analyse dans une situation donnée",
+        "Expliquer un phénomène physiologique, un enjeu environnemental, une disposition réglementaire, en lien avec la démarche de prévention",
+        "Proposer une solution pour résoudre un problème",
+        "Argumenter un choix",
+        "Communiquer à l'écrit avec une syntaxe claire et un vocabulaire adapté"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Réponse écrite argumentée" }
+      ],
+      "source_ref": "RNCP38878BC05"
+    },
+    {
+      "code": "BC06",
+      "title": "Mathématiques",
+      "evaluation_criteria": [
+        "S'approprier : rechercher, extraire et organiser l'information",
+        "Analyser/raisonner : émettre des conjectures ; proposer, choisir une méthode de résolution ; élaborer un algorithme",
+        "Réaliser : mettre en œuvre une méthode de résolution, des algorithmes ; utiliser un modèle ; représenter ; calculer ; expérimenter ; faire une simulation",
+        "Valider : critiquer un résultat, argumenter ; contrôler la vraisemblance d'une conjecture ; mener un raisonnement logique et établir une conclusion",
+        "Communiquer : rendre compte d'une démarche, d'un résultat, à l'oral ou à l'écrit à l'aide d'outils et d'un langage approprié"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite et pratique (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Démarche et résultats (écrit ou oral)" }
+      ],
+      "source_ref": "RNCP38878BC06"
+    },
+    {
+      "code": "BC07",
+      "title": "Physique-chimie",
+      "evaluation_criteria": [
+        "S'approprier : rechercher, extraire et organiser l'information",
+        "Analyser/raisonner : formuler des hypothèses ; proposer, choisir une méthode de résolution ou un protocole expérimental",
+        "Réaliser : mettre en œuvre une méthode de résolution, un protocole expérimental ; utiliser un modèle ; représenter ; calculer ; effectuer une simulation",
+        "Valider : commenter un résultat, argumenter, contrôler la vraisemblance d'une hypothèse, de la valeur d'une mesure",
+        "Communiquer : rendre compte d'une démarche, d'un résultat, à l'oral ou à l'écrit à l'aide d'outils et d'un langage appropriés"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite et pratique (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Compte-rendu de démarche ou d'expérimentation" }
+      ],
+      "source_ref": "RNCP38878BC07"
+    },
+    {
+      "code": "BC08",
+      "title": "Langue vivante",
+      "evaluation_criteria": [
+        "Comprendre la langue orale (niveau B1+ CECRL)",
+        "Comprendre un document écrit",
+        "S'exprimer à l'écrit",
+        "S'exprimer à l'oral en continu",
+        "Interagir à l'oral dans des situations de la vie quotidienne, sociale et professionnelle"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite et orale (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Production écrite" },
+        { "type": "OBS", "label": "Interaction orale" }
+      ],
+      "source_ref": "RNCP38878BC08"
+    },
+    {
+      "code": "BC09",
+      "title": "Français",
+      "evaluation_criteria": [
+        "Maîtriser l'échange écrit : lire, analyser, écrire",
+        "Adapter son expression écrite selon les situations et les destinataires",
+        "Maîtriser la lecture et exercer son esprit critique",
+        "Adapter sa lecture à la diversité des textes",
+        "Mettre en perspective des connaissances et des expériences"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Production écrite, analyse de textes" }
+      ],
+      "source_ref": "RNCP38878BC09"
+    },
+    {
+      "code": "BC10",
+      "title": "Histoire-géographie et enseignement moral et civique",
+      "evaluation_criteria": [
+        "Maîtriser et utiliser des repères chronologiques et spatiaux",
+        "Mémoriser et s'approprier les notions, se repérer, contextualiser (HG)",
+        "S'approprier les démarches historiques et géographiques : exploiter les outils, mener et construire une démarche et la justifier (HG)",
+        "Construire et exprimer une argumentation cohérente et étayée (EMC)",
+        "Mettre à distance ses opinions personnelles pour construire son jugement (HG-EMC)",
+        "Mobiliser ses connaissances pour penser et s'engager en s'appropriant les principes et valeurs de la République (HG-EMC)"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Production écrite, argumentation" }
+      ],
+      "source_ref": "RNCP38878BC10"
+    },
+    {
+      "code": "BC11",
+      "title": "Arts appliqués et cultures artistiques",
+      "evaluation_criteria": [
+        "Rechercher, identifier et collecter des ressources documentaires ; sélectionner, classer et trier les informations",
+        "Analyser, comparer des œuvres ou des produits et les situer dans leur contexte de création",
+        "Respecter une demande et mettre en œuvre un cahier des charges simple",
+        "Établir des propositions cohérentes en réponse à un problème posé",
+        "Opérer un choix raisonné parmi des propositions et finaliser la proposition choisie",
+        "Choisir des outils adaptés ; établir un relevé, analyser et traduire graphiquement ; justifier en argumentant, structurer et présenter une communication graphique, écrite et/ou orale"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle écrite (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Relevé graphique, proposition, communication" }
+      ],
+      "source_ref": "RNCP38878BC11"
+    },
+    {
+      "code": "BC12",
+      "title": "Éducation physique et sportive",
+      "evaluation_criteria": [
+        "Développer sa motricité",
+        "S'organiser pour apprendre et s'entraîner",
+        "Exercer sa responsabilité dans un engagement personnel et solidaire : connaître les règles, les appliquer et les faire respecter",
+        "Construire durablement sa santé",
+        "Accéder au patrimoine culturel sportif et artistique"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle pratique (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "OBS", "label": "Observation des pratiques et de l'engagement" }
+      ],
+      "source_ref": "RNCP38878BC12"
+    },
+    {
+      "code": "BC13",
+      "title": "Langue vivante étrangère ou régionale (bloc facultatif)",
+      "evaluation_criteria": [
+        "S'exprimer à l'oral en continu (niveau B1+ CECRL)",
+        "Interagir à l'oral",
+        "Comprendre un document écrit dans des situations de la vie quotidienne, sociale et professionnelle"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle orale (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "OBS", "label": "Expression et interaction orales" }
+      ],
+      "source_ref": "RNCP38878BC13"
+    },
+    {
+      "code": "BC14",
+      "title": "Mobilité (bloc facultatif)",
+      "evaluation_criteria": [
+        "Comprendre et se faire comprendre dans un contexte professionnel étranger",
+        "Caractériser le contexte professionnel étranger",
+        "Réaliser partiellement une activité professionnelle, sous contrôle, dans un contexte professionnel étranger",
+        "Comparer des activités professionnelles similaires, réalisées ou observées, à l'étranger et en France",
+        "Se repérer dans un nouvel environnement",
+        "Identifier des caractéristiques culturelles du contexte d'accueil"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation ou épreuve ponctuelle orale (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Compte-rendu de mobilité" },
+        { "type": "OBS", "label": "Observation en contexte" }
+      ],
+      "source_ref": "RNCP38878BC14"
+    },
+    {
+      "code": "BC15",
+      "title": "Secteur sportif (bloc facultatif)",
+      "evaluation_criteria": [
+        "Communiquer dans les situations de la vie professionnelle",
+        "Prendre en compte les caractéristiques des publics dans une démarche d'éducation à la citoyenneté",
+        "Contribuer au fonctionnement d'une structure",
+        "Concevoir un projet d'animation",
+        "Promouvoir un projet",
+        "Participer à la conduite d'un projet d'animation",
+        "Assurer le cadrage d'un projet",
+        "Evaluer un projet d'animation"
+      ],
+      "evaluation_modalities": [
+        "Contrôle en cours de formation (selon voie)"
+      ],
+      "expected_evidence": [
+        { "type": "DOC", "label": "Projet d'animation, compte-rendu" },
+        { "type": "OBS", "label": "Observation en situation" }
+      ],
+      "source_ref": "RNCP38878BC15"
+    }
+  ]
+}
