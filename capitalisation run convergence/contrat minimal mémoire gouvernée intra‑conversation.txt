@@ -1,0 +1,70 @@
+{
+  "memory_scope": "session",              // toujours "session" dans ce lot
+  "session_id": "sess_123",
+  "turn_id": 18,
+
+  "theme": {
+    "theme_key": "diagnostic_hugo_refonte",
+    "situation_label": "refonte Hugo 2.0 sur code existant",
+    "objective_label": "stabiliser mémoire intra-conversation",
+    "priority_branch": "memoire_gouvernee"
+  },
+
+  "learner_state": {
+    "clarified_facts": [
+      "workspace local séparé en 3 dossiers docs-workspace / hugo_back / hugo-hugolucia / hugo-main",
+      "périmètre mémoire gouvernée réduit à l'intra-conversation pour ce lot"
+    ],
+    "open_hypotheses": [
+      "degré réel d'injection de LearnerThemeMemory dans build_hugo_turn"
+    ],
+    "missing_elements": [
+      "audit complet du contrat JSON réel de memory-summary",
+      "audit exact de l'usage de LearnerThemeMemory dans le runtime"
+    ]
+  },
+
+  "open_loops": [
+    {
+      "loop_id": "L1",
+      "label": "contrat JSON memory-summary à canoniser",
+      "status": "pending"
+    },
+    {
+      "loop_id": "L2",
+      "label": "audit injection LearnerThemeMemory dans build_hugo_turn",
+      "status": "pending"
+    }
+  ],
+
+  "session_progress": {
+    "local_summaries": [
+      "la mémoire inter-sessions reste préparée mais hors périmètre d'implémentation immédiat",
+      "la mémoire utile doit rester une synthèse gouvernée, non un verbatim"
+    ],
+    "pending_evaluation_points": [
+      "valider que le contrat JSON est assez stable pour en faire un contrat interface"
+    ],
+    "next_actions": [
+      "produire la note de contrat mémoire intra-conversation pour le CTO",
+      "ajouter les tests no-verbatim / no-P0 sur les surfaces mémoire"
+    ]
+  },
+
+  "governance": {
+    "contains_verbatim": false,
+    "contains_P0_fields": false,
+    "exposed_to_front": true,
+    "exposure_mode": "via_ui_state_projection_only"
+  },
+
+  "metadata": {
+    "last_updated_at": "2026-06-16T14:30:00Z",
+    "producer_service": "build_session_memory",
+    "consumer_services": [
+      "build_hugo_turn",
+      "build_ui_state"
+    ],
+    "version": "1.0.0-session-only"
+  }
+}
