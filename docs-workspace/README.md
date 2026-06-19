@@ -7,14 +7,17 @@ Ce README explique comment est organisée la bibliothèque documentaire du works
 
 ### Références aux dépôts d’origine
 
-Les éléments suivants proviennent des dépôts GitHub de Pierre Fardeau (compte : [hamanad](https://github.com/Hamanad)) :
+## Origine et rôle de ce dépôt
 
-- `hugo_back/` et `hugo-main/` : issus du dépôt privé et/ou du dépôt public [https://github.com/Hamanad/hugo](https://github.com/Hamanad/hugo)
-- `hugo-hugolucia/` : issu du dépôt [https://github.com/Hamanad/hugo_poc](https://github.com/Hamanad/hugo_poc), branche `hugo-hugolucia`.
+Ce dépôt GitHub privé est hébergé sous le compte **[charantoine](https://github.com/charantoine)** et correspond au workspace local `Zone de travail Hugo` (`hugo-main/`, `hugo-hugolucia/`, `hugo_back/`, `docs-workspace/`).
 
-Les versions utilisées dans ce dépôt proviennent de ZIP téléchargés entre le 11 et le 12 juin 2026, puis intégrés dans `~/Bureau/depot_github/charantoine/Zone de travail Hugo/`.
+Le socle applicatif utilisé comme point de départ provient de travaux de **Pierre Fardeau** (compte GitHub : [hamanad](https://github.com/Hamanad)), via des archives ZIP téléchargées les **11 et 12 juin 2026** à partir de ses dépôts :
+- backend et noyau Hugo 1.9 : [Hamanad/hugo](https://github.com/Hamanad/hugo) (dossiers `hugo_back/` et `hugo-main`),
+- PoC frontend `hugo-hugolucia` : [Hamanad/hugo_poc](https://github.com/Hamanad/hugo_poc) (dossier `hugo-hugolucia`).
 
-Les briques de départ ont été téléchargées en **ZIP les 11 et 12 juin 2026** depuis son dépôt privé, puis utilisées comme base de travail **en local** sur Mac.  
+Ce dépôt ne revendique pas la paternité du socle initial : il documente et versionne le **travail de convergence, d’audit et de transformation** réalisé ensuite en local (backend, frontend, documentation, tests) à partir de ces bases, en vue d’alimenter les décisions de convergence vers Hugo 2.0.
+
+Les documents `Origine du code, provenance des sources et clarification de contribution.md` et `docs-workspace/README.md` détaillent la traçabilité et la répartition de responsabilité entre le socle de Pierre Fardeau et les contributions réalisées dans ce dépôt.Les versions utilisées dans ce dépôt proviennent de ZIP téléchargés entre le 11 et le 12 juin 2026 depuis son dépôt privé, puis utilisées comme base de travail **en local** sur Mac.  
 Le travail présent dans ce dépôt correspond ensuite à des développements, transformations, audits, tests et documents produits localement, puis **déposés sur GitHub le 19 juin 2026**.
 
 Afin de lever toute ambiguïté de propriété :
