@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from django.core.files.storage import default_storage
+from app_core.tenant_context import tenant_organisation_id
 from .models import (
     EvaluationPolicy,
     EvaluationPromptProfile,
     HugoMessage,
     HugoSession,
+    LearnerConversationGlobalProfile,
     LearnerEvaluationRecord,
     LearnerState,
     OvhLlm,
@@ -343,3 +345,191 @@ class EvaluationPromptProfileSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["id", "organisation", "updated_by", "created_at", "updated_at"]
+
+
+class LearnerConversationGlobalProfileSerializer(serializers.ModelSerializer):
+    diagnostic_tutor_prompt_id = serializers.PrimaryKeyRelatedField(
+        source="diagnostic_tutor_prompt",
+        queryset=TutorPrompt.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    reflective_tutor_prompt_id = serializers.PrimaryKeyRelatedField(
+        source="reflective_tutor_prompt",
+        queryset=TutorPrompt.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    knowledge_review_tutor_prompt_id = serializers.PrimaryKeyRelatedField(
+        source="knowledge_review_tutor_prompt",
+        queryset=TutorPrompt.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    diagnostic_conduct_profile_id = serializers.PrimaryKeyRelatedField(
+        source="diagnostic_conduct_profile",
+        queryset=TutorConductProfile.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    reflective_conduct_profile_id = serializers.PrimaryKeyRelatedField(
+        source="reflective_conduct_profile",
+        queryset=TutorConductProfile.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    knowledge_review_conduct_profile_id = serializers.PrimaryKeyRelatedField(
+        source="knowledge_review_conduct_profile",
+        queryset=TutorConductProfile.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    evaluation_prompt_profile_id = serializers.PrimaryKeyRelatedField(
+        source="evaluation_prompt_profile",
+        queryset=EvaluationPromptProfile.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+    evaluation_policy_id = serializers.PrimaryKeyRelatedField(
+        source="evaluation_policy",
+        queryset=EvaluationPolicy.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = LearnerConversationGlobalProfile
+        fields = [
+            "id",
+            "organisation",
+            "name",
+            "description",
+            "status",
+            "is_default",
+            "diagnostic_tutor_prompt",
+            "diagnostic_tutor_prompt_id",
+            "reflective_tutor_prompt",
+            "reflective_tutor_prompt_id",
+            "knowledge_review_tutor_prompt",
+            "knowledge_review_tutor_prompt_id",
+            "diagnostic_conduct_profile",
+            "diagnostic_conduct_profile_id",
+            "reflective_conduct_profile",
+            "reflective_conduct_profile_id",
+            "knowledge_review_conduct_profile",
+            "knowledge_review_conduct_profile_id",
+            "evaluation_prompt_profile",
+            "evaluation_prompt_profile_id",
+            "evaluation_policy",
+            "evaluation_policy_id",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "organisation",
+            "diagnostic_tutor_prompt",
+            "reflective_tutor_prompt",
+            "knowledge_review_tutor_prompt",
+            "diagnostic_conduct_profile",
+            "reflective_conduct_profile",
+            "knowledge_review_conduct_profile",
+            "evaluation_prompt_profile",
+            "evaluation_policy",
+            "created_at",
+            "updated_at",
+        ]
+
+    def _validate_org_fk(self, value, org_id, label: str):
+        if value is None:
+            return value
+        fk_org_id = getattr(value, "organisation_id", None)
+        if fk_org_id is not None and org_id and str(fk_org_id) != str(org_id):
+            raise serializers.ValidationError(f"{label} must belong to the same organisation.")
+        return value
+
+    def _validate_tutor_prompt_posture(self, value, expected_posture: str, label: str):
+        if value is None:
+            return value
+        actual = getattr(value, "conversation_profile", None)
+        if actual and actual != expected_posture:
+            raise serializers.ValidationError(
+                f"{label} must have conversation_profile={expected_posture} (got {actual})."
+            )
+        return value
+
+    def _validate_conduct_posture(self, value, expected_posture: str, label: str):
+        if value is None:
+            return value
+        actual = getattr(value, "posture", None)
+        if actual and actual != expected_posture:
+            raise serializers.ValidationError(f"{label} must have posture={expected_posture} (got {actual}).")
+        return value
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        org_id = None
+        if request is not None:
+            org_id = tenant_organisation_id(request)
+        elif self.instance is not None:
+            org_id = self.instance.organisation_id
+
+        slot_checks = [
+            ("diagnostic_tutor_prompt", "diagnostic", "prompt"),
+            ("reflective_tutor_prompt", "reflective_afest", "prompt"),
+            ("knowledge_review_tutor_prompt", "knowledge_review", "prompt"),
+            ("diagnostic_conduct_profile", "diagnostic", "conduct"),
+            ("reflective_conduct_profile", "reflective_afest", "conduct"),
+            ("knowledge_review_conduct_profile", "knowledge_review", "conduct"),
+        ]
+        for field, posture, kind in slot_checks:
+            value = attrs.get(field)
+            if value is None and self.instance is not None:
+                value = getattr(self.instance, field, None)
+            if kind == "prompt":
+                self._validate_org_fk(value, org_id, field)
+                self._validate_tutor_prompt_posture(value, posture, field)
+            else:
+                self._validate_org_fk(value, org_id, field)
+                self._validate_conduct_posture(value, posture, field)
+
+        for field in ("evaluation_prompt_profile", "evaluation_policy"):
+            value = attrs.get(field)
+            if value is None and self.instance is not None:
+                value = getattr(self.instance, field, None)
+            self._validate_org_fk(value, org_id, field)
+
+        policy = attrs.get("evaluation_policy")
+        if policy is None and self.instance is not None:
+            policy = getattr(self.instance, "evaluation_policy", None)
+        if policy is not None and getattr(policy, "group_id", None):
+            raise serializers.ValidationError(
+                {"evaluation_policy": "Only organisation-level policies (group=null) can be linked."}
+            )
+
+        return attrs
+
+    def create(self, validated_data):
+        org_id = validated_data.get("organisation_id") or validated_data["organisation"].id
+        if validated_data.get("is_default"):
+            LearnerConversationGlobalProfile.objects.filter(
+                organisation_id=org_id,
+                is_default=True,
+            ).update(is_default=False)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if validated_data.get("is_default"):
+            LearnerConversationGlobalProfile.objects.filter(
+                organisation_id=instance.organisation_id,
+                is_default=True,
+            ).exclude(id=instance.id).update(is_default=False)
+        return super().update(instance, validated_data)

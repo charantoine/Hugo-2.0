@@ -220,6 +220,14 @@ class HugoSession(models.Model):
         blank=True,
         help_text="Optional prompt configuration for this session. If empty, a suitable default will be used.",
     )
+    learner_conversation_profile = models.ForeignKey(
+        "LearnerConversationGlobalProfile",
+        on_delete=models.SET_NULL,
+        related_name="sessions",
+        null=True,
+        blank=True,
+        help_text="Optional global learner conversation profile for this session.",
+    )
     current_phase = models.CharField(
         max_length=32,
         choices=SessionPhase.choices,
@@ -665,6 +673,135 @@ class EvaluationPromptProfile(models.Model):
     def __str__(self) -> str:
         scope = self.organisation.name if self.organisation_id else "platform"
         return f"[{scope}] {self.code} - {self.label}"
+
+
+class LearnerConversationGlobalProfile(models.Model):
+    """
+    Global learner conversation profile grouping posture-specific prompts,
+    conduct overrides and evaluation configuration for AFEST Hugo.
+    """
+
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        ACTIVE = "active", "Active"
+        INACTIVE = "inactive", "Inactive"
+
+    POSTURE_PROMPT_FIELDS = {
+        ConversationPosture.DIAGNOSTIC.value: "diagnostic_tutor_prompt",
+        ConversationPosture.REFLECTIVE_AFEST.value: "reflective_tutor_prompt",
+        ConversationPosture.KNOWLEDGE_REVIEW.value: "knowledge_review_tutor_prompt",
+    }
+    POSTURE_CONDUCT_FIELDS = {
+        ConversationPosture.DIAGNOSTIC.value: "diagnostic_conduct_profile",
+        ConversationPosture.REFLECTIVE_AFEST.value: "reflective_conduct_profile",
+        ConversationPosture.KNOWLEDGE_REVIEW.value: "knowledge_review_conduct_profile",
+    }
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organisation = models.ForeignKey(
+        "accounts.Organisation",
+        on_delete=models.CASCADE,
+        related_name="learner_conversation_global_profiles",
+        null=False,
+    )
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, default="")
+    status = models.CharField(
+        max_length=16,
+        choices=Status.choices,
+        default=Status.ACTIVE,
+    )
+    is_default = models.BooleanField(
+        default=False,
+        help_text="If true, used as organisation default when no group/session profile is set.",
+    )
+    diagnostic_tutor_prompt = models.ForeignKey(
+        TutorPrompt,
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_diagnostic",
+        null=True,
+        blank=True,
+    )
+    reflective_tutor_prompt = models.ForeignKey(
+        TutorPrompt,
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_reflective",
+        null=True,
+        blank=True,
+    )
+    knowledge_review_tutor_prompt = models.ForeignKey(
+        TutorPrompt,
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_knowledge_review",
+        null=True,
+        blank=True,
+    )
+    diagnostic_conduct_profile = models.ForeignKey(
+        TutorConductProfile,
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_diagnostic_conduct",
+        null=True,
+        blank=True,
+    )
+    reflective_conduct_profile = models.ForeignKey(
+        TutorConductProfile,
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_reflective_conduct",
+        null=True,
+        blank=True,
+    )
+    knowledge_review_conduct_profile = models.ForeignKey(
+        TutorConductProfile,
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_knowledge_review_conduct",
+        null=True,
+        blank=True,
+    )
+    evaluation_prompt_profile = models.ForeignKey(
+        "EvaluationPromptProfile",
+        on_delete=models.SET_NULL,
+        related_name="global_profiles_evaluation",
+        null=True,
+        blank=True,
+    )
+    evaluation_policy = models.ForeignKey(
+        "EvaluationPolicy",
+        on_delete=models.SET_NULL,
+        related_name="global_profiles",
+        null=True,
+        blank=True,
+        help_text="Optional organisation-level evaluation policy linked to this profile.",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "learner_conversation_global_profile"
+        ordering = ["organisation_id", "name"]
+        unique_together = [["organisation", "name"]]
+
+    def __str__(self) -> str:
+        return f"{self.organisation_id} / {self.name}"
+
+    def get_tutor_prompt_for_posture(self, posture: str | None) -> TutorPrompt | None:
+        posture_value = str(posture or ConversationPosture.REFLECTIVE_AFEST.value)
+        field_name = self.POSTURE_PROMPT_FIELDS.get(posture_value)
+        if not field_name:
+            return None
+        prompt = getattr(self, field_name, None)
+        if prompt is not None and prompt.is_active:
+            return prompt
+        return None
+
+    def get_conduct_profile_for_posture(self, posture: str | None) -> TutorConductProfile | None:
+        posture_value = str(posture or ConversationPosture.REFLECTIVE_AFEST.value)
+        field_name = self.POSTURE_CONDUCT_FIELDS.get(posture_value)
+        if not field_name:
+            return None
+        profile = getattr(self, field_name, None)
+        if profile is not None and profile.is_active:
+            return profile
+        return None
 
 
 class EvaluationPolicy(models.Model):

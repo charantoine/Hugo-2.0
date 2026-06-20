@@ -40,6 +40,10 @@ const tutorPrompts = ref([])
 const loadingTutorPrompts = ref(false)
 const tutorPromptError = ref('')
 const selectedTutorPromptId = ref('')
+const learnerProfiles = ref([])
+const loadingLearnerProfiles = ref(false)
+const learnerProfileError = ref('')
+const selectedLearnerProfileId = ref('')
 const exportPeriodFrom = ref('')
 const exportPeriodTo = ref('')
 const exportingCsv = ref(false)
@@ -111,6 +115,7 @@ async function loadGroup() {
     const { data } = await api.get(`/groups/${route.params.groupId}/`)
     group.value = data
     selectedTutorPromptId.value = data.default_tutor_prompt || ''
+    selectedLearnerProfileId.value = data.default_learner_conversation_profile || ''
     await loadLibraryData()
   } catch (e) {
     groupError.value = e.response?.data?.detail || 'Erreur lors du chargement du groupe.'
@@ -323,10 +328,24 @@ async function loadTutorPrompts() {
     const { data } = await api.get('/hugo/tutor-prompts/')
     tutorPrompts.value = Array.isArray(data) ? data : (data.results || [])
   } catch (e) {
-    tutorPromptError.value = e.response?.data?.detail || 'Erreur lors du chargement des TutorPrompt.'
+    tutorPromptError.value = e.response?.data?.detail || 'Erreur lors du chargement des prompts apprenant.'
     tutorPrompts.value = []
   } finally {
     loadingTutorPrompts.value = false
+  }
+}
+
+async function loadLearnerProfiles() {
+  loadingLearnerProfiles.value = true
+  learnerProfileError.value = ''
+  try {
+    const { data } = await api.get('/hugo/learner-conversation-profiles/')
+    learnerProfiles.value = Array.isArray(data) ? data : (data.results || [])
+  } catch (e) {
+    learnerProfileError.value = e.response?.data?.detail || 'Erreur lors du chargement des profils conversationnels.'
+    learnerProfiles.value = []
+  } finally {
+    loadingLearnerProfiles.value = false
   }
 }
 
@@ -372,7 +391,20 @@ async function updateDefaultTutorPrompt() {
       default_tutor_prompt: selectedTutorPromptId.value || null,
     })
   } catch (e) {
-    tutorPromptError.value = e.response?.data?.detail || "Erreur lors de l'association du TutorPrompt par défaut."
+    tutorPromptError.value = e.response?.data?.detail || "Erreur lors de l'association du prompt apprenant legacy."
+  }
+}
+
+async function updateDefaultLearnerProfile() {
+  if (!group.value?.id) return
+  learnerProfileError.value = ''
+  try {
+    await api.patch(`/groups/${group.value.id}/`, {
+      default_learner_conversation_profile: selectedLearnerProfileId.value || null,
+    })
+  } catch (e) {
+    learnerProfileError.value =
+      e.response?.data?.detail || "Erreur lors de l'association du profil conversationnel apprenant."
   }
 }
 
@@ -510,6 +542,7 @@ onMounted(() => {
   loadUsers()
   loadTutorLinks()
   loadTutorPrompts()
+  loadLearnerProfiles()
 })
 
 watch(
@@ -624,7 +657,32 @@ watch(
                 </p>
               </div>
               <div class="mb-3">
-                <label for="default-tutor-prompt" class="form-label"><strong>Prompt tuteur par défaut :</strong></label>
+                <label for="default-learner-profile" class="form-label"><strong>Profil conversationnel apprenant :</strong></label>
+                <select
+                  id="default-learner-profile"
+                  v-model="selectedLearnerProfileId"
+                  class="form-select form-select-sm mt-1"
+                  :disabled="loadingLearnerProfiles"
+                  @change="updateDefaultLearnerProfile"
+                >
+                  <option value="">Aucun (profil org ou legacy)</option>
+                  <option
+                    v-for="p in learnerProfiles"
+                    :key="p.id"
+                    :value="p.id"
+                  >
+                    {{ p.name }}{{ p.is_default ? ' (défaut org)' : '' }}
+                  </option>
+                </select>
+                <p class="text-muted small mb-0">
+                  Prioritaire sur le prompt legacy ci-dessous lorsqu'il est renseigné.
+                </p>
+                <p v-if="learnerProfileError" class="text-danger small mb-0">
+                  {{ learnerProfileError }}
+                </p>
+              </div>
+              <div class="mb-3">
+                <label for="default-tutor-prompt" class="form-label"><strong>Prompt apprenant legacy (1.6) :</strong></label>
                 <select
                   id="default-tutor-prompt"
                   v-model="selectedTutorPromptId"

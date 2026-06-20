@@ -33,14 +33,19 @@ export const ADMIN_CONVERSATION_SECTIONS = [
     id: 'learner',
     title: 'Conversation apprenant',
     items: [
+      {
+        path: '/admin/conversation/learner/profiles',
+        label: 'Profils conversationnels',
+        description: 'Profil global apprenant : diag, réflexif, bûchage et évaluation finale.',
+      },
       ...LEARNER_POSTURES.map((p) => ({
         path: `/admin/conversation/learner/${p.code}`,
-        label: p.code === 'knowledge_review' ? 'Buchage' : p.label,
-        description: p.description,
+        label: p.code === 'knowledge_review' ? 'Buchage (legacy)' : `${p.label} (legacy)`,
+        description: `${p.description} — édition par posture (mode expert).`,
       })),
       {
         path: '/admin/conversation/learner/closing',
-        label: 'Clôture évaluation',
+        label: 'Clôture évaluation (legacy)',
         description: 'Profils d’évaluation, politique org et paramètres de clôture.',
       },
     ],
@@ -70,8 +75,8 @@ export const ADMIN_CONVERSATION_SECTIONS = [
 ]
 
 export const LEGACY_ADMIN_ROUTES = [
-  { path: '/tutor-prompts', label: 'Prompts tuteur (legacy)' },
-  { path: '/conduct-profiles', label: 'Profils de conduite (legacy)' },
+  { path: '/tutor-prompts', label: 'Prompts apprenant (legacy 1.6)' },
+  { path: '/conduct-profiles', label: 'Profils de conduite apprenant (legacy)' },
 ]
 
 export function learnerModeMeta(postureCode) {

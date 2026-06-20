@@ -318,26 +318,34 @@ def build_hugo_context(session: HugoSession) -> HugoContext:
     )
 
 
-def _resolve_tutor_prompt(session: HugoSession) -> TutorPrompt | None:
+def _resolve_tutor_prompt(session: HugoSession, posture: str | None = None) -> TutorPrompt | None:
     """
     Resolve the TutorPrompt to use for this session.
 
     Priority:
     - explicit session.tutor_prompt if set and active,
-    - default prompt for organisation / AFEST_HUGO if any,
+    - global learner profile slot for posture (if profile resolved),
+    - default prompt on group (legacy default_tutor_prompt),
+    - default TutorPrompt for organisation / AFEST_HUGO if any,
     - otherwise: None (caller may fall back to legacy behaviour).
     """
-    # 1) explicit TutorPrompt on the session
     if session.tutor_prompt and session.tutor_prompt.is_active:
         return session.tutor_prompt
 
-    # 2) fallback: default TutorPrompt configured on the group
+    from apps.hugo.services.learner_profile_resolver import resolve_tutor_prompt_from_global_profile
+
+    effective_posture = posture or getattr(session, "posture", None) or getattr(
+        session, "conversation_profile_override", None
+    )
+    global_prompt = resolve_tutor_prompt_from_global_profile(session, effective_posture)
+    if global_prompt is not None:
+        return global_prompt
+
     group = getattr(session, "group", None)
     default_group_prompt = getattr(group, "default_tutor_prompt", None) if group else None
     if default_group_prompt and default_group_prompt.is_active:
         return default_group_prompt
 
-    # 3) organisation-wide default
     return (
         TutorPrompt.objects.filter(
             organisation=session.organisation,

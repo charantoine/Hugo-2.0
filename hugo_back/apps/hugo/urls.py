@@ -3,6 +3,7 @@ from . import (
     views_analytics,
     views_conduct_profiles,
     views_evaluation_config,
+    views_learner_conversation_profiles,
     views_ovh_llm,
     views_sessions,
     views_starter_prompts,
@@ -39,6 +40,16 @@ urlpatterns = [
     path("analytics/learners/<uuid:learner_id>/progress/", views_analytics.LearnerProgressView.as_view(), name="learner_progress"),
     path("tutor-prompts/", views_tutor_prompts.TutorPromptListCreate.as_view(), name="tutor_prompt_list_create"),
     path("tutor-prompts/<uuid:id>/", views_tutor_prompts.TutorPromptDetail.as_view(), name="tutor_prompt_detail"),
+    path(
+        "learner-conversation-profiles/",
+        views_learner_conversation_profiles.LearnerConversationGlobalProfileListCreate.as_view(),
+        name="learner_conversation_profile_list_create",
+    ),
+    path(
+        "learner-conversation-profiles/<uuid:id>/",
+        views_learner_conversation_profiles.LearnerConversationGlobalProfileDetail.as_view(),
+        name="learner_conversation_profile_detail",
+    ),
     path("conduct-profiles/", views_conduct_profiles.TutorConductProfileListCreate.as_view(), name="conduct_profile_list_create"),
     path("conduct-profiles/<int:id>/", views_conduct_profiles.TutorConductProfileDetail.as_view(), name="conduct_profile_detail"),
     path(

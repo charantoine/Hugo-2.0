@@ -178,9 +178,12 @@ Pas de tests E2E / Playwright. Pas de test composant Vue intégré.
 | `/dashboard` | `DashboardView` | Liste groupes |
 | `/group/:groupId` | `GroupView` | Apprenants du groupe |
 | `/group/:groupId/learner/:learnerId` | `LearnerSpaceView` | Espace apprenant testeur |
-| `/groups-admin`, `/groups-admin/:groupId` | Admin groupes, bibliothèque RAG | Back-office |
+| `/groups-admin`, `/groups-admin/:groupId` | Admin groupes, bibliothèque RAG, profil conversationnel apprenant | Back-office |
+| `/admin/conversation` | Hub config conversation (apprenant / tuteur / formateur) | Back-office |
+| `/admin/conversation/learner/profiles` | Profils conversationnels globaux apprenant | Back-office |
+| `/admin/conversation/learner/:postureCode` | Hub posture apprenant (legacy / mode expert) | Back-office |
 | `/referentials`, `/referentials/import` | Référentiels | Import RNCP |
-| `/tutor-prompts` | `TutorPromptsView` | CRUD prompts |
+| `/tutor-prompts` | `TutorPromptsView` | CRUD prompts apprenant (legacy 1.6) |
 | `/conduct-profiles` | `ConductProfilesView` | CRUD TutorConductProfiles |
 | `/ovh-llms` | `OvhLlmView` | Config modèles OVH |
 | `/users`, `/users/:userId` | Gestion utilisateurs | Admin comptes |

@@ -75,6 +75,20 @@ class GroupSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Tutor prompt must belong to the same organisation as the group.")
         return value
 
+    def validate_default_learner_conversation_profile(self, value):
+        if value is None:
+            return value
+        request = self.context.get("request")
+        if not request:
+            return value
+        org_id = tenant_organisation_id(request)
+        profile_org_id = getattr(value, "organisation_id", None)
+        if org_id and profile_org_id and str(profile_org_id) != str(org_id):
+            raise serializers.ValidationError(
+                "Learner conversation profile must belong to the same organisation as the group."
+            )
+        return value
+
     class Meta:
         model = Group
         fields = [
@@ -83,6 +97,7 @@ class GroupSerializer(serializers.ModelSerializer):
             "organisation_id",
             "llm_backend",
             "default_tutor_prompt",
+            "default_learner_conversation_profile",
             "learner_display_profile",
             "phase_classifier_enabled",
             "phase_classifier_max_tokens",

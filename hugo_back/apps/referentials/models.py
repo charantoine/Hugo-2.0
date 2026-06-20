@@ -28,6 +28,15 @@ class Group(models.Model):
         null=True,
         blank=True,
         related_name="groups_with_default_tutor_prompt",
+        help_text="Legacy: single TutorPrompt default. Prefer default_learner_conversation_profile.",
+    )
+    default_learner_conversation_profile = models.ForeignKey(
+        "hugo.LearnerConversationGlobalProfile",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="groups_with_default_profile",
+        help_text="Global learner conversation profile for this group.",
     )
     phase_classifier_enabled = models.BooleanField(
         null=True,

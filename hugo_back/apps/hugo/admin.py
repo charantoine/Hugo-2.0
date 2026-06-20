@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import (
     EvaluationPolicy,
     EvaluationPromptProfile,
+    LearnerConversationGlobalProfile,
     OvhLlm,
     TutorPrompt,
     TutorConductProfile,
@@ -91,6 +92,14 @@ class TutorConductProfileAdmin(admin.ModelAdmin):
     list_display = ["posture", "organisation", "is_active", "updated_at"]
     list_filter = ["posture", "organisation", "is_active"]
     search_fields = ["posture", "description", "system_template"]
+
+
+@admin.register(LearnerConversationGlobalProfile)
+class LearnerConversationGlobalProfileAdmin(admin.ModelAdmin):
+    list_display = ["organisation", "name", "status", "is_default", "updated_at"]
+    list_filter = ["organisation", "status", "is_default"]
+    search_fields = ["name", "description"]
+    save_as = True
 
 
 @admin.register(EvaluationPromptProfile)

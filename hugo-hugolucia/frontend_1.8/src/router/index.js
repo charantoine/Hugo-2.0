@@ -134,6 +134,24 @@ const routes = [
     meta: { layout: 'tester', requiresOrgAdmin: true },
   },
   {
+    path: '/admin/conversation/learner/profiles/new',
+    name: 'AdminLearnerProfilesNew',
+    component: () => import('../views/admin/LearnerConversationProfilesView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/learner/profiles/:profileId',
+    name: 'AdminLearnerProfilesDetail',
+    component: () => import('../views/admin/LearnerConversationProfilesView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/learner/profiles',
+    name: 'AdminLearnerProfiles',
+    component: () => import('../views/admin/LearnerConversationProfilesView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
     path: '/admin/conversation/learner/:postureCode',
     name: 'AdminLearnerModeHub',
     component: () => import('../views/admin/LearnerModeHubView.vue'),

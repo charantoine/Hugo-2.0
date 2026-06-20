@@ -208,7 +208,13 @@ def build_hugo_turn(session: HugoSession, user_input: Dict[str, Any]) -> HugoTur
     """
     ctx = build_hugo_context(session)
 
-    tutor_prompt: Optional[TutorPrompt] = _resolve_tutor_prompt(session)
+    content = user_input.get("content", "")
+    resolved_posture = resolve_posture(
+        session=session,
+        user_message=content,
+        explicit_posture=user_input.get("posture"),
+    )
+    tutor_prompt: Optional[TutorPrompt] = _resolve_tutor_prompt(session, posture=resolved_posture.value)
     learner_slice = _build_minimal_learner_state_slice(session, ctx)
     learning_stage = _build_minimal_learning_stage(session)
     pedagogical_profile = _build_minimal_pedagogical_profile(session)
@@ -219,13 +225,7 @@ def build_hugo_turn(session: HugoSession, user_input: Dict[str, Any]) -> HugoTur
         else 1
     )
     effective_phase = _resolve_effective_phase(session, user_input)
-    content = user_input.get("content", "")
-    resolved_posture = resolve_posture(
-        session=session,
-        user_message=content,
-        explicit_posture=user_input.get("posture"),
-    )
-    posture_profile = resolve_conduct_profile(resolved_posture, session.organisation)
+    posture_profile = resolve_conduct_profile(resolved_posture, session.organisation, session=session)
     max_questions_per_turn = min(max_questions_per_turn, int(posture_profile.get("max_questions_per_turn", 1) or 1))
     user_input_for_plan = dict(user_input)
     user_input_for_plan["session_phase"] = effective_phase

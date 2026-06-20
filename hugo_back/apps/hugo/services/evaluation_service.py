@@ -220,10 +220,23 @@ def _normalize_evaluation_output(payload: dict[str, Any] | None, fallback: dict[
 
 
 def generate_evaluation_payload(session, progress: ConversationProgress) -> dict[str, Any]:
-    policy = get_or_create_policy(session.organisation, session.group)
+    from apps.hugo.services.learner_profile_resolver import (
+        resolve_evaluation_profile_code,
+        resolve_learner_conversation_global_profile,
+    )
+
+    global_profile = resolve_learner_conversation_global_profile(session)
+    if global_profile is not None and global_profile.evaluation_policy_id:
+        policy = global_profile.evaluation_policy
+    else:
+        policy = get_or_create_policy(session.organisation, session.group)
     readiness = resolve_evaluation_readiness(progress)
     is_early = readiness["trigger_state"] != "green"
-    profile_code = policy.evaluation_profile_code or ("early_trigger" if is_early else "default")
+    profile_code = resolve_evaluation_profile_code(
+        session,
+        policy_code=policy.evaluation_profile_code or "",
+        is_early_trigger=is_early,
+    )
     profile = get_evaluation_profile(session.organisation, code=profile_code, is_early_trigger=is_early)
     referential_items = _fallback_referential_items(progress)
     trainer_items = _validated_trainer_items(session)

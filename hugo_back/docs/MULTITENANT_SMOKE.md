@@ -4,8 +4,9 @@
 
 Campagne locale post-durcissement multi-tenant (voir archive [`docs-workspace/tests/archives/tests_hugo_2_0_2026-06-18_20.md`](../../docs-workspace/tests/archives/tests_hugo_2_0_2026-06-18_20.md) pour le détail).
 
-- **Multi-tenant backend (relaxed)** : **conforme** — `HUGO_RLS_STRICT=0`, **90/90 PASS**, 0 fuite inter-org.
-- **Front multi-org + Playwright** : **conforme** — **11/11 PASS** (`SMOKE_RUN_TENANT=1`, personas SUPERADMIN / ORGADMIN / TUTEUR / APPRENANT).
+- **Multi-tenant backend (relaxed)** : **conforme** — `HUGO_RLS_STRICT=0`, **90/90 PASS**, 0 fuite inter-org (re-validé 20/06 PM).
+- **Profils conversationnels globaux apprenant** : **conforme** — 9 tests dédiés + campagne ciblée 85 PASS ; fallback legacy actif.
+- **Front multi-org + Playwright** : **conforme** — **11/11 PASS** (`SMOKE_RUN_TENANT=1`, re-validé 20/06 PM).
 - **Tutor-links** : **SUPERADMIN-only confirmé** — 8+ tests dédiés PASS (ORGADMIN / tuteur → 403).
 - **RLS strict** : gate `HUGO_RLS_STRICT=1` **opérationnel** (fail si connexion bypass policies) ; en local et CI actuelle, `TEST_DB_USER=postgres` (superuser) → **non vert** en mode strict — prochaine étape : pytest sur rôle `hugo_app_tenant_test` / `hugo_app`.
 - **Smoke CI** : workflow `.github/workflows/multitenant-smoke.yml` + script `run_multitenant_smoke.sh` **présents** ; exécution GitHub **A_VÉRIFIER** (pas de run remote validé localement).

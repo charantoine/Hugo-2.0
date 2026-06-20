@@ -19,7 +19,18 @@ def _to_conduct_dict(profile: TutorConductProfile, posture: ConversationPosture)
     }
 
 
-def resolve_conduct_profile(posture: ConversationPosture, organisation=None) -> dict:
+def resolve_conduct_profile(
+    posture: ConversationPosture,
+    organisation=None,
+    session=None,
+) -> dict:
+    if session is not None:
+        from apps.hugo.services.learner_profile_resolver import resolve_conduct_profile_from_global_profile
+
+        override = resolve_conduct_profile_from_global_profile(session, posture)
+        if override is not None:
+            return _to_conduct_dict(override, posture)
+
     organisation_id = getattr(organisation, "id", organisation)
     if organisation_id:
         profile = (

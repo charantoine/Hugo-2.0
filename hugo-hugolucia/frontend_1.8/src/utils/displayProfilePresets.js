@@ -25,7 +25,7 @@ export const DISPLAY_PROFILE_PRESETS = {
     compactCopy: true,
     showProgressBar: true,
     showQuestLabel: true,
-    showMaturityBadge: true,
+    showMaturityBadge: false,
     showStepIcons: true,
     progressPanelIntro: 'Où vous en êtes dans votre scène.',
     stepHints: YOUTH_STEP_HINTS,
