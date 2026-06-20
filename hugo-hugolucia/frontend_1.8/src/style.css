@@ -133,6 +133,23 @@ body {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.platform-version-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding: 0.5rem 1rem 0.75rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--bs-secondary-color, #6c757d);
+  letter-spacing: 0.02em;
+}
+
+.platform-version-footer span {
+  opacity: 0.85;
 }
 
 .prod-shell__aurora {

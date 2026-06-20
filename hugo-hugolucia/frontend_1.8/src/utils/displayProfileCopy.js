@@ -21,7 +21,7 @@ export const DISPLAY_PROFILE_COPY = {
   },
   professional: {
     sessionIntro:
-      'Hugo 1.8 vous aide à suivre une progression structurée, demander une synthèse au bon moment et préparer une trace utile sans exposition technique.',
+      'Hugo vous aide à suivre une progression structurée, demander une synthèse au bon moment et préparer une trace utile sans exposition technique.',
     conversationTitle: 'Conversation',
     conversationLead: 'Décrivez un moment concret, une difficulté rencontrée ou une action à analyser.',
     questSectionLead: 'Objectif actif',

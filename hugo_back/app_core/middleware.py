@@ -1,19 +1,20 @@
 """
 Tenant RLS middleware — sets app.organisation_id for the current request.
-Runs AFTER authentication, BEFORE any ORM query.
-SPEC: SET LOCAL app.organisation_id = %s per transaction.
+Runs AFTER authentication, attempts early JWT bind before ORM access.
 """
 import logging
-from uuid import UUID
 
 from django.db import connection
+from django.http import JsonResponse
+
+from app_core.tenant_context import bind_tenant_context, try_bind_tenant_from_jwt
 
 logger = logging.getLogger(__name__)
 
 
 class TenantRLSMiddleware:
     """
-    Set PostgreSQL session variable app.organisation_id from the authenticated user's org.
+    Bind tenant context from session user or JWT, then set PostgreSQL RLS variable.
     Must be placed after AuthenticationMiddleware.
     """
 
@@ -21,38 +22,18 @@ class TenantRLSMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        self._set_tenant(request)
+        error_response = self._bind_tenant_context(request)
+        if error_response is not None:
+            return error_response
         return self.get_response(request)
 
-    def _set_tenant(self, request):
-        organisation_id = self._get_organisation_id(request)
-        if organisation_id is None:
-            return
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "SET LOCAL app.organisation_id = %s",
-                    [str(organisation_id)],
-                )
-        except Exception as e:
-            logger.warning(
-                "tenant_rls_failed",
-                extra={
-                    "organisation_id": str(organisation_id),
-                    "error": str(e),
-                },
-            )
-
-    def _get_organisation_id(self, request):
+    def _bind_tenant_context(self, request):
+        request.effective_organisation_id = None
+        try_bind_tenant_from_jwt(request)
         if not getattr(request, "user", None) or not request.user.is_authenticated:
             return None
-        user = request.user
-        org_id = getattr(user, "organisation_id", None)
-        if org_id is None and hasattr(user, "organisation"):
-            org_id = getattr(user.organisation, "id", None)
-        if org_id is not None and not isinstance(org_id, UUID):
-            try:
-                org_id = UUID(str(org_id))
-            except (ValueError, TypeError):
-                return None
-        return org_id
+        try:
+            bind_tenant_context(request, user=request.user)
+        except ValueError as exc:
+            return JsonResponse({"detail": str(exc)}, status=400)
+        return None

@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from app_core.tenant_context import tenant_organisation_id
 
 from .models import Evidence, Trace, HugoSession
 from .services.evidence_media import evidence_meta_from_request, is_image_upload, strip_image_metadata
@@ -29,14 +30,14 @@ class EvidenceCreateView(APIView):
         if trace_id:
             trace = Trace.objects.filter(
                 id=trace_id,
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
             ).first()
             if not trace:
                 return Response({"detail": "Trace not found."}, status=status.HTTP_404_NOT_FOUND)
         if session_id:
             session = HugoSession.objects.filter(
                 id=session_id,
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 learner=request.user,
             ).first()
             if not session:
@@ -59,7 +60,7 @@ class EvidenceCreateView(APIView):
             if hasattr(file_to_save, "seek"):
                 file_to_save.seek(0)
 
-        rel_path = "evidence/%s/%s%s" % (request.user.organisation_id, uuid.uuid4().hex, ext)
+        rel_path = "evidence/%s/%s%s" % (tenant_organisation_id(request), uuid.uuid4().hex, ext)
         from django.core.files.storage import default_storage
         from django.core.files.base import ContentFile
 
@@ -72,7 +73,7 @@ class EvidenceCreateView(APIView):
 
         meta = evidence_meta_from_request(request.data)
         ev = Evidence.objects.create(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             trace=trace,
             session=session,
             file_path=path,

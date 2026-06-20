@@ -11,6 +11,11 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import connection
 
+from app_core.rls_guard import (
+    assert_rls_environment_usable_for_audit,
+    connection_bypasses_rls,
+    rls_strict_mode_enabled,
+)
 from apps.accounts.models import Organisation, Role
 from apps.hugo.models import HugoSession, Trace
 
@@ -20,25 +25,12 @@ def _is_postgres():
 
 
 def _connection_bypasses_rls():
-    """Superusers and table owners bypass RLS unless FORCE ROW LEVEL SECURITY."""
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "SELECT rolsuper OR rolbypassrls FROM pg_roles WHERE rolname = current_user"
-        )
-        row = cursor.fetchone()
-        if row and row[0]:
-            return True
-        cursor.execute(
-            """
-            SELECT bool_or(c.relowner = (SELECT oid FROM pg_roles WHERE rolname = current_user)
-                           AND NOT c.relforcerowsecurity)
-            FROM pg_class c
-            JOIN pg_namespace n ON n.oid = c.relnamespace
-            WHERE c.relname = 'hugo_session' AND n.nspname = 'public'
-            """
-        )
-        row = cursor.fetchone()
-        return bool(row and row[0])
+    return connection_bypasses_rls()
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _rls_strict_environment_gate():
+    assert_rls_environment_usable_for_audit()
 
 
 @pytest.mark.skipif(not _is_postgres(), reason="RLS audit requires PostgreSQL")
@@ -80,9 +72,12 @@ def test_rls_cross_tenant_session_isolation_sql():
         role=Role.LEARNER,
     )
     if _connection_bypasses_rls():
-        pytest.skip(
-            "Current DB role bypasses RLS (superuser/owner) — use API cross-tenant test or prod app role"
+        message = (
+            "Current DB role bypasses RLS (superuser/owner) — use hugo_app_tenant_test role"
         )
+        if rls_strict_mode_enabled():
+            pytest.fail(message)
+        pytest.skip(message)
 
     session_b = HugoSession.objects.create(organisation=org_b, learner=learner_b)
     Trace.objects.create(organisation=org_b, session=session_b, payload_structured={})

@@ -29,9 +29,11 @@ Ce document décrit **ce que Hugo fait réellement aujourd’hui**, le positionn
 
 **Convergé localement, tests passés.**
 
-Le cœur Hugo répond aux exigences du lot courant : progression explicite, CTA backend-driven, mémoire gouvernée intra-conversation, évaluation non certifiante, isolation multi-tenant (RLS et filtres applicatifs testés en local), exports encadrés.
+Le cœur Hugo répond aux exigences du lot courant : progression explicite, CTA backend-driven, mémoire gouvernée intra-conversation, évaluation non certifiante, isolation multi-tenant (filtres applicatifs + campagne smoke **90/90 PASS** local, 20/06), exports encadrés.
 
-**Points ouverts (non bloquants locaux) :** parité Encoors et RLS sur la base de production réelle — **à vérifier ops** avant release distante.
+**Multi-tenant & UI (20/06) :** navigation multi-org **SUPERADMIN** (switcher, header `X-Organisation-Id`) validée e2e ; **ORGADMIN** mono-org. Wording UI : anciennes versions (1.6, 1.8, « 1.9 ou antérieure ») **retirées** ; **« Hugo 2.0 »** uniquement au footer global et dashboard admin (`platformVersion.js`). Détail : [`tests/archives/tests_hugo_2_0_2026-06-18_20.md`](tests/archives/tests_hugo_2_0_2026-06-18_20.md).
+
+**Points ouverts (non bloquants locaux) :** parité Encoors et RLS strict sur rôle applicatif (non superuser) — **à vérifier ops** avant release distante.
 
 ### Expérience apprenant et RAG (31, 30)
 

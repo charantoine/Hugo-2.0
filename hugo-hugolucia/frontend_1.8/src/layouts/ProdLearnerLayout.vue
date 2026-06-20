@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { frontendFeatures, getGamificationProfileTheme } from '../utils/frontendConfig'
+import PlatformVersionFooter from '../components/PlatformVersionFooter.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -33,7 +34,7 @@ function logout() {
         <router-link class="prod-brand" to="/app">
           <span class="prod-brand__avatar">H</span>
           <span>
-            <strong>Hugo 1.8 - Lucia</strong>
+            <strong>Hugo - Lucia</strong>
             <small>Parcours apprenant</small>
           </span>
         </router-link>
@@ -80,5 +81,7 @@ function logout() {
     <main class="prod-main">
       <slot />
     </main>
+
+    <PlatformVersionFooter />
   </div>
 </template>

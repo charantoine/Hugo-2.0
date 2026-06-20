@@ -35,6 +35,8 @@
 
 **Bilan cluster 8 :** 4/4 Playwright smoke + 2/4 pytest RLS (2 skip documentés) + oracle Encoors probes non auth confirmées.
 
+**État 20/06/2026 (prolongement campagne multi-tenant) :** gate RLS strict (`HUGO_RLS_STRICT=1`) **fonctionnel** — refuse le bypass superuser. Connexion locale/CI pytest reste **`postgres`** → skip/fail RLS SQL attendu. Smoke multi-tenant dédié : **90/90** backend relaxed + **11/11** Playwright tenant. Archive : [`tests/archives/tests_hugo_2_0_2026-06-18_20.md`](tests/archives/tests_hugo_2_0_2026-06-18_20.md) · commandes : [`hugo_back/docs/MULTITENANT_SMOKE.md`](../hugo_back/docs/MULTITENANT_SMOKE.md).
+
 ---
 
 ## 1. Résultats Playwright (local)

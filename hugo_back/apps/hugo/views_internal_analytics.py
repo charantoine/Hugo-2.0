@@ -1,5 +1,6 @@
 """Internal analytics endpoints — D9bis & observabilité avancée v1 (SUPERADMIN)."""
 from __future__ import annotations
+from app_core.tenant_context import tenant_organisation_id
 
 import json
 from datetime import date
@@ -30,7 +31,7 @@ class D9bisBuildView(APIView):
 
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -57,7 +58,7 @@ class D9bisExportView(APIView):
 
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).select_related("llm_analysis").first()
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -104,7 +105,7 @@ class ConversationSummaryView(APIView):
             )
 
         payload = build_conversation_summary(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             group_id=str(group_id) if group_id else None,
             from_date=from_date,
             to_date=to_date,

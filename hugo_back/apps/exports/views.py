@@ -1,5 +1,6 @@
 """Exports: sync CSV/JSON run endpoint for POC."""
 from __future__ import annotations
+from app_core.tenant_context import tenant_organisation_id
 
 import csv
 import io
@@ -123,7 +124,7 @@ class BaseExportBuilder(APIView):
         items_by_id = {
             str(item.id): item
             for item in ReferentialItem.objects.filter(
-                organisation_id=self.request.user.organisation_id,
+                organisation_id=tenant_organisation_id(self.request),
                 id__in=item_ids,
             )
         }
@@ -239,13 +240,13 @@ class ExportRunView(BaseExportBuilder):
         include_bom = _as_bool(request.data.get("include_bom"), default=True)
 
         traces = _build_traces_queryset(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             from_date=from_date,
             to_date=to_date,
             group_ids=group_ids,
         )
         run = ExportRun.objects.create(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             params={
                 "format": export_format,
                 "period": {
@@ -293,7 +294,7 @@ class ExportDownloadView(BaseExportBuilder):
             )
         run = ExportRun.objects.filter(
             id=run_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not run:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -317,7 +318,7 @@ class ExportDownloadView(BaseExportBuilder):
         include_bom = _as_bool(params.get("include_bom"), default=True)
 
         traces = _build_traces_queryset(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             from_date=from_date,
             to_date=to_date,
             group_ids=group_ids,

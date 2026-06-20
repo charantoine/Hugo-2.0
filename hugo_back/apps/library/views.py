@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from app_core.tenant_context import tenant_organisation_id
 
 from .chunking import split_into_chunks
 from .models import Document, GroupDocument, DocumentChunk
@@ -65,7 +66,7 @@ class DocumentListCreate(generics.ListCreateAPIView):
     permission_classes = [IsOrgAdminSuperadminOrTrainer]
 
     def get_queryset(self):
-        return Document.objects.filter(organisation_id=self.request.user.organisation_id)
+        return Document.objects.filter(organisation_id=tenant_organisation_id(self.request))
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -73,7 +74,7 @@ class DocumentListCreate(generics.ListCreateAPIView):
         return DocumentListSerializer
 
     def perform_create(self, serializer):
-        serializer.save(organisation_id=self.request.user.organisation_id)
+        serializer.save(organisation_id=tenant_organisation_id(self.request))
 
 
 class DocumentRetrieveUpdate(generics.RetrieveUpdateAPIView):
@@ -85,7 +86,7 @@ class DocumentRetrieveUpdate(generics.RetrieveUpdateAPIView):
     lookup_url_kwarg = "document_id"
 
     def get_queryset(self):
-        return Document.objects.filter(organisation_id=self.request.user.organisation_id)
+        return Document.objects.filter(organisation_id=tenant_organisation_id(self.request))
 
 
 class DocumentIndexView(APIView):
@@ -94,7 +95,7 @@ class DocumentIndexView(APIView):
     permission_classes = [IsOrgAdminSuperadminOrTrainer]
 
     def post(self, request, document_id):
-        doc = get_object_or_404(Document, id=document_id, organisation_id=request.user.organisation_id)
+        doc = get_object_or_404(Document, id=document_id, organisation_id=tenant_organisation_id(request))
         text = (doc.source_text or "").strip()
         if not text:
             doc.quality_flag = "LOW_TEXT"
@@ -137,11 +138,11 @@ class GroupLibraryListCreate(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, group_id):
-        group = get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        group = get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         if not _can_read_group_library(request, group, self):
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
         gds = (
-            GroupDocument.objects.filter(group_id=group_id, organisation_id=request.user.organisation_id)
+            GroupDocument.objects.filter(group_id=group_id, organisation_id=tenant_organisation_id(request))
             .select_related("document")
             .order_by("-created_at")
         )
@@ -165,15 +166,15 @@ class GroupLibraryListCreate(APIView):
     def post(self, request, group_id):
         if not _can_manage_library(request, self):
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
-        group = get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        group = get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         document_id = request.data.get("document_id")
         if not document_id:
             return Response({"detail": "document_id required."}, status=status.HTTP_400_BAD_REQUEST)
-        doc = get_object_or_404(Document, id=document_id, organisation_id=request.user.organisation_id)
+        doc = get_object_or_404(Document, id=document_id, organisation_id=tenant_organisation_id(request))
         gd, created = GroupDocument.objects.get_or_create(
             group=group,
             document=doc,
-            defaults={"organisation_id": request.user.organisation_id, "status": GroupDocument.Status.ACTIVE},
+            defaults={"organisation_id": tenant_organisation_id(request), "status": GroupDocument.Status.ACTIVE},
         )
         if not created and gd.status != GroupDocument.Status.ACTIVE:
             gd.status = GroupDocument.Status.ACTIVE
@@ -198,14 +199,14 @@ class GroupLibraryDocumentContentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, group_id, document_id):
-        group = get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        group = get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         if not _can_read_group_library(request, group, self):
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
         gd = get_object_or_404(
             GroupDocument,
             group_id=group_id,
             document_id=document_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         )
         if not _can_manage_library(request, self):
             if gd.status != GroupDocument.Status.ACTIVE:
@@ -231,7 +232,7 @@ class GroupLibraryUpdate(APIView):
             GroupDocument,
             id=group_document_id,
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         )
         if "status" in request.data:
             gd.status = request.data["status"]

@@ -2,6 +2,9 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 
+from app_core.tenant_context import home_organisation_id, tenant_organisation_id
+from apps.referentials.access_control import is_superadmin
+
 from .models import Organisation, User, Role
 
 
@@ -58,6 +61,24 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("ORGADMIN can only create learner or tutor accounts.")
         return value
 
+    def validate(self, attrs):
+        request = self.context.get("request")
+        org = attrs.get("organisation")
+        if not request or org is None:
+            return attrs
+        org_id = getattr(org, "id", org)
+        effective_id = tenant_organisation_id(request)
+        if is_superadmin(request.user):
+            if effective_id and str(org_id) != str(effective_id):
+                raise serializers.ValidationError(
+                    {"organisation": "User must be created in the active tenant organisation."}
+                )
+        elif str(org_id) != str(home_organisation_id(request)):
+            raise serializers.ValidationError(
+                {"organisation": "Cannot assign user to another organisation."}
+            )
+        return attrs
+
     def create(self, validated_data):
         password = validated_data.pop("password")
         user = User.objects.create(**validated_data)
@@ -82,3 +103,10 @@ class UserAdminUpdateSerializer(serializers.ModelSerializer):
         if request and getattr(request.user, "role", None) == Role.ORGADMIN and value not in {Role.LEARNER, Role.TUTOR}:
             raise serializers.ValidationError("ORGADMIN can only manage learner or tutor accounts here.")
         return value
+
+    def validate(self, attrs):
+        if "organisation" in attrs:
+            raise serializers.ValidationError(
+                {"organisation": "Transferring users between organisations is forbidden."}
+            )
+        return attrs

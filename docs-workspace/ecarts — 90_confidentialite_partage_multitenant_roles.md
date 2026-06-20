@@ -1,6 +1,8 @@
 # 00_rapport_ecarts — 90_confidentialite_partage_multitenant_roles
 
 > **Mise à jour post-cluster 16 — 2026-06-18** · **Cluster 16 :** pas d'impact direct ; oracle U16-S3 vérifie absence P0 dans panneau mémoire. **A_VÉRIFIER :** RLS prod.
+>
+> **Mise à jour post-campagne multi-tenant — 2026-06-20** · Isolation tenant backend **validée localement** (90/90 smoke relaxed, 0 fuite inter-org). Front multi-org SUPERADMIN + e2e **11/11 PASS**. Tutor-links création = **SUPERADMIN only** (transitoire). RLS : gate strict actif mais connexion locale/CI encore en superuser `postgres` — vert strict prod-like **en attente** rôle `hugo_app`. Synthèse : [`tests/archives/tests_hugo_2_0_2026-06-18_20.md`](tests/archives/tests_hugo_2_0_2026-06-18_20.md) · ops : [`hugo_back/docs/MULTITENANT_SMOKE.md`](../hugo_back/docs/MULTITENANT_SMOKE.md).
 
 ## Domaine
 

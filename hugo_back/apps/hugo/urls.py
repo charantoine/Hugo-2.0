@@ -2,6 +2,7 @@ from django.urls import path
 from . import (
     views_analytics,
     views_conduct_profiles,
+    views_evaluation_config,
     views_ovh_llm,
     views_sessions,
     views_starter_prompts,
@@ -40,6 +41,26 @@ urlpatterns = [
     path("tutor-prompts/<uuid:id>/", views_tutor_prompts.TutorPromptDetail.as_view(), name="tutor_prompt_detail"),
     path("conduct-profiles/", views_conduct_profiles.TutorConductProfileListCreate.as_view(), name="conduct_profile_list_create"),
     path("conduct-profiles/<int:id>/", views_conduct_profiles.TutorConductProfileDetail.as_view(), name="conduct_profile_detail"),
+    path(
+        "evaluation-prompt-profiles/",
+        views_evaluation_config.EvaluationPromptProfileListCreate.as_view(),
+        name="evaluation_prompt_profile_list_create",
+    ),
+    path(
+        "evaluation-prompt-profiles/<int:id>/",
+        views_evaluation_config.EvaluationPromptProfileDetail.as_view(),
+        name="evaluation_prompt_profile_detail",
+    ),
+    path(
+        "evaluation-policies/",
+        views_evaluation_config.EvaluationPolicyListCreate.as_view(),
+        name="evaluation_policy_list_create",
+    ),
+    path(
+        "evaluation-policies/<int:id>/",
+        views_evaluation_config.EvaluationPolicyDetail.as_view(),
+        name="evaluation_policy_detail",
+    ),
     path("ovh-llms/", views_ovh_llm.OvhLlmListCreate.as_view(), name="ovh_llm_list_create"),
     path("ovh-llms/<uuid:id>/", views_ovh_llm.OvhLlmDetail.as_view(), name="ovh_llm_detail"),
     path("starter-prompts/", views_starter_prompts.StarterPromptListCreate.as_view(), name="starter_prompt_list_create"),

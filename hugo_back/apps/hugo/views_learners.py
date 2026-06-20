@@ -3,6 +3,7 @@ from django.db import models
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
+from app_core.tenant_context import tenant_organisation_id
 
 from .models import HugoSession, Trace, Evidence
 from .serializers import HugoSessionSerializer, TraceSerializer, EvidenceSerializer
@@ -15,7 +16,7 @@ class LearnerSessionList(generics.ListAPIView):
 
     def get_queryset(self):
         qs = HugoSession.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             learner=self.request.user,
         )
         from_ = self.request.query_params.get("from")
@@ -40,7 +41,7 @@ class LearnerTraceList(generics.ListAPIView):
 
     def get_queryset(self):
         qs = Trace.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             session__learner=self.request.user,
         )
         from_ = self.request.query_params.get("from")
@@ -70,7 +71,7 @@ class LearnerEvidenceList(generics.ListAPIView):
 
     def get_queryset(self):
         return Evidence.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
         ).filter(
             models.Q(trace__session__learner=self.request.user)
             | models.Q(session__learner=self.request.user)

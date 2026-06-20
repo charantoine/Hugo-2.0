@@ -53,7 +53,7 @@
 
 | Dimension | CIBLE | RÉEL OBSERVÉ | ÉCART CONFIRMÉ | A_VÉRIFIER |
 |---|---|---|---|---|
-| Surfaces | Supervision technique sous contraintes | Même `is_admin_like` qu'ORGADMIN sur exports ; Django admin ; routes tester non gardées par rôle dans le router Vue | **Pas de frontière applicative** ORGADMIN vs SUPERADMIN dans le code audité (D2-M12 ouvert) | Superadmin prod vs ORGADMIN |
+| Surfaces | Supervision technique sous contraintes | Multi-org via switcher + `X-Organisation-Id` (validé e2e 20/06) ; exports admin ; routes `/admin/organisations` | Frontière ORGADMIN vs SUPERADMIN **clarifiée** sur tutor-links et navigation multi-org | Superadmin prod vs ORGADMIN |
 | Accès contenu apprenant | Pas de lecture applicative libre | Pas de route `export-md` / debug P0 pour ORGADMIN (test G3-03) ; `LearnerDetailView` (modales debug) réservé espace **propre** apprenant dans `LearnerSpaceView` | Surface debug P0 existe en tester pour **soi-même**, pas garde superadmin explicite | Flags `VITE_P0_DEBUG_ENABLED` prod |
 | Exports debug | Réservés superadmin technique (cible) | Absence modèle `ConversationTurnLLMAnalysis` ; pas d'endpoint export-md | Aligné par **absence** | D9bis couronne |
 
@@ -102,7 +102,7 @@ Alignée sur la matrice canonique 2.0 (`spec_canonique_hugo_2_0.md` §29.6) et d
 | **Tuteur** | Timeline tester : sessions/traces métadonnées ; verbatim + `pilotage` **si** `share_verbatim` ; compétences `LearnerState` | Valider trace si link ; lire cohorte filtrée | Pas de surface prod dédiée ; exports UI visibles mais **403 API** ; pas de commentaire structuré éval côté UI tuteur | Prod B1-01 |
 | **Formateur** | Items `TrainerKnowledgeItem` via API ; docs groupe admin ; pas de timeline apprenant sans link tuteur | Elicitation, ingest, validate knowledge ; export éval partagées | Endpoints trainer **sans garde rôle** sur elicitation/ingest ; pas d'UI formateur prod ; orchestrateur formateur 50 = **CIBLE** | LEARNER sur `/hugo/trainer/*` |
 | **Coordinateur** | Idem tuteur-like si link | Idem tuteur-like | Rôle canonique **non différencié** | Périmètre métier coordo |
-| **ORGADMIN** | Users, groupes, config, exports ; pas verbatim masse | CRUD users partiel, tutor-links, exports tenant, bundle Qualiopi | Admin incomplète ; frontière superadmin floue | DELETE user ; prod admin |
+| **ORGADMIN** | Users, groupes, config, exports ; pas verbatim masse | CRUD users partiel ; **tutor-links création = SUPERADMIN only (20/06, transitoire)** ; exports tenant, bundle Qualiopi | Admin incomplète ; multi-org réservé SUPERADMIN (validé e2e 20/06) | DELETE user ; prod admin |
 | **Superadmin technique** | Idem ORGADMIN + Django admin | Idem exports ; maintenance Django | Pas de séparation stricte ORGADMIN/superadmin dans code ; pas d'export debug P0 dédié superadmin seul | D2-M12 ; prod |
 
 ### Risques confidentialité (runtime local)

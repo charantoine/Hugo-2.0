@@ -91,11 +91,17 @@ export async function fetchWithAuth(path, options = {}) {
   return response
 }
 
+const TENANT_STORAGE_KEY = 'hugo_active_organisation_id'
+
 api.interceptors.request.use((config) => {
   // Ne pas envoyer un access expiré sur login/refresh : évite des rejets inutiles côté DRF.
   if (!isAuthRefreshRequest(config) && !isAuthLoginRequest(config)) {
     const token = localStorage.getItem('access')
     if (token) config.headers.Authorization = `Bearer ${token}`
+    const tenantOrgId = localStorage.getItem(TENANT_STORAGE_KEY)
+    if (tenantOrgId) {
+      config.headers['X-Organisation-Id'] = tenantOrgId
+    }
   }
   return config
 })

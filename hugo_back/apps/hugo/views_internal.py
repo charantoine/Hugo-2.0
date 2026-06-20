@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from app_core.tenant_context import tenant_organisation_id
 
 from .models import HugoSession, HugoMessage
 from .services.evaluation_trace_pivot import enrich_trace_payload_with_pivot
@@ -28,14 +29,14 @@ class VerbatimWindowView(generics.GenericAPIView):
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
         sessions = HugoSession.objects.filter(
             learner_id=learner_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         )
         if not is_self:
             if is_tutor_like(request.user):
                 allowed_group_ids = tutor_linked_groups_for_learner(
                     tutor_id=request.user.id,
                     learner_id=learner_id,
-                    organisation_id=request.user.organisation_id,
+                    organisation_id=tenant_organisation_id(request),
                 )
                 if not allowed_group_ids:
                     return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
@@ -64,10 +65,10 @@ class RagSearchView(APIView):
             return Response({"detail": "query and group_id required."}, status=status.HTTP_400_BAD_REQUEST)
         from apps.library.models import GroupDocument, DocumentChunk
         from apps.referentials.models import Group
-        Group.objects.get(id=group_id, organisation_id=request.user.organisation_id)
+        Group.objects.get(id=group_id, organisation_id=tenant_organisation_id(request))
         gds = GroupDocument.objects.filter(
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             status=GroupDocument.Status.ACTIVE,
         ).values_list("document_id", flat=True)
         chunks = DocumentChunk.objects.filter(document_id__in=gds)[:top_k]
@@ -89,7 +90,7 @@ class TurnReviewView(APIView):
 
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -135,7 +136,7 @@ class SessionPilotageView(APIView):
     def get(self, request, session_id):
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -147,7 +148,7 @@ class SessionPilotageView(APIView):
             allowed_group_ids = tutor_linked_groups_for_learner(
                 tutor_id=request.user.id,
                 learner_id=session.learner_id,
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
             )
             if session.group_id not in allowed_group_ids:
                 return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
@@ -188,7 +189,7 @@ class SessionObservabilityView(APIView):
 
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)

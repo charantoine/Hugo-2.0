@@ -4,6 +4,7 @@ import {
   isEncadrantLike,
   isLearnerOnly,
   isOrgAdminLike,
+  isSuperAdmin,
   isTrainerLike,
   isTutorLike,
 } from '../utils/roleGuards'
@@ -97,6 +98,18 @@ const routes = [
     meta: { layout: 'tester', requiresEncadrant: true },
   },
   {
+    path: '/admin/organisations',
+    name: 'AdminOrganisations',
+    component: () => import('../views/admin/OrganisationsListView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/organisations/:orgId',
+    name: 'AdminOrganisationDetail',
+    component: () => import('../views/admin/OrganisationDetailView.vue'),
+    meta: { layout: 'tester', requiresSuperAdmin: true },
+  },
+  {
     path: '/groups-admin',
     name: 'GroupsAdmin',
     component: () => import('../views/GroupsAdminListView.vue'),
@@ -106,6 +119,36 @@ const routes = [
     path: '/groups-admin/:groupId',
     name: 'GroupAdminDetail',
     component: () => import('../views/GroupAdminDetailView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation',
+    name: 'AdminConversationIndex',
+    component: () => import('../views/admin/AdminConversationIndexView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/learner/closing',
+    name: 'AdminLearnerClosing',
+    component: () => import('../views/admin/LearnerClosingEvaluationView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/learner/:postureCode',
+    name: 'AdminLearnerModeHub',
+    component: () => import('../views/admin/LearnerModeHubView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/tutor',
+    name: 'AdminTutorOrchestrator',
+    component: () => import('../views/admin/TutorOrchestratorAdminView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/trainer',
+    name: 'AdminTrainerOrchestrator',
+    component: () => import('../views/admin/TrainerOrchestratorAdminView.vue'),
     meta: { layout: 'tester', requiresOrgAdmin: true },
   },
   {
@@ -146,6 +189,9 @@ const router = createRouter({
 })
 
 function redirectForRole(user, to) {
+  if (to.meta.requiresSuperAdmin && !isSuperAdmin(user)) {
+    return '/dashboard'
+  }
   if (to.meta.requiresOrgAdmin && !isOrgAdminLike(user)) {
     return '/app'
   }

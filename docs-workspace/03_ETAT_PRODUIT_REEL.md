@@ -9,7 +9,7 @@
 
 ## 1. Périmètre produit montrable
 
-**Démo client (« prod_showable »)** : parcours apprenant masquant l'instrumentation P0 — routes `/login`, `/app`, `/app/session/:sessionId`, layout `ProdLearnerLayout`, branding « Hugo 1.8 - Lucia ». C'est la surface à montrer en démo.
+**Démo client (« prod_showable »)** : parcours apprenant masquant l'instrumentation P0 — routes `/login`, `/app`, `/app/session/:sessionId`, layout `ProdLearnerLayout`, branding **« Hugo - Lucia »** (sans numéro de version legacy). C'est la surface à montrer en démo.
 
 **Testeur / calibration** : routes `meta.layout: 'tester'` (`/dashboard`, `/group/...`, admin) avec layout `TesterLayout` ; chat détaillé et debug P0 dans `LearnerDetailView.vue` (modales TurnState, override phase/classifier). Hors parcours démo client, mais présent dans le même build `frontend_1.8`.
 
@@ -48,13 +48,18 @@ La démo courante **ne prouve pas** le moteur local `hugo_back` ; elle reflète 
 
 **Bascule layout** (`src/App.vue` L9–11) : `route.meta.layout === 'tester'` → `TesterLayout`, sinon `ProdLearnerLayout`.
 
-**Branding visible :**
+**Branding visible (état 20/06/2026) :**
 
 | Emplacement | Texte |
 |-------------|-------|
-| `index.html` L7 | `Hugo 1.8 - Lucia` |
-| `layouts/ProdLearnerLayout.vue` L36 | `Hugo 1.8 - Lucia` / « Parcours apprenant » |
+| `index.html` | `Hugo - Lucia` |
+| `layouts/ProdLearnerLayout.vue` (topbar) | `Hugo - Lucia` / « Parcours apprenant » |
+| `LoginView.vue` (eyebrow) | `POC Hugo Lucia` (sans version legacy) |
+| Footer global (`PlatformVersionFooter.vue`) | `Hugo 2.0 — Lucia` |
+| Dashboard admin (`DashboardView.vue`) | `Version de la plateforme : Hugo 2.0` |
 | Profils A/B/C | `getGamificationProfileTheme()` — titres « Ludique assumé », « Intermédiaire », « Sobre pro » |
+
+**Multi-org (SUPERADMIN, validé e2e 20/06) :** `OrgTenantSwitcher`, routes `/admin/organisations`, header API `X-Organisation-Id`. ORGADMIN : pas de switcher, périmètre org unique. Archive : [`tests/archives/tests_hugo_2_0_2026-06-18_20.md`](tests/archives/tests_hugo_2_0_2026-06-18_20.md).
 
 Aucune variable d'env dans les `.env` commités sauf `VITE_API_URL` → mode prod et engagement **activés par défaut**.
 

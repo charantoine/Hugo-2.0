@@ -16,6 +16,14 @@ def is_superadmin(user) -> bool:
     return bool(user and getattr(user, "role", None) == Role.SUPERADMIN)
 
 
+def can_manage_tutor_links(user) -> bool:
+    """
+    Transitional (2026-06): tutor-link mutations are SUPERADMIN-only.
+    ORGADMIN will be added later.
+    """
+    return is_superadmin(user)
+
+
 def is_tutor_like(user) -> bool:
     return bool(user and getattr(user, "role", None) in TUTOR_ROLES)
 
@@ -75,7 +83,11 @@ def learner_ids_visible_in_group(user, group_id, organisation_id) -> list:
 def can_access_learner_in_group(user, learner_id, group_id, organisation_id) -> bool:
     if not group_id:
         if is_admin_like(user):
-            return True
+            from apps.accounts.models import User
+            return User.objects.filter(
+                id=learner_id,
+                organisation_id=organisation_id,
+            ).exists()
         return str(user.id) == str(learner_id)
 
     visible_ids = learner_ids_visible_in_group(

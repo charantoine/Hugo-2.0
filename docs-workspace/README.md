@@ -2,31 +2,6 @@
 
 Ce README explique comment est organisée la bibliothèque documentaire du workspace Hugo, comment la lire sans se perdre, et comment la maintenir au fil des convergences entre le **Hugo réel** (code local audité) et la **cible Hugo 2.0** (doctrine et specs).
 
-
-## Origine du code et crédits
-
-### Références aux dépôts d’origine
-
-## Origine et rôle de ce dépôt
-
-Ce dépôt GitHub privé est hébergé sous le compte **[charantoine](https://github.com/charantoine)** et correspond au workspace local `Zone de travail Hugo` (`hugo-main/`, `hugo-hugolucia/`, `hugo_back/`, `docs-workspace/`).
-
-Le socle applicatif utilisé comme point de départ provient de travaux de **Pierre Fardeau** (compte GitHub : [hamanad](https://github.com/Hamanad)), via des archives ZIP téléchargées les **11 et 12 juin 2026** à partir de ses dépôts :
-- backend et noyau Hugo 1.9 : [Hamanad/hugo](https://github.com/Hamanad/hugo) (dossiers `hugo_back/` et `hugo-main`),
-- PoC frontend `hugo-hugolucia` : [Hamanad/hugo_poc](https://github.com/Hamanad/hugo_poc) (dossier `hugo-hugolucia`).
-
-Ce dépôt ne revendique pas la paternité du socle initial : il documente et versionne le **travail de convergence, d’audit et de transformation** réalisé ensuite en local (backend, frontend, documentation, tests) à partir de ces bases, en vue d’alimenter les décisions de convergence vers Hugo 2.0.
-
-Les documents `Origine du code, provenance des sources et clarification de contribution.md` et `docs-workspace/README.md` détaillent la traçabilité et la répartition de responsabilité entre le socle de Pierre Fardeau et les contributions réalisées dans ce dépôt.Les versions utilisées dans ce dépôt proviennent de ZIP téléchargés entre le 11 et le 12 juin 2026 depuis son dépôt privé, puis utilisées comme base de travail **en local** sur Mac.  
-Le travail présent dans ce dépôt correspond ensuite à des développements, transformations, audits, tests et documents produits localement, puis **déposés sur GitHub le 19 juin 2026**.
-
-Afin de lever toute ambiguïté de propriété :
-- le **socle initial** reste attribué à **Pierre Fardeau** ;
-- les **modifications et développements ultérieurs** présents dans ce dépôt correspondent au travail réalisé à partir de cette base ;
-- ce dépôt ne prétend pas requalifier la paternité du code de départ, mais documenter clairement l’origine du socle et l’état du travail partagé.
-
-Les archives ZIP utilisées comme base de travail ont été **conservées à la racine de ce dépôt** comme traces explicites du point de départ utilisé les **11 et 12 juin 2026**.
-
 ---
 
 ## 1. Objet du dossier `docs-workspace`
@@ -122,6 +97,7 @@ Méthode obligatoire : `DOC_METHODO_REFERENCE_CONVERGENCE_HUGO_REVISE.md`.
 | `protocole_tests_interfaces_apprenant_formateur_v1.md` | Protocole + check-lists UI manuelles (C15, apprenant + formateur) |
 | `cluster16_protocole_tests_interface_apprenant_v1.md` | Protocole tests interface apprenant C16 (B16-*, U16-*) |
 | `rapport_mise_a_jour_doc_post_tests_2026-06-18.md` | Synthèse post-campagne pytest (90 tests PASS local) |
+| `tests/archives/tests_hugo_2_0_2026-06-18_20.md` | **Archive consolidée** campagnes 18/06 (convergence) + 20/06 (multi-tenant / RLS / smoke) |
 | `REFERENCE_CONVERGENCE_HUGO_REEL_VS_2_0_GARDEFOU.md` | Garde-fou de convergence (à relire avant toute promo « livré ») |
 | `handover_hugo_reel_vs_2_0.md` | Handover synthétique réel / cible / couronne |
 

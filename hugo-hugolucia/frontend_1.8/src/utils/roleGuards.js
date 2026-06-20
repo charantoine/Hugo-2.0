@@ -8,11 +8,15 @@ export function isOrgAdminLike(user) {
   if (!user) return false
   const role = normalizedRole(user)
   return (
-    Boolean(user.is_superuser || user.is_staff) ||
     role === 'ORGADMIN' ||
     role === 'SUPERADMIN' ||
     role === 'ADMIN'
   )
+}
+
+export function isSuperAdmin(user) {
+  if (!user) return false
+  return normalizedRole(user) === 'SUPERADMIN'
 }
 
 export function isTrainerLike(user) {

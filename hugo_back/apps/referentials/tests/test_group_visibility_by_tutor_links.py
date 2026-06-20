@@ -66,14 +66,14 @@ class GroupVisibilityByTutorLinksTests(TestCase):
         self.assertIn(str(self.group_linked.id), group_ids)
         self.assertNotIn(str(self.group_unlinked.id), group_ids)
 
-    def test_tutor_can_create_link_when_both_users_are_group_members(self):
+    def test_tutor_cannot_create_link_requires_superadmin(self):
         payload = {
             "tutor": str(self.tutor.id),
             "learner": str(self.learner_unlinked.id),
         }
         response = self.client.post(f"/groups/{self.group_unlinked.id}/tutor-links/", payload, format="json")
-        self.assertEqual(response.status_code, 201)
-        self.assertTrue(
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(
             TutorLearnerLink.objects.filter(
                 organisation=self.org,
                 group=self.group_unlinked,

@@ -5,6 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from app_core.tenant_context import tenant_organisation_id
 
 from apps.referentials.models import Group, GroupMembership
 from apps.referentials.access_control import (
@@ -73,15 +74,15 @@ class DashboardLearnersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, group_id):
-        get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         visible_ids = learner_ids_visible_in_group(
             user=request.user,
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         )
         members = GroupMembership.objects.filter(
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             user_id__in=visible_ids,
         ).select_related("user")
         return Response({
@@ -96,12 +97,12 @@ class DashboardTimelineView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, group_id, learner_id):
-        get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         if not can_access_learner_in_group(
             user=request.user,
             learner_id=learner_id,
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ):
             raise PermissionDenied("You are not allowed to access this learner.")
         first_learner_message_subquery = (
@@ -115,7 +116,7 @@ class DashboardTimelineView(APIView):
         sessions = HugoSession.objects.filter(
             group_id=group_id,
             learner_id=learner_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).annotate(first_learner_message_text=Subquery(first_learner_message_subquery)).prefetch_related(
             Prefetch(
                 "messages",
@@ -125,7 +126,7 @@ class DashboardTimelineView(APIView):
         traces = Trace.objects.filter(
             session__group_id=group_id,
             session__learner_id=learner_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).order_by("-created_at")[:50]
         return Response({
             "sessions": [
@@ -155,15 +156,15 @@ class DashboardCompetencesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, group_id):
-        get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         visible_ids = learner_ids_visible_in_group(
             user=request.user,
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         )
         states = LearnerState.objects.filter(
             group_id=group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner_id__in=visible_ids,
         )
         return Response({

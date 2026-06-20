@@ -2,8 +2,11 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api/client'
+import { useAuthStore } from '../stores/auth'
+import { PLATFORM_VERSION_ADMIN_LINE } from '../utils/platformVersion.js'
 
 const router = useRouter()
+const auth = useAuthStore()
 const groups = ref([])
 const loading = ref(true)
 
@@ -43,5 +46,9 @@ function openGroup(group) {
       </div>
     </div>
     <p v-else class="text-muted">Aucun groupe.</p>
+
+    <aside v-if="auth.isAdminLike" class="mt-5 pt-3 border-top">
+      <p class="small text-muted mb-0">{{ PLATFORM_VERSION_ADMIN_LINE }}</p>
+    </aside>
   </div>
 </template>

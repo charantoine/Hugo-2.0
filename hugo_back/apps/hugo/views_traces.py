@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
+from app_core.tenant_context import tenant_organisation_id
 
 from .models import Trace, LearnerState
 from apps.quality.views import log_audit
@@ -18,7 +19,7 @@ class ValidateTraceView(APIView):
     def post(self, request, trace_id):
         trace = Trace.objects.filter(
             id=trace_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not trace:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -26,7 +27,7 @@ class ValidateTraceView(APIView):
             user=request.user,
             learner_id=trace.session.learner_id,
             group_id=trace.session.group_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ):
             raise PermissionDenied("You are not allowed to validate this trace.")
         trace.validated_by = request.user
@@ -34,7 +35,7 @@ class ValidateTraceView(APIView):
         trace.save()
         log_audit(request, "trace_validated", "trace", trace.id)
         LearnerState.objects.update_or_create(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner_id=trace.session.learner_id,
             group_id=trace.session.group_id,
             defaults={

@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 
 from .models import AuditLog
+from app_core.tenant_context import tenant_organisation_id
 from apps.hugo.models import Trace, HugoSession
 from apps.referentials.models import Referential
 from apps.referentials.access_control import is_admin_like
@@ -19,8 +20,9 @@ from apps.library.models import GroupDocument
 
 def log_audit(request, action, resource_type, resource_id):
     """Write audit_log (metadata only)."""
+    org_id = tenant_organisation_id(request) or getattr(request.user, "organisation_id", None)
     AuditLog.objects.create(
-        organisation_id=request.user.organisation_id,
+        organisation_id=org_id,
         actor=request.user,
         action=action,
         resource_type=resource_type,
@@ -35,7 +37,7 @@ class EvidenceBundleView(APIView):
     def post(self, request):
         if not is_admin_like(request.user):
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
-        organisation_id = request.user.organisation_id
+        organisation_id = tenant_organisation_id(request)
         bundle_id = uuid.uuid4()
         log_audit(request, "evidence_bundle_requested", "qualiopi_bundle", bundle_id)
         period = request.data.get("period", {})

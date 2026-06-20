@@ -1,5 +1,6 @@
 """Hugo sessions: create, get, messages, generate-trace, share."""
 from __future__ import annotations
+from app_core.tenant_context import tenant_organisation_id
 
 import json
 import re
@@ -467,7 +468,7 @@ class SessionListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             learner=self.request.user,
         )
 
@@ -509,7 +510,7 @@ class SessionPhaseOverrideView(APIView):
     def patch(self, request, session_id):
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner=request.user,
         ).first()
         if not session:
@@ -554,7 +555,7 @@ class SessionClassifierConfigView(APIView):
     def patch(self, request, session_id):
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner=request.user,
         ).first()
         if not session:
@@ -612,7 +613,7 @@ def _resolve_llm_provider(session: HugoSession) -> str:
 def _get_message_session(request, session_id) -> Optional[HugoSession]:
     return HugoSession.objects.select_related("group", "organisation").filter(
         id=session_id,
-        organisation_id=request.user.organisation_id,
+        organisation_id=tenant_organisation_id(request),
         learner=request.user,
     ).first()
 
@@ -894,7 +895,7 @@ class SessionMemorySummaryView(APIView):
             else {}
         )
         records = LearnerThemeMemory.objects.filter(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner_id=session.learner_id,
         ).order_by("-updated_at")[:10]
         return Response(
@@ -960,7 +961,7 @@ def _build_message_turn_runtime(request, session: HugoSession, content: str, req
         previous_assistant_content=getattr(previous_assistant_msg, "content", ""),
     )
     learner_msg = HugoMessage.objects.create(
-        organisation_id=request.user.organisation_id,
+        organisation_id=tenant_organisation_id(request),
         session=session,
         role=HugoMessage.Role.LEARNER,
         content=content,
@@ -977,7 +978,7 @@ def _build_message_turn_runtime(request, session: HugoSession, content: str, req
     teaching_plan = turn.teaching_plan
 
     focus_criterion_code, focus_criterion_label, covered_criteria_codes = _apply_focus_competence_trace(
-        organisation_id=request.user.organisation_id,
+        organisation_id=tenant_organisation_id(request),
         session=session,
         enriched_content=enriched_content,
         teaching_plan=teaching_plan,
@@ -1266,7 +1267,7 @@ class MessageListCreate(APIView):
     def get(self, request, session_id):
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner=request.user,
         ).first()
         if not session:
@@ -1420,7 +1421,7 @@ class GenerateTraceView(APIView):
     def post(self, request, session_id):
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner=request.user,
         ).first()
         if not session:
@@ -1435,7 +1436,7 @@ class GenerateTraceView(APIView):
         }
         enriched_payload = enrich_trace_payload_with_pivot(session, payload)
         trace = Trace.objects.create(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             session=session,
             payload_structured=enriched_payload,
         )
@@ -1461,7 +1462,7 @@ class ShareView(APIView):
     def post(self, request, session_id):
         session = HugoSession.objects.filter(
             id=session_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             learner=request.user,
         ).first()
         if not session:

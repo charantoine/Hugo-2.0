@@ -1,4 +1,5 @@
 from __future__ import annotations
+from app_core.tenant_context import tenant_organisation_id
 
 import csv
 from io import StringIO
@@ -84,7 +85,7 @@ class TrainerKnowledgeItemListView(APIView):
         denied = _forbidden_if_not_trainer_knowledge(request.user)
         if denied:
             return denied
-        qs = TrainerKnowledgeItem.objects.filter(organisation_id=request.user.organisation_id).select_related("validated_by")
+        qs = TrainerKnowledgeItem.objects.filter(organisation_id=tenant_organisation_id(request)).select_related("validated_by")
         status_filter = str(request.query_params.get("status") or "").strip()
         if status_filter:
             qs = qs.filter(status=status_filter)
@@ -116,7 +117,7 @@ class TrainerElicitationAnswersView(APIView):
             if not content:
                 continue
             item = TrainerKnowledgeItem.objects.create(
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 referential_item_id=str(referential_item_id),
                 content=content,
                 content_type=_content_type_for_question(question_id),
@@ -137,7 +138,7 @@ class TrainerKnowledgeValidationView(APIView):
             return denied
         item = TrainerKnowledgeItem.objects.filter(
             id=item_id,
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
         ).first()
         if not item:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -181,11 +182,11 @@ class TrainerDocumentIngestView(APIView):
         referential_item_id = str(request.data.get("referential_item_id") or "").strip()
         if not file_path:
             return Response({"detail": "file_path required."}, status=status.HTTP_400_BAD_REQUEST)
-        raw_items = ingest_document(file_path, str(request.user.organisation_id), referential_item_id)
+        raw_items = ingest_document(file_path, str(tenant_organisation_id(request)), referential_item_id)
         created_ids: list[str] = []
         for raw in raw_items:
             item = TrainerKnowledgeItem.objects.create(
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 referential_item_id=raw.get("referential_item_id", ""),
                 content=raw.get("content", ""),
                 content_type=raw.get("content_type", "mastery_criterion"),

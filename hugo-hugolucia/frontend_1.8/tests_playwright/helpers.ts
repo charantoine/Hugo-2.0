@@ -15,6 +15,17 @@ export type SmokeFixtures = {
   cluster16_sessions?: Record<'youth' | 'adult' | 'professional', string>
 }
 
+export type TenantSmokeFixtures = {
+  password: string
+  org_a: { id: string; name: string }
+  org_b: { id: string; name: string }
+  group_a_id: string
+  group_b_id: string
+  session_a_id: string
+  session_b_id: string
+  users: Record<string, string>
+}
+
 export function loadFixtures(): SmokeFixtures {
   const fixturePath = path.join(__dirname, 'smoke-fixtures.json')
   if (!fs.existsSync(fixturePath)) {
@@ -23,6 +34,16 @@ export function loadFixtures(): SmokeFixtures {
     )
   }
   return JSON.parse(fs.readFileSync(fixturePath, 'utf-8')) as SmokeFixtures
+}
+
+export function loadTenantFixtures(): TenantSmokeFixtures {
+  const fixturePath = path.join(__dirname, 'tenant-smoke-fixtures.json')
+  if (!fs.existsSync(fixturePath)) {
+    throw new Error(
+      'Missing tenant-smoke-fixtures.json — run: cd hugo_back && python manage.py bootstrap_multitenant_smoke',
+    )
+  }
+  return JSON.parse(fs.readFileSync(fixturePath, 'utf-8')) as TenantSmokeFixtures
 }
 
 export function cluster16SessionId(
@@ -38,6 +59,7 @@ export async function login(page: Page, username: string, password: string, redi
   await page.evaluate(() => {
     localStorage.removeItem('access')
     localStorage.removeItem('refresh')
+    localStorage.removeItem('hugo_active_organisation_id')
   })
   await page.getByLabel('Identifiant').fill(username)
   await page.getByLabel('Mot de passe', { exact: true }).fill(password)
@@ -48,4 +70,10 @@ export async function login(page: Page, username: string, password: string, redi
     page.getByRole('button', { name: 'Se connecter' }).click(),
   ])
   await page.waitForURL((u) => !u.pathname.includes('/login'), { timeout: 15_000 })
+}
+
+export async function setTenantOrg(page: Page, orgId: string) {
+  await page.evaluate((id) => {
+    localStorage.setItem('hugo_active_organisation_id', id)
+  }, orgId)
 }

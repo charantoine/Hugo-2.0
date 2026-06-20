@@ -5,6 +5,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from app_core.tenant_context import tenant_organisation_id
 
 from .models import (
     Referential,
@@ -37,7 +38,7 @@ class ReferentialListView(generics.ListAPIView):
 
     def get_queryset(self):
         return (
-            Referential.objects.filter(organisation_id=self.request.user.organisation_id)
+            Referential.objects.filter(organisation_id=tenant_organisation_id(self.request))
             .annotate(
                 items_count=Count("items", distinct=True),
                 activities_count=Count("activities", distinct=True),
@@ -66,7 +67,7 @@ class ImportV2View(APIView):
         name = data.get("name") or "Referential"
         source_ref = data.get("source_ref", "")
         ref = Referential.objects.create(
-            organisation_id=request.user.organisation_id,
+            organisation_id=tenant_organisation_id(request),
             name=name,
             source_ref=source_ref,
         )
@@ -76,7 +77,7 @@ class ImportV2View(APIView):
         items_data = data.get("items", [])
         for it in items_data:
             item = ReferentialItem.objects.create(
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 referential=ref,
                 code=it.get("code", ""),
                 title=it.get("title", ""),
@@ -104,7 +105,7 @@ class ImportV2View(APIView):
                     if not label:
                         continue
                     ReferentialCriterion.objects.create(
-                        organisation_id=request.user.organisation_id,
+                        organisation_id=tenant_organisation_id(request),
                         referential_item=item,
                         code=code,
                         label=label,
@@ -123,7 +124,7 @@ class ImportV2View(APIView):
                 continue
             order_index = activity.get("order_index", idx)
             db_activity, _ = ReferentialActivity.objects.update_or_create(
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 referential=ref,
                 code=activity_code,
                 defaults={
@@ -146,7 +147,7 @@ class ImportV2View(APIView):
                     if not task_code or not task_label:
                         continue
                     db_task, _ = ReferentialTask.objects.update_or_create(
-                        organisation_id=request.user.organisation_id,
+                        organisation_id=tenant_organisation_id(request),
                         activity=db_activity,
                         code=task_code,
                         defaults={
@@ -170,7 +171,7 @@ class ImportV2View(APIView):
                 continue
             task_order = task.get("order_index", idx)
             db_task, _ = ReferentialTask.objects.update_or_create(
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 activity=db_activity,
                 code=task_code,
                 defaults={
@@ -198,7 +199,7 @@ class ImportV2View(APIView):
                 if not db_task:
                     continue
                 ReferentialCompetencyTask.objects.get_or_create(
-                    organisation_id=request.user.organisation_id,
+                    organisation_id=tenant_organisation_id(request),
                     referential_item=item,
                     task=db_task,
                 )
@@ -218,7 +219,7 @@ class ImportV2View(APIView):
             if not item or not task:
                 continue
             ReferentialCompetencyTask.objects.get_or_create(
-                organisation_id=request.user.organisation_id,
+                organisation_id=tenant_organisation_id(request),
                 referential_item=item,
                 task=task,
             )
@@ -241,7 +242,7 @@ class ReferentialItemListView(generics.ListAPIView):
     def get_queryset(self):
         return ReferentialItem.objects.filter(
             referential_id=self.kwargs["ref_id"],
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
         ).prefetch_related("criteria", "competency_tasks__task", "competency_tasks__task__activity")
 
 
@@ -251,7 +252,7 @@ class ReferentialCriterionListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return ReferentialCriterion.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             referential_item_id=self.kwargs["item_id"],
             referential_item__referential_id=self.kwargs["ref_id"],
         ).order_by("order_index", "code")
@@ -261,10 +262,10 @@ class ReferentialCriterionListCreateView(generics.ListCreateAPIView):
             ReferentialItem,
             id=self.kwargs["item_id"],
             referential_id=self.kwargs["ref_id"],
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
         )
         serializer.save(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             referential_item=item,
         )
 
@@ -277,7 +278,7 @@ class ReferentialCriterionDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return ReferentialCriterion.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             referential_item_id=self.kwargs["item_id"],
             referential_item__referential_id=self.kwargs["ref_id"],
         )
@@ -290,7 +291,7 @@ class ReferentialActivityListView(generics.ListAPIView):
     def get_queryset(self):
         return (
             ReferentialActivity.objects.filter(
-                organisation_id=self.request.user.organisation_id,
+                organisation_id=tenant_organisation_id(self.request),
                 referential_id=self.kwargs["ref_id"],
             )
             .annotate(tasks_count=Count("tasks", distinct=True))
@@ -304,7 +305,7 @@ class ReferentialActivityTaskListView(generics.ListAPIView):
 
     def get_queryset(self):
         return ReferentialTask.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             activity_id=self.kwargs["activity_id"],
             activity__referential_id=self.kwargs["ref_id"],
         ).order_by("order_index", "code")
@@ -316,7 +317,7 @@ class ReferentialItemTaskListView(generics.ListAPIView):
 
     def get_queryset(self):
         return ReferentialCompetencyTask.objects.filter(
-            organisation_id=self.request.user.organisation_id,
+            organisation_id=tenant_organisation_id(self.request),
             referential_item_id=self.kwargs["item_id"],
             referential_item__referential_id=self.kwargs["ref_id"],
         ).select_related("task", "task__activity", "referential_item")
@@ -328,10 +329,10 @@ class ReferentialConfigView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, group_id):
-        group = get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        group = get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         config = (
             ReferentialConfig.objects.select_related("referential", "scale")
-            .filter(group=group, organisation_id=request.user.organisation_id)
+            .filter(group=group, organisation_id=tenant_organisation_id(request))
             .first()
         )
         if not config:
@@ -353,19 +354,19 @@ class ReferentialConfigView(APIView):
         return Response(data)
 
     def put(self, request, group_id):
-        group = get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        group = get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         referential_id = request.data.get("referential_id")
         scale_id = request.data.get("scale_id")
         if not referential_id:
             return Response({"detail": "referential_id required."}, status=status.HTTP_400_BAD_REQUEST)
-        ref = get_object_or_404(Referential, id=referential_id, organisation_id=request.user.organisation_id)
+        ref = get_object_or_404(Referential, id=referential_id, organisation_id=tenant_organisation_id(request))
         scale = None
         if scale_id:
-            scale = get_object_or_404(Scale, id=scale_id, organisation_id=request.user.organisation_id)
+            scale = get_object_or_404(Scale, id=scale_id, organisation_id=tenant_organisation_id(request))
         config, _ = ReferentialConfig.objects.update_or_create(
             group=group,
             referential=ref,
-            defaults={"organisation_id": request.user.organisation_id, "scale": scale},
+            defaults={"organisation_id": tenant_organisation_id(request), "scale": scale},
         )
         return Response({"id": str(config.id)})
 
@@ -376,18 +377,18 @@ class ReferentialItemOverlayView(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, group_id, ref_id, item_id):
-        group = get_object_or_404(Group, id=group_id, organisation_id=request.user.organisation_id)
+        group = get_object_or_404(Group, id=group_id, organisation_id=tenant_organisation_id(request))
         item = get_object_or_404(
             ReferentialItem,
             id=item_id,
             referential_id=ref_id,
-            referential__organisation_id=request.user.organisation_id,
+            referential__organisation_id=tenant_organisation_id(request),
         )
         overlay, _ = ReferentialItemOverlay.objects.update_or_create(
             group=group,
             referential_item=item,
             defaults={
-                "organisation_id": request.user.organisation_id,
+                "organisation_id": tenant_organisation_id(request),
                 "enabled": request.data.get("enabled", True),
                 "example_situations": request.data.get("example_situations", []),
                 "example_evidence": request.data.get("example_evidence", []),

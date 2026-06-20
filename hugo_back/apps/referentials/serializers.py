@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from app_core.tenant_context import tenant_organisation_id
 from .models import (
     Group,
     GroupMembership,
@@ -61,6 +62,18 @@ class GroupSerializer(serializers.ModelSerializer):
         if normalized not in allowed:
             raise serializers.ValidationError("Must be one of: youth, adult, professional.")
         return normalized
+
+    def validate_default_tutor_prompt(self, value):
+        if value is None:
+            return value
+        request = self.context.get("request")
+        if not request:
+            return value
+        org_id = tenant_organisation_id(request)
+        prompt_org_id = getattr(value, "organisation_id", None)
+        if org_id and prompt_org_id and str(prompt_org_id) != str(org_id):
+            raise serializers.ValidationError("Tutor prompt must belong to the same organisation as the group.")
+        return value
 
     class Meta:
         model = Group

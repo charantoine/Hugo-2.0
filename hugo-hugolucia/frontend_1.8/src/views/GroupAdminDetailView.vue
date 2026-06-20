@@ -1,9 +1,12 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api, { runExportAndDownload } from '../api/client'
+import { useAuthStore } from '../stores/auth'
 
 const route = useRoute()
+const auth = useAuthStore()
+const canManageTutorLinks = computed(() => auth.isSuperAdmin)
 
 const group = ref(null)
 const loadingGroup = ref(false)
@@ -1019,7 +1022,11 @@ watch(
               </div>
             </div>
             <hr class="my-3" />
+            <template v-if="canManageTutorLinks">
             <h3 class="h6 mb-2">Associations tuteur/apprenant</h3>
+            <p class="small text-muted">
+              Réservé au SUPERADMIN (état transitoire — ORGADMIN sera autorisé ultérieurement).
+            </p>
             <div v-if="tutorLinksError" class="alert alert-danger py-2" role="alert">
               {{ tutorLinksError }}
             </div>
@@ -1097,6 +1104,10 @@ watch(
             </ul>
             <p v-else class="text-muted small mb-0">
               Aucune association tuteur/apprenant pour ce groupe.
+            </p>
+            </template>
+            <p v-else class="small text-muted mb-0">
+              Les associations tuteur/apprenant sont gérées par le SUPERADMIN uniquement pour le moment.
             </p>
           </div>
         </div>

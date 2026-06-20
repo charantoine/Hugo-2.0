@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import api from '../api/client'
-import { isEncadrantLike, isOrgAdminLike, isTrainerLike, isTutorLike } from '../utils/roleGuards'
+import { isEncadrantLike, isOrgAdminLike, isSuperAdmin, isTrainerLike, isTutorLike } from '../utils/roleGuards'
+import { useTenantStore } from './tenant'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -17,6 +18,7 @@ export const useAuthStore = defineStore('auth', {
     isTrainerLike: (s) => isTrainerLike(s.user),
     isTutorLike: (s) => isTutorLike(s.user),
     isEncadrantLike: (s) => isEncadrantLike(s.user),
+    isSuperAdmin: (s) => isSuperAdmin(s.user),
   },
   actions: {
     async login(username, password) {
@@ -34,11 +36,13 @@ export const useAuthStore = defineStore('auth', {
       this.refresh = null
       localStorage.removeItem('access')
       localStorage.removeItem('refresh')
+      useTenantStore().clearTenant()
     },
     async fetchMe() {
       if (!this.access) return
       const { data } = await api.get('/auth/me/')
       this.user = data
+      useTenantStore().syncFromUser(data)
       this.access = localStorage.getItem('access') || this.access
       return data
     },

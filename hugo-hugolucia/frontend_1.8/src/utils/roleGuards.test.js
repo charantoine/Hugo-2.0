@@ -5,6 +5,7 @@ import {
   isEncadrantLike,
   isLearnerOnly,
   isOrgAdminLike,
+  isSuperAdmin,
   isTrainerLike,
   isTutorLike,
 } from './roleGuards.js'
@@ -14,6 +15,13 @@ test('isOrgAdminLike matches ORGADMIN and SUPERADMIN only', () => {
   assert.equal(isOrgAdminLike({ role: 'SUPERADMIN' }), true)
   assert.equal(isOrgAdminLike({ role: 'TRAINER' }), false)
   assert.equal(isOrgAdminLike({ role: 'TUTOR' }), false)
+  assert.equal(isOrgAdminLike({ is_superuser: true, role: 'TRAINER' }), false)
+})
+
+test('isSuperAdmin matches SUPERADMIN role only', () => {
+  assert.equal(isSuperAdmin({ role: 'SUPERADMIN' }), true)
+  assert.equal(isSuperAdmin({ role: 'ORGADMIN' }), false)
+  assert.equal(isSuperAdmin({ is_superuser: true, role: 'ORGADMIN' }), false)
 })
 
 test('isTrainerLike includes TRAINER and org admins', () => {

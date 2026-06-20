@@ -2,7 +2,7 @@
 
 > **Sources mobilisées :** clusters 8–16, `cluster2_matrice_runtime_vs_cible.md` **(V5)**, personae/oracles cluster 2–3, écarts domaines 10–120, protocoles `protocole_tests_*`, `cluster16_protocole_tests_interface_apprenant_v1.md`.  
 > **Réel confirmé :** pytest ~45 fichiers `hugo_back/apps/hugo/tests/` (dont `test_cluster15_*`, `test_cluster16_*`) ; Playwright `frontend_1.8/tests_playwright/` (smokes + `e2e/cluster16_learner_interface.spec.ts` **10 PASS**) ; oracles `encoors_oracle.py`.  
-> **Dernière mise à jour :** 2026-06-18 (post-cluster 16).
+> **Dernière mise à jour :** 2026-06-20 (post-campagne multi-tenant / RLS / smoke — voir §9 Archives).
 
 ---
 
@@ -19,7 +19,7 @@
 | **60** | Orchestrateur tuteur | `test_tutor_access_control`, `test_tutorprompt`, `test_vague5` T1 | `test_smoke_tutor`, `e2e/tutor_b1` | — | — | Observabilité interne **sans UI** |
 | **70** | Évaluation / traces / pivot v1 | `test_evaluation_trace_minimal`, `test_request_evaluation_guard`, `test_cluster3`, **`test_cluster16`** B16-C2 advisory | — (CTA visibles en U16-S2) | **EVAL1** | — | Playwright advisory dédié **U16-S2b ouvert** |
 | **80** | Observabilité qualité conversationnelle | `test_observabilite_base`, `test_observabilite_avancee_v1`, `test_quality_signals`, `test_d9bis_*` | — | **OBS_BASE**, **D9BIS** | — | Zéro surface front observabilité interne |
-| **90** | Confidentialité / multi-tenant / rôles | `test_rls_postgres_minimal`, `test_d2_m07_confidentiality_oracles`, `test_encadrants_role_guards`, `test_preprod_garde_fou` | guards e2e (learner/tutor) | auth probes | `audit_rls_prod_template.sql` | RLS prod **A_VÉRIFIER** ; COORDO UI dédiée **ABSENTE** |
+| **90** | Confidentialité / multi-tenant / rôles | `test_tenant_*`, `test_tutor_links_permissions`, `test_rls_postgres_minimal`, `test_d2_m07_confidentiality_oracles`, `test_encadrants_role_guards`, `test_preprod_garde_fou` | `tenant_*.spec.ts` (11 PASS, 20/06) | auth probes | `audit_rls_prod_template.sql` | RLS strict vert **en attente** rôle `hugo_app` ; smoke CI GitHub **A_VÉRIFIER** |
 | **100** | Exports / preuves Qualiopi lite | `test_d2_m06_d2_m11_*`, `test_analytics_absence_*`, `test_vague5` O1 | `test_smoke_orgadmin_exports` | **O1** | — | E1–E6 org **PARTIEL** (tester layout) ; Felix v3 **ABSENT** Encoors |
 | **110** | Interfaces formateur / tuteur | `test_encadrants_role_guards`, `test_cluster4`, **`test_cluster15_*`** | smokes tutor/trainer/coordo + **cluster16** apprenant | — | — | Tuteur prod **A_VÉRIFIER** ; IFT-042 **CIBLE** |
 | **120** | Intercalaires v1 | — | — | — | — | **GAP** — pas de suite dédiée ; N/A preprod immédiat |
@@ -180,3 +180,12 @@
 3. Exécuter oracles Encoors avec credentials → comparer JSON local vs `encoors_oracle_preprod.generated.json`.
 4. Exécuter `audit_rls_prod_template.sql` sur prod **A_VÉRIFIER**.
 5. Domaine 120 : contrat minimal intercalaires avant tests.
+
+---
+
+## 9. Archives des campagnes de tests (2026-06)
+
+Synthèse consolidée **18/06** (convergence) + **20/06** (multi-tenant, RLS, tutor-links, UI, smoke CI) : [`tests/archives/tests_hugo_2_0_2026-06-18_20.md`](tests/archives/tests_hugo_2_0_2026-06-18_20.md).
+
+- **18/06 — détail :** [`test_final_complétude_améliorations.md`](test_final_complétude_améliorations.md) · briefing CTO [`briefing_cto_convergence_hugo_2_0_tests.docx`](briefing_cto_convergence_hugo_2_0_tests.docx)
+- **20/06 — opérationnel :** [`hugo_back/docs/MULTITENANT_SMOKE.md`](../hugo_back/docs/MULTITENANT_SMOKE.md)

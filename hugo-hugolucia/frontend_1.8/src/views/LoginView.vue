@@ -38,7 +38,7 @@ async function onSubmit() {
     <div class="row align-items-center justify-content-center g-4">
       <div class="col-12 col-lg-5">
         <div class="prod-auth-copy">
-          <span class="prod-auth-copy__eyebrow">POC - Hugo 1.8 - Lucia</span>
+          <span class="prod-auth-copy__eyebrow">POC Hugo Lucia</span>
           <h1 class="prod-auth-copy__title">Tuteur numérique</h1>
           <p class="prod-auth-copy__text d-none">
             Une interface plus claire, plus chaleureuse et pensée pour suivre ta progression sans afficher toute la mécanique interne.
