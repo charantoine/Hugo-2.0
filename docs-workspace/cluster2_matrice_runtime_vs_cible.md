@@ -1,8 +1,8 @@
 # Cluster 2 — Matrice runtime ↔ cible Hugo 2.0
 
 **Workspace :** `/Users/machin/Desktop/Zone de travail Hugo`  
-**Version :** 5 (post-cluster 16 — 2026-06-18)  
-**V4 :** post-tests cluster 15 · **V3 :** 2026-06-18 · **V2 :** 2026-06-16 · **V1 :** même date  
+**Version :** 6 (post-profils globaux apprenant — 2026-06-20)  
+**V5 :** post-cluster 16 — 2026-06-18 · **V4 :** post-tests cluster 15 · **V3 :** 2026-06-18 · **V2 :** 2026-06-16 · **V1 :** même date  
 **Méthode :** `00_HIERARCHIE_DOCUMENTAIRE.md`, `DOC_METHODO_REFERENCE_CONVERGENCE_HUGO_REVISE.md`, `plan_documentation_cto_convergence_hugo.md`, `synthese_globale_ecarts_par_domaine.md`, écarts 10–120, glossaire, `02`–`05`, `07`–`10`, code `hugo_back` + `hugo-hugolucia/frontend_1.8`.
 
 > **Référence trajectoire CTO :** voir `plan_documentation_cto_convergence_hugo.md`, section  
@@ -37,23 +37,25 @@
 
 ---
 
-## 0. Synthèse transversale cluster 2 (V5 — post-cluster 16 — 2026-06-18)
+## 0. Synthèse transversale cluster 2 (V6 — post-profils globaux — 2026-06-20)
 
 | Domaine | Intitulé | Alignement | Lacune principale | Preuve dominante |
 |---------|----------|------------|-------------------|------------------|
 | **10** | runtime / P0 / progression / UIState | Fort backend + CTA + scène UIState | Double stack UIState ; v17 A_VÉRIFIER | `test_cluster4`, `test_cluster16_interface_apprenant_backend.py` |
 | **20** | mémoire gouvernée intra-conversation | Contract + API + panneau **PARTIEL+** | Pas injection prompt ; inter-sessions hors tour | `test_session_memory_contract.py`, B16-M1/M2, C16 Playwright |
 | **30** | référentiel documentaire / RAG | Lexical opérationnel | pgvector inactif ; hiérarchie contexte non contractualisée | `test_rag_support_tracing.py` |
-| **31** | front apprenant postures & bascule | CTA + profils + posture/scène **PARTIEL+** | Matrice SW-xx ; verrou phase/tours explicite | `PostureSelector.vue`, cluster 16 (15+10 tests) |
+| **31** | front apprenant postures & bascule | CTA + profils + posture/scène **PARTIEL+** ; **admin profils globaux OK** | Matrice SW-xx ; verrou phase/tours ; synthèse/starter prompts sans admin | `PostureSelector.vue`, cluster 16 ; **`test_learner_conversation_global_profile.py`** |
 | **40** | base connaissances formateur | Objets + workflow API C15 | Lien RAG runtime A_VÉRIFIER | `test_cluster15_interfaces_formateur.py` |
 | **50** | orchestrateur formateur | API élicitation + atelier V0 | Script F1–F4 non prouvé bout-en-bout | C15 formateur tests |
 | **60** | orchestrateur tuteur | Backend riche ; B1-01 vert | Surface métier tuteur partielle | `test_cluster3_oracles.py` |
-| **70** | évaluation / traces / preuves | Branche terminale + CTA advisory UI | Payload trace minimal ; EvaluationTrace conceptuel | `test_request_evaluation_guard.py`, B16-C2 |
+| **70** | évaluation / traces / preuves | Branche terminale + CTA advisory UI ; slot eval dans profil global | Payload trace minimal ; policies **groupe** sans UI dédiée | `test_request_evaluation_guard.py`, B16-C2, profil global |
 | **80** | observabilité / qualité conversationnelle | Signaux présents | Catalogue signaux ABSENT ; D9bis CIBLE | `test_observabilite_base.py` |
-| **90** | confidentialité / multi-tenant / rôles | Doctrine + tests locaux | RLS prod A_VÉRIFIER ; COORDO absent | `test_d2_m07`, cluster 3 |
+| **90** | confidentialité / multi-tenant / rôles | Doctrine + tests locaux + **Playwright tenant 11/11** | RLS prod A_VÉRIFIER ; CI strict partiel | `test_d2_m07`, cluster 3, `tenant_personas.spec.ts` |
 | **100** | exports / preuves / Qualiopi lite | Objets réels testés | Encoors A_VÉRIFIER | `test_d2_m06_d2_m11`, D1-02 |
-| **110** | interfaces formateur / tuteur | Apprenant **PARTIEL+ C16** ; formateur C15 | Tuteur prod ; IFT-042 choix profil | cluster 16 + protocole tests C16 |
+| **110** | interfaces formateur / tuteur | Apprenant **PARTIEL+ C16** ; formateur C15 ; **admin convo profils globaux** | Tuteur prod ; IFT-042 choix profil ; trous synthèse/orchestrateur | cluster 16 ; **`LearnerConversationProfilesView.vue`** ; Playwright pipeline |
 | **120** | intercalaires v1 | CIBLE cadrée | Aucune feature observée runtime local | `audit_domaine_120`, ecarts-120 |
+
+> **V5 (18/06)** : voir historique §18. **V6** intègre `LearnerConversationGlobalProfile`, admin `/admin/conversation/learner/profiles`, affectation groupe, résolution runtime avec fallback legacy — preuves §19.
 
 ### Taxonomie des sorties (cluster 2 — à ne pas confondre)
 
@@ -379,3 +381,26 @@
 **Vague interface apprenant C16 :** **Livré local** — `cluster16_interface_apprenant_spec_conformite_resultats.md`, `cluster16_interface_apprenant_resultats_tests.md`.
 
 **Hors périmètre immédiat (couronne) :** RAG vectoriel, D9bis exposé produit / dashboards analytics, intercalaires v1, parité Encoors authentifiée, mémoire inter-sessions injection tour, certification autonome, scénarios manuels S16-A1→A5, IFT-042 choix profil cohorte.
+
+---
+
+## 19. Statut post-profils globaux apprenant (2026-06-20)
+
+| Élément | Statut | Domaines | Preuve |
+|---------|--------|----------|--------|
+| Modèle `LearnerConversationGlobalProfile` | **Livré local** | 10, 31, 70, 110 | `models.py`, migration 0020 |
+| API CRUD + legacy template | **Livré local** | 110 | `test_learner_conversation_global_profile.py` (12 PASS) |
+| Admin `/admin/conversation/learner/profiles` | **Livré local** | 110 | Playwright `admin_learner_profiles.spec.ts` |
+| Affectation groupe | **Livré local** | 110, 90 | `GroupAdminDetailView` ; Playwright `admin_conversation_pipeline.spec.ts` |
+| Résolution runtime (session → groupe → org) | **Livré local** | 10 | `learner_profile_resolver.py`, tests résolution |
+| Fallback legacy TutorPrompt | **Conservé actif** | 10 | `test_resolve_tutor_prompt_legacy_fallback_when_no_global_profile` |
+| Apprenant choisit mode, pas profil global | **Conforme produit** | 31 | `PostureSelector.vue` ; doc `MINI_SPEC_*` |
+| Prompts synthèse admin | **Absent** | 10, 70 | `synthesis_service.py` hardcodé — **CIBLE Phase 3** |
+| Orchestrateur params éditables | **Absent** | 10 | Panneau read-only — **PARTIEL** |
+| Starter prompts admin | **Absent** | 110 | API seule — tester only |
+| `session.learner_conversation_profile` REST | **Absent** | 90, 110 | Modèle + résolveur ; pas d’API PATCH session |
+| Policies évaluation groupe UI | **Partiel** | 70 | Backend `EvaluationPolicy(group=…)` ; UI org-level surtout |
+
+**Pipe nominal documenté :** admin compose profil global → affecte au groupe → runtime résout slots par posture → apprenant bascule diag/réflexif/bûchage → évaluation finale via slot eval / policy org.
+
+**Référence :** `MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md`, archive `tests/archives/tests_hugo_2_0_2026-06-18_20.md` §2 bis.

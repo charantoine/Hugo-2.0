@@ -97,7 +97,8 @@ Méthode obligatoire : `DOC_METHODO_REFERENCE_CONVERGENCE_HUGO_REVISE.md`.
 | `protocole_tests_interfaces_apprenant_formateur_v1.md` | Protocole + check-lists UI manuelles (C15, apprenant + formateur) |
 | `cluster16_protocole_tests_interface_apprenant_v1.md` | Protocole tests interface apprenant C16 (B16-*, U16-*) |
 | `rapport_mise_a_jour_doc_post_tests_2026-06-18.md` | Synthèse post-campagne pytest (90 tests PASS local) |
-| `tests/archives/tests_hugo_2_0_2026-06-18_20.md` | **Archive consolidée** campagnes 18/06 (convergence) + 20/06 (multi-tenant / RLS / smoke) |
+| `tests/archives/tests_hugo_2_0_2026-06-18_20.md` | **Archive consolidée** campagnes 18/06 (convergence) + 20/06 (multi-tenant / RLS / smoke / **profils globaux apprenant**) |
+| `MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md` | Contrat minimal **profil conversationnel global apprenant** (4 sous-blocs + gouvernance admin) |
 | `REFERENCE_CONVERGENCE_HUGO_REEL_VS_2_0_GARDEFOU.md` | Garde-fou de convergence (à relire avant toute promo « livré ») |
 | `handover_hugo_reel_vs_2_0.md` | Handover synthétique réel / cible / couronne |
 
@@ -247,6 +248,7 @@ Un **cluster** est un **lot de convergence** documenté de bout en bout : audit 
 | **Cluster 15** | Interfaces apprenant + formateur (posture, mémoire, trainer) | `cluster15_interfaces…`, `protocole_tests_interfaces…` |
 | **Cluster 16** | Interface apprenant spec 2.0 (polish UX, E2E profils) | `cluster16_protocole_tests…`, `cluster16_interface_apprenant_*`, `rapport_mise_a_jour_doc_post_cluster16_2026-06-18.md` |
 | **Post-tests 2026-06-18** | Mise à jour doc après campagne pytest C15 | `rapport_mise_a_jour_doc_post_tests_2026-06-18.md` |
+| **Profils globaux apprenant 2026-06-20** | Modèle `LearnerConversationGlobalProfile`, admin, résolution runtime, re-tests | `MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md`, archive §2 bis |
 
 Un futur **cluster 2.1** (ou cluster 16+) s’accroche ainsi :
 
@@ -304,7 +306,25 @@ Toujours séparer réel, cible, écarts confirmés, A_VÉRIFIER.
 
 Éviter les noms génériques (`notes.md`, `temp_audit.md`) à la racine de `docs-workspace`.
 
-### 7.5 Fichiers à ne pas modifier sans garde-fou
+### 7.6 Pipes conversationnels — maintenance doc
+
+Pour tout changement touchant la **gestion conversationnelle apprenant** (profils globaux, modes, clôture, legacy) :
+
+1. Mettre à jour **`MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md`** si le contrat objet change.
+2. Croiser **`02_ETAT_MOTEUR_REEL.md`** (résolveurs) et **`03_ETAT_PRODUIT_REEL.md`** (routes admin `/admin/conversation/*`).
+3. Exécuter au minimum : `pytest apps/hugo/tests/test_learner_conversation_global_profile.py` + Playwright `admin_learner_profiles.spec.ts` + `admin_conversation_pipeline.spec.ts` (`SMOKE_RUN_TENANT=1`).
+4. Consigner les résultats dans **`tests/archives/tests_hugo_2_0_2026-06-18_20.md`** (§2 bis ou suivant) — ne pas réécrire toute l’archive.
+5. Distinguer dans les textes :
+   - **profil conversationnel global apprenant** (`LearnerConversationGlobalProfile`) — décision admin, affecté au **groupe** ;
+   - **mode conversationnel** (diag / réflexif / bûchage) — choix **apprenant** en séance ;
+   - **prompt legacy apprenant** (`TutorPrompt`, ex-nom « tuteur ») — brique par posture, encore utilisée en fallback ;
+   - **profil d’affichage** (`learner_display_profile`) — UX youth/adult/pro, hors pipe LLM.
+
+**Terminologie :** le modèle backend s’appelle encore `TutorPrompt` ; dans la doc produit, préférer « prompt apprenant (legacy) » ou « prompt moteur apprenant » pour éviter la confusion avec l’espace tuteur humain.
+
+---
+
+### 7.7 Fichiers à ne pas modifier sans garde-fou
 
 - **`spec_canonique_hugo_2_0.md`** : doctrine de fond ; ajouter des **bandeaux de statut runtime**, pas de refonte métier dans un fil de convergence.
 - **`00_HIERARCHIE_DOCUMENTAIRE.md`** : changer uniquement si la hiérarchie des sources change réellement.
@@ -328,4 +348,5 @@ Toujours séparer réel, cible, écarts confirmés, A_VÉRIFIER.
 
 | Date | Auteur / rôle | Résumé |
 |------|---------------|--------|
+| 2026-06-20 | conv-hugo-doc | Alignement pipes conversationnels : profils globaux apprenant, campagne tests 20/06 PM, §7.6 maintenance convo, terminologie prompt apprenant vs tuteur. |
 | 2026-06-18 | conv-hugo-doc | Création du README : organisation 00–10 / specs / écarts / clusters / Cursor, parcours CTO-produit-dev, niveaux de vérité, recette par domaine, maintenance post-cluster 15 et campagne pytest 90 PASS. |

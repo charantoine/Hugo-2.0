@@ -78,12 +78,31 @@ Le cluster 16 a livré le **polish interface apprenant** conforme spec 2.0 (post
 
 ---
 
-## 6. Prochaine sortie utile
+## 6. Addendum 2026-06-20 — profils globaux apprenant & pipes admin
 
-1. Exécuter scénarios manuels S16-A1→A5 et mettre à jour `cluster16_interface_apprenant_resultats_tests.md` § manuels.
-2. Oracle Encoors sur posture, CTA advisory et profils (domaines 10/31/110).
-3. Backlog IFT-042 + test Playwright U16-S2b si priorité produit.
+**Hors périmètre C16** mais aligné sur domaines **10, 31, 70, 110** :
+
+| Livrable | Statut doc | Référence |
+|----------|------------|-----------|
+| `LearnerConversationGlobalProfile` + résolveurs | **ALIGNE** | `MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md`, matrice V6 §19 |
+| Admin Super Admin / OrgAdmin | **ALIGNE** | `/admin/conversation/learner/profiles`, `GroupAdminDetailView` |
+| Tests automatisés | **12 pytest + 4 Playwright admin + 11 tenant** | archive §2 bis ; `test_final_complétude_améliorations.md` §10 |
+| Fallback legacy TutorPrompt | **Documenté actif** | Ne pas présenter comme supprimé |
+
+**Matrice :** V5 → **V6** (`cluster2_matrice_runtime_vs_cible.md`).  
+**Briefing CTO :** régénéré post-20/06 (`generate_cto_briefing_docx.py`).
+
+**Trous restants (non C16) :** synthèse admin, orchestrateur statique, starter prompts, policies eval groupe — voir matrice §19.
 
 ---
 
-*Rapport généré après passe documentaire transversale post-cluster 16 — modifications appliquées directement dans `docs-workspace/`.*
+## 7. Prochaine sortie utile
+
+1. Exécuter scénarios manuels S16-A1→A5 et mettre à jour `cluster16_interface_apprenant_resultats_tests.md` § manuels.
+2. Oracle Encoors sur posture, CTA advisory, profils globaux et profils d’affichage (domaines 10/31/110).
+3. Backlog IFT-042 + test Playwright U16-S2b si priorité produit.
+4. P1 pipes : admin synthèse ; UI policies évaluation groupe.
+
+---
+
+*Rapport généré après passe documentaire transversale post-cluster 16 — addendum 20/06 profils globaux.*

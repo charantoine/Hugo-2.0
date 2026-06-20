@@ -140,3 +140,18 @@ Compte-rendu : `docs-workspace/cluster16_interface_apprenant_resultats_tests.md`
 | U16-P1/P2 profils | Playwright 6 tests | S16-A4, S16-A5 |
 
 **Verdict tests auto :** SUCCÈS (critères §5.1–5.2). **Scénarios manuels §4 :** ouverts.
+
+---
+
+## 8. Périmètre exclu de ce protocole (2026-06-20)
+
+Le cluster 16 couvre l’**interface apprenant prod** (`/app/session/*`), pas l’**administration conversationnelle** :
+
+| Sujet | Où tester / documenter |
+|-------|------------------------|
+| Profils conversationnels globaux apprenant | Admin `/admin/conversation/learner/profiles` — `test_learner_conversation_global_profile.py`, Playwright `admin_learner_profiles.spec.ts` |
+| Affectation profil au groupe | `/groups-admin/:id` — Playwright `admin_conversation_pipeline.spec.ts` |
+| Hubs legacy par posture | `/admin/conversation/learner/:postureCode` |
+| Clôture / évaluation org | `/admin/conversation/learner/closing` |
+
+**Distinction terminologique :** le cluster 16 valide le **mode conversationnel** côté apprenant ; la **composition admin du profil global** (4 sous-blocs) relève d’un lot séparé — voir `MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md`.

@@ -364,4 +364,54 @@ La campagne **final complétude** exécutée le 2026-06-18 démontre que **l’e
 
 ---
 
-*Rapport généré sans modification du code applicatif. Régénérer le briefing CTO : `python docs-workspace/scripts/generate_cto_briefing_docx.py`*
+## 10. Addendum 2026-06-20 — profils conversationnels globaux & pipes admin
+
+**Commit de référence :** `c560fa8` — `feat: learner global conversation profiles with legacy fallback`  
+**Mini-spec :** [`MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md`](MINI_SPEC_PROFILS_CONVERSATIONNELS_APPRENANT.md)  
+**Archive consolidée :** [`tests/archives/tests_hugo_2_0_2026-06-18_20.md`](tests/archives/tests_hugo_2_0_2026-06-18_20.md) §2 bis
+
+### 10.1 Ce qui a été livré (réel confirmé)
+
+| Brique | Backend | Admin Super Admin / OrgAdmin | Runtime |
+|--------|---------|------------------------------|---------|
+| Profil global apprenant | `LearnerConversationGlobalProfile` | `/admin/conversation/learner/profiles` | Résolution session → groupe → org `is_default` |
+| 4 sous-blocs | FK TutorPrompt ×3 + conduct ×3 + eval prompt + policy | Éditeur profil + hubs legacy par posture | `_resolve_tutor_prompt`, conduct, évaluation |
+| Affectation groupe | `Group.default_learner_conversation_profile` | `/groups-admin/:id` | Priorité groupe |
+| Fallback legacy | `default_tutor_prompt`, `TutorPrompt.is_default`, prompts hardcodés | Select legacy masqué si profil global | Chaîne documentée dans résolveurs |
+| Gouvernance produit | — | Super Admin + org tenant | Apprenant choisit **mode** ; admin choisit **profil global** |
+
+### 10.2 Campagne tests complémentaire (20/06 PM + audit pipes)
+
+| Campagne | Résultat | Preuve |
+|----------|----------|--------|
+| `test_learner_conversation_global_profile.py` | **12 PASS** | CRUD, résolution, legacy template, priorité session/groupe |
+| Pipeline convo ciblé (profils + eval + posture + tutorprompt + guards) | **26 PASS** | Audit pipes admin ↔ runtime |
+| Interface apprenant C16 (backend + cluster15/16) | **32 PASS** | Non-régression runtime apprenant |
+| Playwright profils admin | **2 PASS** | `admin_learner_profiles.spec.ts` |
+| Playwright pipeline SUPERADMIN → groupe | **2 PASS** | `admin_conversation_pipeline.spec.ts` |
+| Playwright tenant personas | **11 PASS** | `tenant_personas.spec.ts` (campagnes 20/06 — **existe et archivée**) |
+| Smoke multi-tenant relaxed | **90 PASS, 3 SKIP** | `run_multitenant_smoke.sh` |
+
+### 10.3 Ce qui fonctionne / ce qui reste partiel (pipes conversationnels)
+
+| Statut | Élément |
+|--------|---------|
+| **OK** | Création / édition / suppression profil global ; affectation groupe ; résolution runtime ; choix mode apprenant ; clôture/éval org via closing view |
+| **Legacy actif** | Hubs posture, `/tutor-prompts`, `/conduct-profiles`, `Group.default_tutor_prompt`, override `tutor_prompt_id` à la création session prod |
+| **Partiel** | Création depuis legacy (dépend données org) ; policies évaluation **groupe** ; paramètres orchestrateur statiques (lecture seule) |
+| **Manquant admin** | Prompts synthèse ; starter prompts ; override session `learner_conversation_profile` (modèle sans REST) |
+| **A_VÉRIFIER** | Parité Encoors ; RLS strict CI ; campagne LLM multi-tours |
+
+### 10.4 Backlog doc/code ouvert (pipes)
+
+| Priorité | Item |
+|----------|------|
+| **P1** | Admin prompts synthèse (Phase 3 — `synthesis_service.py` hardcodé) |
+| **P1** | UI policies évaluation par groupe |
+| **P2** | Admin starter prompts (`/hugo/starter-prompts/`) |
+| **P2** | Paramètres orchestrateur éditables (aujourd’hui read-only front + Python statique) |
+| **P2** | Décision produit : exposer ou retirer `session.learner_conversation_profile` |
+
+---
+
+*Rapport généré sans modification du code applicatif (18/06). Addendum 20/06 = doc + re-tests post-livraison profils globaux. Régénérer le briefing CTO : `python docs-workspace/scripts/generate_cto_briefing_docx.py`*
