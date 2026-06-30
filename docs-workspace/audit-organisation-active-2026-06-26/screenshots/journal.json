@@ -1,0 +1,95 @@
+{
+  "pages": [
+    {
+      "slug": "01-dashboard",
+      "path": "/dashboard",
+      "hasOrgMentionInMain": false,
+      "orgBannerSnippet": "",
+      "switcherVisible": true
+    },
+    {
+      "slug": "02-users",
+      "path": "/users",
+      "hasOrgMentionInMain": true,
+      "orgBannerSnippet": "",
+      "switcherVisible": true
+    },
+    {
+      "slug": "03-groups-admin",
+      "path": "/groups-admin",
+      "hasOrgMentionInMain": true,
+      "orgBannerSnippet": "Organisation actuelle : Demo Hugo Org",
+      "switcherVisible": true
+    },
+    {
+      "slug": "04-group-detail",
+      "path": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "hasOrgMentionInMain": true,
+      "orgBannerSnippet": "Organisation : Demo Hugo Org",
+      "switcherVisible": true
+    },
+    {
+      "slug": "05-onboarding",
+      "path": "/admin/onboarding",
+      "hasOrgMentionInMain": true,
+      "orgBannerSnippet": "Organisation active :Demo Hugo Org Groupe de référence : bac pro melec",
+      "switcherVisible": true
+    }
+  ],
+  "api": [
+    {
+      "label": "groups-demo-org",
+      "path": "/groups/",
+      "orgHeader": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "status": 200,
+      "count": 3,
+      "sampleNames": [
+        "_ux_audit_tmp_group2",
+        "bac pro melec",
+        "Demo Group"
+      ]
+    },
+    {
+      "label": "users-demo-org",
+      "path": "/users/",
+      "orgHeader": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "status": 200,
+      "count": 12,
+      "sampleNames": [
+        "formateur_melec_test",
+        "tuteur_melec_3",
+        "tuteur_melec_2",
+        "tuteur_melec_1",
+        "apprenant_melec_3"
+      ]
+    },
+    {
+      "label": "members-demo-org",
+      "path": "/groups/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/members/",
+      "orgHeader": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "status": 200,
+      "count": 7,
+      "sampleNames": [
+        "a5a43812-5894-4f26-837f-f28289745808",
+        "86bd6962-d5d1-4618-ae70-2c5fd8099fc7",
+        "7f0b7fb1-1bcd-4eac-b2d8-28a742c04030",
+        "78bad8d5-201a-4ede-9a63-32c19dd6cef3",
+        "ef5a0fed-ad10-42e0-9dcc-e642e17c21ec"
+      ]
+    },
+    {
+      "label": "referential-demo-org",
+      "path": "/groups/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential-config/",
+      "orgHeader": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "status": 200,
+      "count": null,
+      "sampleNames": null
+    }
+  ],
+  "orgSwitcher": {
+    "visible": true,
+    "selectedLabel": "Demo Hugo Org",
+    "selectedId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+    "navbarUserLine": "demo.superadmin — Demo Hugo OrgSUPERADMIN"
+  }
+}

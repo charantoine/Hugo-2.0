@@ -1,0 +1,41 @@
+{
+  "frontUrl": "http://localhost:5173",
+  "apiOrigin": "http://127.0.0.1:8000",
+  "checkedAt": "2026-06-29T08:06:00.043Z",
+  "loginStatus": 200,
+  "superadmin": {
+    "username": "demo.superadmin",
+    "ok": true
+  },
+  "organisationCount": 6,
+  "hasTwoOrgs": true,
+  "groupCountDemoOrg": 7,
+  "hasTwoGroups": true,
+  "hasBacProMelec": true,
+  "rolesDemoOrg": {
+    "SUPERADMIN": [
+      "demo.superadmin"
+    ],
+    "ORGADMIN": [],
+    "LEARNER": [
+      "apprenant_melec_3",
+      "apprenant_melec_2",
+      "apprenant_melec_1"
+    ],
+    "TUTOR": [
+      "tuteur_melec_3",
+      "tuteur_melec_2",
+      "tuteur_melec_1"
+    ],
+    "TRAINER": [
+      "formateur_melec_test",
+      "demo.formateur"
+    ]
+  },
+  "missingCritical": [],
+  "smokeFixtures": {
+    "ok": true,
+    "org": "Smoke Playwright Org",
+    "group": "Smoke Group"
+  }
+}

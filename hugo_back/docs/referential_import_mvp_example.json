@@ -1,0 +1,119 @@
+{
+  "name": "BAC PRO MELEC - avec critères et tâches",
+  "source_ref": "RNCP38878",
+  "items": [
+    {
+      "code": "C1",
+      "title": "Analyser les conditions de l'operation et son contexte",
+      "block_code": "BC01",
+      "block_label": "Preparation des operations a realiser",
+      "evaluation_criteria": [],
+      "evaluation_modalities": [],
+      "expected_evidence": [],
+      "source_ref": "",
+      "criteria": [
+        { "code": "C1.1", "label": "Les informations necessaires sont recueillies", "expected_evidence": [], "question_seeds": [] },
+        { "code": "C1.2", "label": "Les contraintes techniques et d'execution sont reperees", "expected_evidence": [], "question_seeds": [] }
+      ],
+      "tasks": ["T1-1", "T1-2", "T1-4"]
+    },
+    {
+      "code": "C2",
+      "title": "Organiser l'operation dans son contexte",
+      "block_code": "BC02",
+      "block_label": "Realisation et mise en service d'une installation",
+      "evaluation_criteria": [],
+      "evaluation_modalities": [],
+      "expected_evidence": [],
+      "source_ref": "",
+      "criteria": [
+        { "code": "C2.1", "label": "Les activites sont organisees de maniere chronologique", "expected_evidence": [], "question_seeds": [] }
+      ],
+      "tasks": ["T1-3", "T1-4", "T2-1", "T2-4", "T2-5", "T2-6", "T4-2"]
+    },
+    {
+      "code": "C10",
+      "title": "Exploiter les outils numeriques dans le contexte professionnel",
+      "block_code": "BC01",
+      "block_label": "Preparation des operations a realiser",
+      "evaluation_criteria": [],
+      "evaluation_modalities": [],
+      "expected_evidence": [],
+      "source_ref": "",
+      "criteria": [
+        { "code": "C10.1", "label": "Les applications numeriques sont exploitees avec pertinence", "expected_evidence": [], "question_seeds": [] }
+      ],
+      "tasks": ["T1-1", "T1-2", "T5-1", "T5-2"]
+    }
+  ],
+  "activities": [
+    {
+      "code": "A1",
+      "label": "Preparation des operations de realisation, de mise en service, de maintenance",
+      "order_index": 1,
+      "tasks": [
+        { "code": "T1-1", "label": "Prendre connaissance du dossier relatif aux operations a realiser, le constituer pour une operation simple", "order_index": 1 },
+        { "code": "T1-2", "label": "Rechercher et expliquer les informations relatives aux operations et aux conditions d'execution", "order_index": 2 },
+        { "code": "T1-3", "label": "Verifier et completer si besoin la liste des materiels electriques, equipements et outillages necessaires aux operations", "order_index": 3 },
+        { "code": "T1-4", "label": "Repartir les taches en fonction des habilitations, des certifications des equipiers et du planning des autres intervenants", "order_index": 4 }
+      ]
+    },
+    {
+      "code": "A2",
+      "label": "Realisation",
+      "order_index": 2,
+      "tasks": [
+        { "code": "T2-1", "label": "Organiser le poste de travail", "order_index": 1 },
+        { "code": "T2-2", "label": "Implanter, poser, installer les materiels electriques", "order_index": 2 },
+        { "code": "T2-3", "label": "Cabler, raccorder les materiels electriques", "order_index": 3 },
+        { "code": "T2-4", "label": "Gerer les activites de son equipe", "order_index": 4 },
+        { "code": "T2-5", "label": "Coordonner son activite par rapport a celles des autres intervenants", "order_index": 5 },
+        { "code": "T2-6", "label": "Mener son activite de maniere eco-responsable", "order_index": 6 }
+      ]
+    },
+    {
+      "code": "A3",
+      "label": "Mise en service",
+      "order_index": 3,
+      "tasks": [
+        { "code": "T3-1", "label": "Realiser les verifications, les reglages, les parametrages, les essais necessaires a la mise en service de l'installation", "order_index": 1 },
+        { "code": "T3-2", "label": "Participer a la reception technique et aux levees de reserves de l'installation", "order_index": 2 }
+      ]
+    },
+    {
+      "code": "A4",
+      "label": "Maintenance",
+      "order_index": 4,
+      "tasks": [
+        { "code": "T4-1", "label": "Realiser une operation de maintenance preventive", "order_index": 1 },
+        { "code": "T4-2", "label": "Realiser une operation de depannage", "order_index": 2 }
+      ]
+    },
+    {
+      "code": "A5",
+      "label": "Communication et documentation",
+      "order_index": 5,
+      "tasks": [
+        { "code": "T5-1", "label": "Participer a la mise a jour du dossier technique de l'installation", "order_index": 1 },
+        { "code": "T5-2", "label": "Echanger sur le deroulement des operations, expliquer le fonctionnement de l'installation a l'interne et a l'externe", "order_index": 2 },
+        { "code": "T5-3", "label": "Conseiller le client, lui proposer une prestation complementaire, une modification ou une amelioration", "order_index": 3 }
+      ]
+    }
+  ],
+  "competency_tasks": [
+    { "competency_code": "C1", "task_code": "T1-1" },
+    { "competency_code": "C1", "task_code": "T1-2" },
+    { "competency_code": "C1", "task_code": "T1-4" },
+    { "competency_code": "C2", "task_code": "T1-3" },
+    { "competency_code": "C2", "task_code": "T1-4" },
+    { "competency_code": "C2", "task_code": "T2-1" },
+    { "competency_code": "C2", "task_code": "T2-4" },
+    { "competency_code": "C2", "task_code": "T2-5" },
+    { "competency_code": "C2", "task_code": "T2-6" },
+    { "competency_code": "C2", "task_code": "T4-2" },
+    { "competency_code": "C10", "task_code": "T1-1" },
+    { "competency_code": "C10", "task_code": "T1-2" },
+    { "competency_code": "C10", "task_code": "T5-1" },
+    { "competency_code": "C10", "task_code": "T5-2" }
+  ]
+}

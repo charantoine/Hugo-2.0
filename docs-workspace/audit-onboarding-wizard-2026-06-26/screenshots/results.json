@@ -1,0 +1,67 @@
+{
+  "checks": [
+    {
+      "name": "dashboard-onboarding-link",
+      "ok": true,
+      "url": "http://localhost:5173/admin/onboarding"
+    },
+    {
+      "name": "org-visible",
+      "ok": true
+    },
+    {
+      "name": "four-steps",
+      "ok": true,
+      "titles": [
+        "Comptes",
+        "Groupe",
+        "Conversation apprenant",
+        "Référentiel"
+      ]
+    },
+    {
+      "name": "status-badges",
+      "ok": true,
+      "badges": [
+        "OK",
+        "OK",
+        "Incomplet",
+        "OK"
+      ]
+    },
+    {
+      "name": "guidance-disclaimer",
+      "ok": true
+    },
+    {
+      "name": "cta-Gérer les utilisateurs",
+      "ok": true,
+      "href": "/users",
+      "landed": "http://localhost:5173/users"
+    },
+    {
+      "name": "cta-Gérer le groupe",
+      "ok": true,
+      "href": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "landed": "http://localhost:5173/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50"
+    },
+    {
+      "name": "cta-Configurer la conversation apprenant",
+      "ok": true,
+      "href": "/admin/conversation/learner/profiles/c9d018e5-12c0-4b7c-9466-0e24ee3130e3",
+      "landed": "http://localhost:5173/admin/conversation/learner/profiles/c9d018e5-12c0-4b7c-9466-0e24ee3130e3"
+    },
+    {
+      "name": "cta-Associer un référentiel",
+      "ok": true,
+      "href": "/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential",
+      "landed": "http://localhost:5173/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential"
+    },
+    {
+      "name": "group-bac-pro-melec",
+      "ok": true
+    }
+  ],
+  "screenshot": "wizard-overview.png",
+  "url": "http://localhost:5173/admin/onboarding"
+}

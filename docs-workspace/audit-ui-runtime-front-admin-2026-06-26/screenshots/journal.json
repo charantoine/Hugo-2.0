@@ -1,0 +1,213 @@
+{
+  "baseline": {
+    "base": "http://localhost:5173",
+    "login": "demo.superadmin",
+    "tenantLabel": "Demo Hugo Org",
+    "postLoginUrl": "http://localhost:5173/dashboard",
+    "capturedAt": "2026-06-26T11:13:05.510Z"
+  },
+  "manifest": [
+    {
+      "slug": "01-dashboard",
+      "path": "/dashboard",
+      "heading": "Tableau de bord",
+      "orgBannerVisible": false,
+      "breadcrumb": "",
+      "url": "http://localhost:5173/dashboard",
+      "screenshot": "01-dashboard.png",
+      "fullPage": false
+    },
+    {
+      "slug": "02-users",
+      "path": "/users",
+      "heading": "Création de comptes",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordUtilisateurs",
+      "url": "http://localhost:5173/users",
+      "screenshot": "02-users.png",
+      "fullPage": true
+    },
+    {
+      "slug": "03-user-detail",
+      "path": "/users/4c1b14e6-d990-44b1-ac85-67851ae099c7",
+      "heading": "Détail utilisateur",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordUtilisateursFormateur Melec Test",
+      "url": "http://localhost:5173/users/4c1b14e6-d990-44b1-ac85-67851ae099c7",
+      "screenshot": "03-user-detail.png",
+      "fullPage": false
+    },
+    {
+      "slug": "04-groups-admin",
+      "path": "/groups-admin",
+      "heading": "Groupes de l’organisation",
+      "orgBannerVisible": true,
+      "breadcrumb": "Tableau de bordGroupes",
+      "url": "http://localhost:5173/groups-admin",
+      "screenshot": "04-groups-admin.png",
+      "fullPage": false
+    },
+    {
+      "slug": "05-group-detail-viewport",
+      "path": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "heading": "bac pro melec",
+      "orgBannerVisible": true,
+      "breadcrumb": "Tableau de bordGroupesbac pro melec",
+      "url": "http://localhost:5173/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "screenshot": "05-group-detail-viewport.png",
+      "fullPage": false
+    },
+    {
+      "slug": "05-group-detail-full",
+      "path": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "heading": "bac pro melec",
+      "orgBannerVisible": true,
+      "breadcrumb": "Tableau de bordGroupesbac pro melec",
+      "url": "http://localhost:5173/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "screenshot": "05-group-detail-full.png",
+      "fullPage": true
+    },
+    {
+      "slug": "06-admin-conversation",
+      "path": "/admin/conversation",
+      "heading": "Configuration conversationnelle",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordConfiguration conversation",
+      "url": "http://localhost:5173/admin/conversation",
+      "screenshot": "06-admin-conversation.png",
+      "fullPage": true
+    },
+    {
+      "slug": "07-learner-profiles",
+      "path": "/admin/conversation/learner/profiles",
+      "heading": "Profils conversationnels apprenant",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordConfiguration conversationProfils conversationnels apprenant",
+      "url": "http://localhost:5173/admin/conversation/learner/profiles",
+      "screenshot": "07-learner-profiles.png",
+      "fullPage": true
+    },
+    {
+      "slug": "08-diagnostic",
+      "path": "/admin/conversation/learner/diagnostic",
+      "heading": "Apprenant — Diagnostic",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordConfiguration conversationDiagnostic",
+      "url": "http://localhost:5173/admin/conversation/learner/diagnostic",
+      "screenshot": "08-diagnostic.png",
+      "fullPage": true
+    },
+    {
+      "slug": "09-reflective_afest",
+      "path": "/admin/conversation/learner/reflective_afest",
+      "heading": "Apprenant — Réflexif AFEST",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordConfiguration conversationRéflexif AFEST",
+      "url": "http://localhost:5173/admin/conversation/learner/reflective_afest",
+      "screenshot": "09-reflective_afest.png",
+      "fullPage": true
+    },
+    {
+      "slug": "10-knowledge_review",
+      "path": "/admin/conversation/learner/knowledge_review",
+      "heading": "Apprenant — Buchage",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordConfiguration conversationBuchage",
+      "url": "http://localhost:5173/admin/conversation/learner/knowledge_review",
+      "screenshot": "10-knowledge_review.png",
+      "fullPage": true
+    },
+    {
+      "slug": "11-closing",
+      "path": "/admin/conversation/learner/closing",
+      "heading": "Apprenant — Clôture & évaluation",
+      "orgBannerVisible": true,
+      "breadcrumb": "Tableau de bordConfiguration conversationClôture évaluation",
+      "url": "http://localhost:5173/admin/conversation/learner/closing",
+      "screenshot": "11-closing.png",
+      "fullPage": true
+    },
+    {
+      "slug": "12-tutor-prompts",
+      "path": "/tutor-prompts",
+      "heading": "TutorPrompt (CRUD)",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordPrompts tuteur",
+      "url": "http://localhost:5173/tutor-prompts",
+      "screenshot": "12-tutor-prompts.png",
+      "fullPage": true
+    },
+    {
+      "slug": "13-conduct-profiles",
+      "path": "/conduct-profiles",
+      "heading": "TutorConductProfiles",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordProfils de conduite",
+      "url": "http://localhost:5173/conduct-profiles",
+      "screenshot": "13-conduct-profiles.png",
+      "fullPage": true
+    },
+    {
+      "slug": "14-referentials",
+      "path": "/referentials",
+      "heading": "Référentiels",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordRéférentiels",
+      "url": "http://localhost:5173/referentials",
+      "screenshot": "14-referentials.png",
+      "fullPage": false
+    },
+    {
+      "slug": "15-group-referential",
+      "path": "/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential",
+      "heading": "Référentiel associé au groupe",
+      "orgBannerVisible": false,
+      "breadcrumb": "Tableau de bordGroupesbac pro melecRéférentiel",
+      "url": "http://localhost:5173/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential",
+      "screenshot": "15-group-referential.png",
+      "fullPage": true
+    }
+  ],
+  "functional": [
+    {
+      "name": "dashboard-admin-link-users",
+      "ok": true,
+      "landed": "http://localhost:5173/users"
+    },
+    {
+      "name": "dashboard-tester-button",
+      "ok": false,
+      "error": "Error: locator.isVisible: Error: strict mode violation: getByRole('button', { name: /mode testeur/i }) resolved to 3 elements:\n    1) <button type=\"button\" class=\"btn btn-outline-primary btn-sm\">…</button> aka getByRole('button', { name: 'Voir les apprenants (mode' }).first()\n    2) <button type=\"button\" class=\"btn btn-outline-primary btn-sm\">…</button> aka getByRole('button', { name: 'Voir les apprenants (mode' }).nth(1)\n    3) <button type=\"button\" class=\"btn btn-outline-primary btn-sm\">…</button> aka getByRole('button', { name: 'Voir les apprenants (mode' }).nth(2)\n\nCall log:\n    - checking visibility of getByRole('button', { name: /mode testeur/i })\n"
+    },
+    {
+      "name": "group-detail-referential-link",
+      "ok": true,
+      "landed": "http://localhost:5173/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential"
+    },
+    {
+      "name": "hub-compat-tutor-prompts",
+      "ok": true,
+      "landed": "http://localhost:5173/tutor-prompts",
+      "tutorPromptsInMainNav": false
+    },
+    {
+      "name": "groups-admin-create-form-visible",
+      "ok": true,
+      "orgVisible": true,
+      "createBtn": true
+    },
+    {
+      "name": "group-has-name-bac-pro-melec",
+      "ok": true,
+      "groupHeading": "bac pro melec",
+      "cohortVisible": true,
+      "exportsAccordionOpenByDefault": false
+    },
+    {
+      "name": "navbar-no-tutor-prompts-direct",
+      "ok": true,
+      "expertRoutesInNavbar": 0
+    }
+  ],
+  "errors": []
+}

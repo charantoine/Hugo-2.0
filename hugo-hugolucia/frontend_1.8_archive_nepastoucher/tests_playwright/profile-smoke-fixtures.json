@@ -1,0 +1,24 @@
+{
+  "password": "smoke-pass-2026",
+  "learner": "smoke_learner",
+  "profiles": {
+    "single": "b345f2bd-3409-4f2a-bf4b-115a9efdc3d7",
+    "alpha": "e1696b14-2b8b-4611-b241-a6ea7e785021",
+    "beta": "4bbef2ab-e4a3-4cfd-a561-aabbd3ef968a"
+  },
+  "groups": {
+    "one": {
+      "group_id": "36203df0-d06c-4e1e-a3e4-6707db832c67",
+      "default_profile_id": "b345f2bd-3409-4f2a-bf4b-115a9efdc3d7"
+    },
+    "multi": {
+      "group_id": "182b555c-2f7f-4355-a7ce-0a01b0261a68",
+      "default_profile_id": null
+    },
+    "none": {
+      "group_id": "2636cd20-56d4-4db2-afde-d26bd8761f64",
+      "default_profile_id": null
+    }
+  },
+  "legacy_session_id": "60d0a25a-cbe6-4f80-9408-dea1a1680934"
+}

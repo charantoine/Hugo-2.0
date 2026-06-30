@@ -1,0 +1,32 @@
+{
+  "checks": [
+    {
+      "name": "dashboard-org-banner",
+      "ok": true
+    },
+    {
+      "name": "wizard-group-select-visible",
+      "ok": true,
+      "optionCount": 3,
+      "options": [
+        "_ux_audit_tmp_group2",
+        "bac pro melec",
+        "Demo Group"
+      ]
+    },
+    {
+      "name": "wizard-scope-message",
+      "ok": true
+    },
+    {
+      "name": "wizard-query-groupId",
+      "ok": true,
+      "selectedId": "29e5cdb9-de89-49b3-a36e-53b4b9bbbc50"
+    },
+    {
+      "name": "wizard-change-group-recalculates",
+      "ok": true,
+      "secondLabel": "bac pro melec"
+    }
+  ]
+}

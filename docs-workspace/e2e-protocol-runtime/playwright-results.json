@@ -1,0 +1,1393 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/Cellar/node/26.3.0/bin/node",
+      "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/node_modules/.bin/playwright",
+      "test",
+      "tests_playwright/e2e/protocol",
+      "-c",
+      "tests_playwright/playwright.config.ts",
+      "--reporter=json"
+    ],
+    "configFile": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/playwright.config.ts",
+    "rootDir": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run dev -- --port 5173 --strictPort",
+      "cwd": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true,
+      "env": {
+        "GOMODCACHE": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/go-mod",
+        "_ZO_DOCTOR": "0",
+        "PUPPETEER_CACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/puppeteer",
+        "VSCODE_CRASH_REPORTER_PROCESS_TYPE": "extensionHost",
+        "NODE": "/usr/local/Cellar/node/26.3.0/bin/node",
+        "INIT_CWD": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8",
+        "TERM": "dumb",
+        "SHELL": "/bin/zsh",
+        "npm_config_allow_scripts": "",
+        "VSCODE_PROCESS_TITLE": "extension-host  Zone de travail Hugo [1-2]",
+        "TMPDIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/",
+        "npm_config_global_prefix": "/usr/local",
+        "CURSOR_WORKSPACE_LABEL": "Zone de travail Hugo",
+        "PIP_CACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/pip",
+        "MallocNanoZone": "0",
+        "COLOR": "0",
+        "NO_COLOR": "1",
+        "npm_config_noproxy": "",
+        "npm_config_local_prefix": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8",
+        "CURSOR_LAYOUT": "glass",
+        "CURSOR_CONVERSATION_ID": "ce395ec4-6138-49d2-87e6-808cad17ab0a",
+        "NX_CACHE_DIRECTORY": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/nx",
+        "CYPRESS_CACHE_FOLDER": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/cypress",
+        "USER": "machin",
+        "CCACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/ccache",
+        "COMMAND_MODE": "unix2003",
+        "npm_config_globalconfig": "/usr/local/etc/npmrc",
+        "YARN_CACHE_FOLDER": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/yarn",
+        "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.wOQ92rXRcO/Listeners",
+        "__CF_USER_TEXT_ENCODING": "0x1F6:0x0:0x1",
+        "npm_execpath": "/usr/local/lib/node_modules/npm/bin/npm-cli.js",
+        "BUN_INSTALL_CACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/bun",
+        "VIRTUAL_ENV": "/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv",
+        "HOMEBREW_CACHE": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/homebrew",
+        "ELECTRON_RUN_AS_NODE": "1",
+        "npm_config_devdir": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/node-gyp",
+        "PATH": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/node_modules/.bin:/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/node_modules/.bin:/Users/machin/Desktop/Zone de travail Hugo/node_modules/.bin:/Users/machin/Desktop/node_modules/.bin:/Users/machin/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Users/machin/Desktop/Zone de travail Hugo/hugo_back/.venv/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.14/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/X11/bin:/Applications/Cursor.app/Contents/Resources/app/node_modules/@vscode/ripgrep/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.14/bin",
+        "npm_package_json": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/package.json",
+        "_": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/node_modules/.bin/playwright",
+        "npm_config_userconfig": "/Users/machin/.npmrc",
+        "npm_config_init_module": "/Users/machin/.npm-init.js",
+        "__CFBundleIdentifier": "com.todesktop.230313mzl4w4u92",
+        "npm_command": "run",
+        "CP_HOME_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/cocoapods",
+        "PWD": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8",
+        "DJANGO_SETTINGS_MODULE": "config.settings.dev",
+        "VSCODE_HANDLES_UNCAUGHT_ERRORS": "true",
+        "npm_lifecycle_event": "test:protocol:report",
+        "EDITOR": "vi",
+        "VSCODE_ESM_ENTRYPOINT": "vs/workbench/api/node/extensionHostProcess",
+        "npm_package_name": "frontend",
+        "CONDA_PKGS_DIRS": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/conda",
+        "CURSOR_AGENT": "1",
+        "npm_config_npm_version": "11.16.0",
+        "PLAYWRIGHT_BROWSERS_PATH": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/playwright",
+        "XPC_FLAGS": "0x0",
+        "FORCE_COLOR": "0",
+        "MACH_PORT_RENDEZVOUS_PEER_VALDATION": "0",
+        "npm_config_node_gyp": "/usr/local/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+        "GEM_SPEC_CACHE": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/gem-specs",
+        "npm_package_version": "0.0.0",
+        "XPC_SERVICE_NAME": "0",
+        "GRADLE_USER_HOME": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/gradle",
+        "CURSOR_ORIG_UID": "502",
+        "SHLVL": "2",
+        "HOME": "/Users/machin",
+        "VSCODE_NLS_CONFIG": "{\"userLocale\":\"fr\",\"osLocale\":\"fr-fr\",\"resolvedLanguage\":\"en\",\"defaultMessagesFile\":\"/Applications/Cursor.app/Contents/Resources/app/out/nls.messages.json\",\"locale\":\"fr\",\"availableLanguages\":{}}",
+        "PNPM_STORE_PATH": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/pnpm-store",
+        "BUNDLE_PATH": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/bundle",
+        "TURBO_CACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/turbo",
+        "NUGET_PACKAGES": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/nuget",
+        "NPM_CONFIG_CACHE": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/npm",
+        "CURSOR_ORIG_GID": "20",
+        "LOGNAME": "machin",
+        "npm_lifecycle_script": "playwright test tests_playwright/e2e/protocol -c tests_playwright/playwright.config.ts --reporter=json > ../../docs-workspace/e2e-protocol-runtime/playwright-results.json && node scripts/generate_protocol_report.mjs",
+        "GOCACHE": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/go-build",
+        "CURSOR_RIPGREP_PATH": "/Applications/Cursor.app/Contents/Resources/app/node_modules/@vscode/ripgrep/bin/rg",
+        "VSCODE_IPC_HOOK": "/Users/machin/Library/Application Support/Cursor/3.8.-main.sock",
+        "VSCODE_CODE_CACHE_PATH": "/Users/machin/Library/Application Support/Cursor/CachedData/e56ad3440df06d22ca7501e65fd518e905486ef0",
+        "npm_config_user_agent": "npm/11.16.0 node/v26.3.0 darwin x64 workspaces/false",
+        "CARGO_TARGET_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/cargo-target",
+        "VSCODE_PID": "71721",
+        "DISPLAY": "/private/tmp/com.apple.launchd.a6O0sq2Grj/org.macosforge.xquartz:0",
+        "AGENT_TRANSCRIPTS": "/Users/machin/.cursor/projects/Users-machin-Desktop-Zone-de-travail-Hugo/agent-transcripts",
+        "POETRY_CACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/poetry",
+        "COMPOSER_HOME": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/composer",
+        "DATABASE_URL": "postgresql://localhost:5432/hugo_poc",
+        "VSCODE_CWD": "/",
+        "VIRTUAL_ENV_PROMPT": "(.venv) ",
+        "UV_CACHE_DIR": "/var/folders/vb/611s9yhn6zx77cbtk7q0dbr40000gp/T/cursor-sandbox-cache/2fd7304421dd60d3c74c4ad090a4c713/uv",
+        "npm_node_execpath": "/usr/local/Cellar/node/26.3.0/bin/node",
+        "npm_config_prefix": "/usr/local",
+        "VITE_API_URL": "/api"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "e2e/protocol/lot00-preconditions-smoke.spec.ts",
+      "file": "e2e/protocol/lot00-preconditions-smoke.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 0 — Préconditions & smoke",
+          "file": "e2e/protocol/lot00-preconditions-smoke.spec.ts",
+          "line": 16,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L0-preconditions probe API + auth",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 828,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:05:59.993Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "405a26f9467fd1b11e5a-1af8585d4767245df651",
+              "file": "e2e/protocol/lot00-preconditions-smoke.spec.ts",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "L0-smoke login + dashboard + no fatal console",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2885,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:00.870Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "405a26f9467fd1b11e5a-d09cee7c2ca8fce1c82a",
+              "file": "e2e/protocol/lot00-preconditions-smoke.spec.ts",
+              "line": 93,
+              "column": 3
+            },
+            {
+              "title": "L0-smoke app learner route loads for smoke user if fixtures present",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2913,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:04.166Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "405a26f9467fd1b11e5a-daa51187dfc9b506b3cc",
+              "file": "e2e/protocol/lot00-preconditions-smoke.spec.ts",
+              "line": 104,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "e2e/protocol/lot01-org-active.spec.ts",
+      "file": "e2e/protocol/lot01-org-active.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 1 — Organisation active / SUPERADMIN",
+          "file": "e2e/protocol/lot01-org-active.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L1-banner /dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3005,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:07.102Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f315421db622621a61e2-df5858018f60d003c2e2",
+              "file": "e2e/protocol/lot01-org-active.spec.ts",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "L1-banner /users",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2989,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:10.118Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f315421db622621a61e2-8dcede8224cc77b5f6d3",
+              "file": "e2e/protocol/lot01-org-active.spec.ts",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "L1-banner /groups-admin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2981,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:13.117Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f315421db622621a61e2-6a4525979471b4cd87d2",
+              "file": "e2e/protocol/lot01-org-active.spec.ts",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "L1-banner /groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2997,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:16.109Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f315421db622621a61e2-3737ddcf9ae38443acd2",
+              "file": "e2e/protocol/lot01-org-active.spec.ts",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "L1-banner /admin/onboarding",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2965,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:19.120Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f315421db622621a61e2-9024d72189cfc4628e7e",
+              "file": "e2e/protocol/lot01-org-active.spec.ts",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "L1-org-switch changes group list (no silent leak)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9342,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:22.105Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f315421db622621a61e2-5d539462b0d732ad3473",
+              "file": "e2e/protocol/lot01-org-active.spec.ts",
+              "line": 28,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "e2e/protocol/lot02-wizard.spec.ts",
+      "file": "e2e/protocol/lot02-wizard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 2 — Wizard admin généralisé",
+          "file": "e2e/protocol/lot02-wizard.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L2-scope org + groupe à configurer + pas de référence démo",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4324,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:31.482Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7a61bcf2f2b3c2cff64-8d38e7c35ad25b38e2f9",
+              "file": "e2e/protocol/lot02-wizard.spec.ts",
+              "line": 14,
+              "column": 3
+            },
+            {
+              "title": "L2-query groupId pré-sélectionne le groupe",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4117,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:35.822Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7a61bcf2f2b3c2cff64-2e68f9ed32e9ecd0c3fe",
+              "file": "e2e/protocol/lot02-wizard.spec.ts",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "title": "L2-changer groupe recalcule étape Groupe",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6174,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:39.954Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7a61bcf2f2b3c2cff64-9e7d5159fa898844094b",
+              "file": "e2e/protocol/lot02-wizard.spec.ts",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "L2-CTA créer groupe -> /groups-admin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2571,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:46.145Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a7a61bcf2f2b3c2cff64-25c8106528df910329cc",
+              "file": "e2e/protocol/lot02-wizard.spec.ts",
+              "line": 54,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "e2e/protocol/lot03-dashboard-demo.spec.ts",
+      "file": "e2e/protocol/lot03-dashboard-demo.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 3 — Dashboard testeur / démo séparé",
+          "file": "e2e/protocol/lot03-dashboard-demo.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L3-raccourci démo distinct du wizard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3042,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:48.740Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "78385bc4fe207be0aff5-75b8ce1de0fad9fa0e32",
+              "file": "e2e/protocol/lot03-dashboard-demo.spec.ts",
+              "line": 6,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "e2e/protocol/lot04-groups-users.spec.ts",
+      "file": "e2e/protocol/lot04-groups-users.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 4 — Groupes / users (wire + persistance légère)",
+          "file": "e2e/protocol/lot04-groups-users.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L4-users list wired to GET /users/",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2968,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:51.803Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "42836372a9577e7fd3bd-71fb9b3b9551f28cbd14",
+              "file": "e2e/protocol/lot04-groups-users.spec.ts",
+              "line": 12,
+              "column": 3
+            },
+            {
+              "title": "L4-groups-admin list wired to GET /groups/",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2963,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:54.781Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "42836372a9577e7fd3bd-75172f7118b996d8c637",
+              "file": "e2e/protocol/lot04-groups-users.spec.ts",
+              "line": 20,
+              "column": 3
+            },
+            {
+              "title": "L4-create group persists in list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4160,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:06:57.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "42836372a9577e7fd3bd-78ebfe0eba1d51b1642a",
+              "file": "e2e/protocol/lot04-groups-users.spec.ts",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "title": "L4-group detail members section loads",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3939,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:01.924Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "42836372a9577e7fd3bd-e05a339fe4e35819b75f",
+              "file": "e2e/protocol/lot04-groups-users.spec.ts",
+              "line": 42,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+      "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 5 — Associations tuteur/apprenant",
+          "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+          "line": 10,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L5-tutor sees only linked learners",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Scaffold — nécessite mots de passe apprenant/tuteur démo ou SMOKE_RUN_TENANT=1 pour associations et synthèse complète",
+                      "location": {
+                        "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                        "line": 11,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:05.879Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Scaffold — nécessite mots de passe apprenant/tuteur démo ou SMOKE_RUN_TENANT=1 pour associations et synthèse complète",
+                          "location": {
+                            "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                            "line": 11,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "13eef1f890a614716ba7-e8fb5f59eb9ab3753cf5",
+              "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+              "line": 12,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "LOT 6 — Profils conversationnels",
+          "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L6-profile assign persists on group",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Utiliser e2e/admin_learner_profiles.spec.ts avec SMOKE_RUN_TENANT=1",
+                      "location": {
+                        "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                        "line": 16,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:05.879Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Utiliser e2e/admin_learner_profiles.spec.ts avec SMOKE_RUN_TENANT=1",
+                          "location": {
+                            "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                            "line": 16,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "13eef1f890a614716ba7-80cc0146a7875426055b",
+              "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+              "line": 17,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "LOT 7 — Référentiel / bibliothèque",
+          "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L7-RNCP38878 attached and library visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Scaffold — nécessite mots de passe apprenant/tuteur démo ou SMOKE_RUN_TENANT=1 pour associations et synthèse complète",
+                      "location": {
+                        "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                        "line": 21,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:05.879Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Scaffold — nécessite mots de passe apprenant/tuteur démo ou SMOKE_RUN_TENANT=1 pour associations et synthèse complète",
+                          "location": {
+                            "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                            "line": 21,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "13eef1f890a614716ba7-aa42a29aa142f2df2c3d",
+              "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+              "line": 22,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "LOT 9 — Synthèse / évaluation / trace",
+          "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L9-request-synthesis wired",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Nécessite session en état synthesis_eligible — voir cluster16 fixtures",
+                      "location": {
+                        "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                        "line": 26,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:05.879Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Nécessite session en état synthesis_eligible — voir cluster16 fixtures",
+                          "location": {
+                            "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                            "line": 26,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "13eef1f890a614716ba7-f998f964b98706b36005",
+              "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+              "line": 27,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "LOT 11 — Formateur",
+          "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+          "line": 30,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L11-trainer knowledge route",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Couvert partiellement par test_smoke_trainer.spec.ts",
+                      "location": {
+                        "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                        "line": 31,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:05.879Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "Couvert partiellement par test_smoke_trainer.spec.ts",
+                          "location": {
+                            "file": "/Users/machin/Desktop/Zone de travail Hugo/hugo-hugolucia/frontend_1.8/tests_playwright/e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+                            "line": 31,
+                            "column": 8
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "13eef1f890a614716ba7-bf81e902e26ff5049833",
+              "file": "e2e/protocol/lot05-07-09-11-scaffold.spec.ts",
+              "line": 32,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+      "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "LOT 8 — Parcours apprenant (smoke fixtures)",
+          "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L8-session ui-state wired",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3916,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:05.891Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "46dfd3d5c6eef7b8cb1b-b2372ea2163e06260586",
+              "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "L8-memory-summary wired when panel open",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3396,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:09.818Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "46dfd3d5c6eef7b8cb1b-d5993c6b2ea804557e49",
+              "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+              "line": 22,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "LOT 10 — Tuteur (smoke fixtures)",
+          "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+          "line": 42,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L10-tutor timeline sans verbatim",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 914,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:13.225Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "46dfd3d5c6eef7b8cb1b-8a36fa538b4830259d04",
+              "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+              "line": 43,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "LOT 12 — Mode testeur / pas de P0 sur /app",
+          "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+          "line": 58,
+          "column": 6,
+          "specs": [
+            {
+              "title": "L12-learner app sans debug P0",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2893,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:14.148Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "46dfd3d5c6eef7b8cb1b-b86bd787cc62b86db33d",
+              "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+              "line": 59,
+              "column": 3
+            },
+            {
+              "title": "L12-dashboard testeur séparé",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 959,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-29T08:07:17.049Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "46dfd3d5c6eef7b8cb1b-a0e89e67b40314814c18",
+              "file": "e2e/protocol/lot08-12-learner-tutor.spec.ts",
+              "line": 73,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-06-29T08:05:59.005Z",
+    "duration": 79074.30200000001,
+    "expected": 23,
+    "skipped": 5,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

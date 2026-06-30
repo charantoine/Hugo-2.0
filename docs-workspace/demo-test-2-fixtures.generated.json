@@ -1,0 +1,16 @@
+{
+  "organisation_id": "444cc40a-dd56-49e0-8776-3b1273e3c2de",
+  "organisation_name": "OF_test_2",
+  "group_id": "57833104-45ca-4615-b32a-b8b49dd80c7c",
+  "group_name": "bac_pro__test_2",
+  "referential_source_ref": "RNCP38878",
+  "referential_id": "a70d7369-0186-45aa-9a16-6c3cbd85fb82",
+  "learner_conversation_profile_id": "b96f4745-9857-42d3-ab69-c6dd73fcba5d",
+  "profile_clone_source": "profile:profil_conversationnel_mk1",
+  "password": "demo123",
+  "users": {
+    "learner": "apprenant_test_2",
+    "tutor": "tuteur_test_2",
+    "trainer": "formateur_test_2"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "password": "tenant-smoke-2026",
+  "org_a": {
+    "id": "e9333fb1-f49e-4539-a195-ecbf94bee85a",
+    "name": "Tenant Smoke Org A"
+  },
+  "org_b": {
+    "id": "e13a1d48-6b30-400b-8d7c-826ec40ec397",
+    "name": "Tenant Smoke Org B"
+  },
+  "group_a_id": "79eb55b6-e4b5-4bf8-b842-b3b0eec1a423",
+  "group_b_id": "a590799f-062f-4ec4-bffe-3ac7cf62b4b6",
+  "session_a_id": "caf5b174-4748-4657-8592-3ec4600298ce",
+  "session_b_id": "efa8ef8d-12fc-4f06-9e52-4e64d6b710fa",
+  "users": {
+    "superadmin": "tenant_superadmin",
+    "orgadmin_a": "tenant_orgadmin_a",
+    "orgadmin_b": "tenant_orgadmin_b",
+    "tutor_a": "tenant_tutor_a",
+    "learner_a": "tenant_learner_a",
+    "learner_b": "tenant_learner_b"
+  }
+}

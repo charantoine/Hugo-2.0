@@ -1,0 +1,28 @@
+{
+  "base": "https://hugoback.encoors.com",
+  "authenticated": false,
+  "results": [
+    {
+      "scenario": "probe",
+      "path": "/internal/hugo/analytics/conversation-summary/",
+      "status": 404,
+      "note": "unauthenticated",
+      "detail": null
+    },
+    {
+      "scenario": "probe",
+      "path": "/internal/hugo/sessions/00000000-0000-0000-0000-000000000001/observability/",
+      "status": 404,
+      "note": "unauthenticated",
+      "detail": null
+    },
+    {
+      "scenario": "probe",
+      "path": "/internal/hugo/sessions/00000000-0000-0000-0000-000000000001/d9bis/export/",
+      "status": 404,
+      "note": "unauthenticated",
+      "detail": null
+    }
+  ],
+  "message": "Set ENCOORS_USERNAME/PASSWORD for EVAL1/O1"
+}

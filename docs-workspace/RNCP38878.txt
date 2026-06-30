@@ -1,0 +1,494 @@
+{
+  "name": "BAC PRO MELEC - RNCP38878 (gabarit structuré)",
+  "source_ref": "RNCP38878",
+  "items": [
+    {
+      "code": "BC01",
+      "label": "Préparation des opérations à réaliser",
+      "evaluation_criteria": [
+        "Analyse les conditions de l’opération et son contexte pour préparer l’intervention.",
+        "Définit l’installation à l’aide de solutions préétablies adaptées à la situation.",
+        "Exploite les outils numériques dans le contexte professionnel pour préparer les opérations.",
+        "Complète avec rigueur les documents liés aux opérations à réaliser."
+      ]
+    },
+    {
+      "code": "BC02",
+      "label": "Réalisation et mise en service d’une installation",
+      "evaluation_criteria": [
+        "Organise l’opération dans son contexte en tenant compte des contraintes du chantier.",
+        "Réalise l’installation de manière éco-responsable en respectant les consignes de sécurité.",
+        "Contrôle les grandeurs caractéristiques de l’installation et ajuste les réglages nécessaires.",
+        "Règle et paramètre les matériels de l’installation, puis valide le fonctionnement global."
+      ]
+    },
+    {
+      "code": "BC03",
+      "label": "Maintenance d’une installation",
+      "evaluation_criteria": [
+        "Diagnostique un dysfonctionnement sur une installation électrique ou connectée.",
+        "Identifie les causes probables de la panne et propose une action corrective adaptée.",
+        "Remplace un matériel électrique en respectant les procédures de sécurité.",
+        "Vérifie le bon fonctionnement de l’installation après intervention de maintenance."
+      ]
+    },
+    {
+      "code": "BC04",
+      "label": "Économie-gestion",
+      "evaluation_criteria": [
+        "Comprend et analyse une situation d’entreprise en mobilisant les notions économiques et de gestion.",
+        "Exploite et analyse des documents économiques, juridiques ou de gestion adaptés au contexte professionnel.",
+        "Justifie une réponse en sélectionnant des informations pertinentes dans un ou plusieurs documents.",
+        "Rédige une réponse structurée à une problématique donnée en utilisant le vocabulaire professionnel adéquat."
+      ]
+    },
+    {
+      "code": "BC05",
+      "label": "Prévention santé environnement",
+      "evaluation_criteria": [
+        "Met en œuvre une démarche d’analyse dans une situation donnée en lien avec la prévention.",
+        "Explique un phénomène physiologique, un enjeu environnemental ou une disposition réglementaire.",
+        "Propose une solution pour résoudre un problème en prenant en compte la prévention des risques.",
+        "Argumente un choix et communique à l’écrit avec une syntaxe claire et un vocabulaire adapté."
+      ]
+    },
+    {
+      "code": "BC06",
+      "label": "Mathématiques",
+      "evaluation_criteria": [
+        "Recherche, extrait et organise l’information nécessaire à la résolution de problèmes.",
+        "Émet des conjectures, propose et choisit une méthode de résolution ou élabore un algorithme.",
+        "Met en œuvre une méthode de résolution, utilise un modèle, représente et calcule pour répondre à la situation.",
+        "Critique un résultat, en valide la vraisemblance et communique une démarche argumentée à l’oral ou à l’écrit."
+      ]
+    },
+    {
+      "code": "BC07",
+      "label": "Physique-chimie",
+      "evaluation_criteria": [
+        "Recherche, extrait et organise l’information scientifique utile à la résolution d’une situation.",
+        "Formule des hypothèses et choisit une méthode de résolution ou un protocole expérimental adapté.",
+        "Met en œuvre un protocole expérimental, utilise un modèle, calcule et effectue des simulations.",
+        "Commente un résultat, argumente la vraisemblance d’une hypothèse ou d’une mesure et communique la démarche."
+      ]
+    },
+    {
+      "code": "BC08",
+      "label": "Langue vivante",
+      "evaluation_criteria": [
+        "Comprend la langue orale dans des situations de la vie quotidienne, sociale et professionnelle.",
+        "Comprend un document écrit et en dégage les informations essentielles.",
+        "S’exprime à l’écrit et à l’oral en continu à un niveau B1+ du CECRL.",
+        "Interagit à l’oral dans des situations courantes de la vie sociale et professionnelle."
+      ]
+    },
+    {
+      "code": "BC09",
+      "label": "Français",
+      "evaluation_criteria": [
+        "Maîtrise l’échange écrit pour lire, analyser et écrire des textes adaptés aux situations.",
+        "Adapte son expression écrite selon les situations, les destinataires et les objectifs.",
+        "Maîtrise la lecture et exerce son esprit critique face à différents types de textes.",
+        "Met en perspective ses connaissances et ses expériences pour construire une réflexion argumentée."
+      ]
+    },
+    {
+      "code": "BC10",
+      "label": "Histoire-géographie et enseignement moral et civique",
+      "evaluation_criteria": [
+        "Maîtrise et utilise des repères chronologiques et spatiaux pour se situer dans le temps et l’espace.",
+        "S’approprie les notions et démarches historiques et géographiques pour analyser des situations.",
+        "Construit et exprime une argumentation cohérente et étayée en lien avec les programmes.",
+        "Met à distance ses opinions personnelles pour construire un jugement en mobilisant les valeurs de la République."
+      ]
+    },
+    {
+      "code": "BC11",
+      "label": "Arts appliqués et cultures artistiques",
+      "evaluation_criteria": [
+        "Recherche, identifie et collecte des ressources documentaires et les organise pour nourrir une réflexion.",
+        "Analyse et compare des œuvres ou des produits en les situant dans leur contexte de création.",
+        "Établit des propositions cohérentes en réponse à un problème posé, en respectant un cahier des charges simple.",
+        "Choisit des outils adaptés, traduit graphiquement des intentions et présente une communication structurée."
+      ]
+    },
+    {
+      "code": "BC12",
+      "label": "Éducation physique et sportive",
+      "evaluation_criteria": [
+        "Développe sa motricité et s’organise pour apprendre et s’entraîner efficacement.",
+        "Exerce sa responsabilité dans un engagement personnel et solidaire en respectant les règles.",
+        "Construit durablement sa santé par une pratique physique adaptée et régulière.",
+        "Accède au patrimoine culturel sportif et artistique en participant à des activités variées."
+      ]
+    },
+    {
+      "code": "BC13",
+      "label": "Langue vivante étrangère ou régionale (bloc facultatif)",
+      "evaluation_criteria": [
+        "S’exprime à l’oral en continu à un niveau B1+ dans une langue étrangère ou régionale.",
+        "Interagit à l’oral dans des situations de la vie quotidienne, sociale et professionnelle.",
+        "Comprend un document écrit dans des situations courantes et professionnelles.",
+        "Mobilise ses compétences linguistiques dans un contexte facultatif de spécialisation."
+      ]
+    },
+    {
+      "code": "BC14",
+      "label": "Mobilité (bloc facultatif)",
+      "evaluation_criteria": [
+        "Comprend et se fait comprendre dans un contexte professionnel étranger.",
+        "Caractérise le contexte professionnel étranger et se repère dans un nouvel environnement.",
+        "Réalise partiellement une activité professionnelle sous contrôle dans un contexte étranger.",
+        "Compare des activités professionnelles similaires réalisées en France et à l’étranger et identifie des caractéristiques culturelles."
+      ]
+    },
+    {
+      "code": "BC15",
+      "label": "Secteur sportif (bloc facultatif)",
+      "evaluation_criteria": [
+        "Communique dans les situations de la vie professionnelle liées au secteur sportif.",
+        "Prend en compte les caractéristiques des publics dans une démarche d’éducation à la citoyenneté.",
+        "Contribue au fonctionnement d’une structure en participant à la conception et à la conduite de projets d’animation.",
+        "Assure le cadrage, la promotion et l’évaluation d’un projet d’animation dans le secteur sportif."
+      ]
+    }
+  ],
+  "activities": [
+    {
+      "code": "A1",
+      "label": "Préparation des opérations",
+      "description": "Préparation des opérations de réalisation, de mise en service et de maintenance des installations électriques et de leurs environnements connectés.",
+      "tasks": [
+        {
+          "code": "T1-1",
+          "label": "Analyser les conditions de l’opération et son contexte à partir des documents techniques et des contraintes du site."
+        },
+        {
+          "code": "T1-2",
+          "label": "Définir l’installation en s’appuyant sur des solutions préétablies et la documentation technique."
+        },
+        {
+          "code": "T1-3",
+          "label": "Exploiter les outils numériques pour préparer les opérations (plans, schémas, logiciels professionnels)."
+        },
+        {
+          "code": "T1-4",
+          "label": "Compléter les documents liés aux opérations (dossiers techniques, formulaires, fiches de suivi)."
+        }
+      ]
+    },
+    {
+      "code": "A2",
+      "label": "Réalisation de l’installation",
+      "description": "Réalisation des installations électriques et connectées en tenant compte des exigences de sécurité et d’éco-responsabilité.",
+      "tasks": [
+        {
+          "code": "T2-1",
+          "label": "Organiser l’opération de réalisation en fonction du contexte, des moyens disponibles et du planning."
+        },
+        {
+          "code": "T2-2",
+          "label": "Réaliser l’installation électrique et ses environnements connectés de manière éco-responsable."
+        },
+        {
+          "code": "T2-3",
+          "label": "Mettre en œuvre les appareillages, équipements et réseaux en respectant les normes en vigueur."
+        },
+        {
+          "code": "T2-4",
+          "label": "Contrôler les grandeurs caractéristiques de l’installation au fur et à mesure de la réalisation."
+        }
+      ]
+    },
+    {
+      "code": "A3",
+      "label": "Mise en service et validation",
+      "description": "Mise en service, réglage et validation des installations électriques et de leurs environnements connectés.",
+      "tasks": [
+        {
+          "code": "T3-1",
+          "label": "Régler et paramétrer les matériels de l’installation en fonction des prescriptions."
+        },
+        {
+          "code": "T3-2",
+          "label": "Effectuer les essais et mesures nécessaires pour valider le fonctionnement de l’installation."
+        },
+        {
+          "code": "T3-3",
+          "label": "Valider le fonctionnement de l’installation en consignant les résultats et en respectant les procédures."
+        },
+        {
+          "code": "T3-4",
+          "label": "Communiquer avec les professionnels et le client/usager lors de la mise en service."
+        }
+      ]
+    },
+    {
+      "code": "A4",
+      "label": "Maintenance",
+      "description": "Maintenance des installations électriques et connectées, incluant le diagnostic et la remise en état.",
+      "tasks": [
+        {
+          "code": "T4-1",
+          "label": "Diagnostiquer un dysfonctionnement sur une installation électrique ou connectée."
+        },
+        {
+          "code": "T4-2",
+          "label": "Identifier l’origine de la panne à partir des symptômes et des mesures relevées."
+        },
+        {
+          "code": "T4-3",
+          "label": "Remplacer un matériel électrique ou un composant défectueux en respectant les procédures."
+        },
+        {
+          "code": "T4-4",
+          "label": "Vérifier le bon fonctionnement de l’installation après intervention de maintenance."
+        }
+      ]
+    },
+    {
+      "code": "A5",
+      "label": "Communication",
+      "description": "Communication professionnelle avec les équipes, les autres intervenants et les clients/usagers autour des opérations réalisées.",
+      "tasks": [
+        {
+          "code": "T5-1",
+          "label": "Communiquer entre professionnels sur l’opération en utilisant un vocabulaire technique adapté."
+        },
+        {
+          "code": "T5-2",
+          "label": "Communiquer avec le client ou l’usager sur l’opération réalisée, les consignes d’utilisation et de sécurité."
+        },
+        {
+          "code": "T5-3",
+          "label": "Renseigner les documents de suivi, comptes rendus et rapports liés à l’intervention."
+        },
+        {
+          "code": "T5-4",
+          "label": "Utiliser les outils numériques pour partager les informations techniques et organisationnelles."
+        }
+      ]
+    }
+  ],
+  "criteria": [
+    {
+      "code": "C01.1",
+      "block_code": "BC01",
+      "label": "Analyse correctement le contexte de l’opération pour préparer les travaux."
+    },
+    {
+      "code": "C01.2",
+      "block_code": "BC01",
+      "label": "Utilise les outils numériques et les documents techniques pour définir l’installation."
+    },
+    {
+      "code": "C02.1",
+      "block_code": "BC02",
+      "label": "Organise l’opération de réalisation en tenant compte des contraintes du chantier."
+    },
+    {
+      "code": "C02.2",
+      "block_code": "BC02",
+      "label": "Réalise l’installation de manière conforme aux normes et en intégrant une démarche éco-responsable."
+    },
+    {
+      "code": "C02.3",
+      "block_code": "BC02",
+      "label": "Règle, paramètre et valide le fonctionnement de l’installation après essais."
+    },
+    {
+      "code": "C03.1",
+      "block_code": "BC03",
+      "label": "Diagnostique de manière fiable les dysfonctionnements d’une installation."
+    },
+    {
+      "code": "C03.2",
+      "block_code": "BC03",
+      "label": "Remplace un matériel électrique et s’assure du bon fonctionnement après intervention."
+    },
+    {
+      "code": "C05.1",
+      "block_code": "BC05",
+      "label": "Met en œuvre une démarche d’analyse en prévention santé environnement."
+    },
+    {
+      "code": "C05.2",
+      "block_code": "BC05",
+      "label": "Propose et argumente des solutions de prévention adaptées à la situation."
+    },
+    {
+      "code": "C06.1",
+      "block_code": "BC06",
+      "label": "Choisit et met en œuvre une méthode de résolution mathématique adaptée à la situation."
+    },
+    {
+      "code": "C06.2",
+      "block_code": "BC06",
+      "label": "Valide et communique les résultats des calculs ou simulations mathématiques."
+    },
+    {
+      "code": "C09.1",
+      "block_code": "BC09",
+      "label": "Rédige des textes structurés en adaptant son expression écrite aux destinataires."
+    },
+    {
+      "code": "C09.2",
+      "block_code": "BC09",
+      "label": "Exerce son esprit critique dans la lecture de différents types de textes."
+    },
+    {
+      "code": "C06.3",
+      "block_code": "BC06",
+      "label": "Émet des conjectures et élabore un algorithme adapté à la résolution du problème."
+    },
+    {
+      "code": "C06.4",
+      "block_code": "BC06",
+      "label": "Critique la vraisemblance des résultats obtenus en menant un raisonnement logique."
+    },
+    {
+      "code": "C07.1",
+      "block_code": "BC07",
+      "label": "Formule des hypothèses et choisit un protocole expérimental adapté à la situation."
+    },
+    {
+      "code": "C07.2",
+      "block_code": "BC07",
+      "label": "Met en œuvre un protocole expérimental et exploite les résultats obtenus."
+    },
+    {
+      "code": "C07.3",
+      "block_code": "BC07",
+      "label": "Commente et valide les résultats en argumentant la vraisemblance des mesures."
+    },
+    {
+      "code": "C08.1",
+      "block_code": "BC08",
+      "label": "Comprend la langue orale et les documents écrits dans des situations courantes."
+    },
+    {
+      "code": "C08.2",
+      "block_code": "BC08",
+      "label": "S’exprime à l’écrit et à l’oral à un niveau B1+ en contexte social et professionnel."
+    },
+    {
+      "code": "C10.1",
+      "block_code": "BC10",
+      "label": "Utilise des repères chronologiques et spatiaux pour contextualiser des événements."
+    },
+    {
+      "code": "C10.2",
+      "block_code": "BC10",
+      "label": "Construit une argumentation cohérente en mobilisant les notions d’histoire-géographie et d’EMC."
+    },
+    {
+      "code": "C11.1",
+      "block_code": "BC11",
+      "label": "Sélectionne et analyse des références artistiques pour élaborer une réponse graphique."
+    },
+    {
+      "code": "C11.2",
+      "block_code": "BC11",
+      "label": "Met en œuvre une démarche d’expérimentation et finalise une proposition en respectant un cahier des charges."
+    },
+    {
+      "code": "C12.1",
+      "block_code": "BC12",
+      "label": "Participe à des activités physiques en respectant les règles et en s’engageant dans une pratique régulière."
+    },
+    {
+      "code": "C12.2",
+      "block_code": "BC12",
+      "label": "Adapte sa pratique physique pour contribuer durablement à sa santé."
+    },
+    {
+      "code": "C13.1",
+      "block_code": "BC13",
+      "label": "Interagit à l’oral dans une langue étrangère ou régionale dans des situations de la vie quotidienne et professionnelle."
+    },
+    {
+      "code": "C14.1",
+      "block_code": "BC14",
+      "label": "Se repère dans un contexte professionnel étranger et caractérise ses spécificités."
+    },
+    {
+      "code": "C15.1",
+      "block_code": "BC15",
+      "label": "Conçoit et encadre un projet d’animation dans le secteur sportif en tenant compte des publics concernés."
+    }
+  ],
+  "competency_tasks": [
+    {
+      "competency_code": "BC01",
+      "task_code": "T1-1"
+    },
+    {
+      "competency_code": "BC01",
+      "task_code": "T1-2"
+    },
+    {
+      "competency_code": "BC01",
+      "task_code": "T1-3"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T2-1"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T2-2"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T2-3"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T3-1"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T3-2"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T3-3"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T5-1"
+    },
+    {
+      "competency_code": "BC02",
+      "task_code": "T5-2"
+    },
+    {
+      "competency_code": "BC03",
+      "task_code": "T4-1"
+    },
+    {
+      "competency_code": "BC03",
+      "task_code": "T4-2"
+    },
+    {
+      "competency_code": "BC03",
+      "task_code": "T4-3"
+    },
+    {
+      "competency_code": "BC05",
+      "task_code": "T5-3"
+    },
+    {
+      "competency_code": "BC05",
+      "task_code": "T5-4"
+    },
+    {
+      "competency_code": "BC06",
+      "task_code": "T1-3"
+    },
+    {
+      "competency_code": "BC09",
+      "task_code": "T5-3"
+    }
+  ]
+}

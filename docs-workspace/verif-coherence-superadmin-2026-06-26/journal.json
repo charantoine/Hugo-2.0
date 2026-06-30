@@ -1,0 +1,99 @@
+{
+  "pages": [
+    {
+      "path": "/dashboard",
+      "orgBannerCount": 1,
+      "hasDemoHugoOrg": true,
+      "hasGroupeDeReference": false,
+      "hasRaccourciDemo": true,
+      "hasGroupeAConfigurer": false,
+      "hasBacProMelec": true,
+      "switcherVisible": true,
+      "navbarOrg": "Demo Hugo Org"
+    },
+    {
+      "path": "/users",
+      "orgBannerCount": 1,
+      "hasDemoHugoOrg": true,
+      "hasGroupeDeReference": false,
+      "hasRaccourciDemo": false,
+      "hasGroupeAConfigurer": false,
+      "hasBacProMelec": false,
+      "switcherVisible": true,
+      "navbarOrg": "Demo Hugo Org"
+    },
+    {
+      "path": "/groups-admin",
+      "orgBannerCount": 1,
+      "hasDemoHugoOrg": true,
+      "hasGroupeDeReference": false,
+      "hasRaccourciDemo": false,
+      "hasGroupeAConfigurer": false,
+      "hasBacProMelec": true,
+      "switcherVisible": true,
+      "navbarOrg": "Demo Hugo Org"
+    },
+    {
+      "path": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "orgBannerCount": 1,
+      "hasDemoHugoOrg": true,
+      "hasGroupeDeReference": false,
+      "hasRaccourciDemo": false,
+      "hasGroupeAConfigurer": false,
+      "hasBacProMelec": true,
+      "switcherVisible": true,
+      "navbarOrg": "Demo Hugo Org"
+    },
+    {
+      "path": "/admin/onboarding",
+      "orgBannerCount": 1,
+      "hasDemoHugoOrg": true,
+      "hasGroupeDeReference": false,
+      "hasRaccourciDemo": false,
+      "hasGroupeAConfigurer": true,
+      "hasBacProMelec": true,
+      "switcherVisible": true,
+      "navbarOrg": "Demo Hugo Org"
+    }
+  ],
+  "checks": [
+    {
+      "name": "all-pages-org-banner",
+      "ok": true
+    },
+    {
+      "name": "all-pages-demo-org-name",
+      "ok": true
+    },
+    {
+      "name": "onboarding-no-groupe-de-reference",
+      "ok": true
+    },
+    {
+      "name": "onboarding-has-groupe-a-configurer",
+      "ok": true
+    },
+    {
+      "name": "onboarding-no-bac-pro-implicit",
+      "ok": false,
+      "error": "bac pro melec visible dans wizard sans sélection explicite"
+    },
+    {
+      "name": "dashboard-demo-shortcut-labeled",
+      "ok": true,
+      "error": "dashboard doit utiliser libellé raccourci démo, pas Groupe de référence"
+    },
+    {
+      "name": "users-no-bac-pro",
+      "ok": true
+    },
+    {
+      "name": "groups-admin-no-bac-pro",
+      "ok": false
+    },
+    {
+      "name": "group-detail-no-bac-pro-name-required",
+      "ok": true
+    }
+  ]
+}

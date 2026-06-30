@@ -1,0 +1,137 @@
+{
+  "baseline": {
+    "referenceGroupName": "bac pro melec",
+    "referenceGroupId": "29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+    "canonicalTesterPath": "/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50"
+  },
+  "pages": [
+    {
+      "slug": "01-dashboard",
+      "path": "/dashboard",
+      "heading": "Tableau de bord",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/dashboard"
+    },
+    {
+      "slug": "02-users",
+      "path": "/users",
+      "heading": "Création de comptes",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/users"
+    },
+    {
+      "slug": "03-user-detail",
+      "path": "/users/4c1b14e6-d990-44b1-ac85-67851ae099c7",
+      "heading": "Détail utilisateur",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/users/4c1b14e6-d990-44b1-ac85-67851ae099c7"
+    },
+    {
+      "slug": "04-groups-admin",
+      "path": "/groups-admin",
+      "heading": "Groupes de l’organisation",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/groups-admin"
+    },
+    {
+      "slug": "05-group-detail-viewport",
+      "path": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "heading": "bac pro melec",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50"
+    },
+    {
+      "slug": "05-group-detail-full",
+      "path": "/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50",
+      "heading": "bac pro melec",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/groups-admin/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50"
+    },
+    {
+      "slug": "06-admin-conversation",
+      "path": "/admin/conversation",
+      "heading": "Configuration conversationnelle",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/admin/conversation"
+    },
+    {
+      "slug": "07-learner-profiles",
+      "path": "/admin/conversation/learner/profiles",
+      "heading": "Profils conversationnels apprenant",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/admin/conversation/learner/profiles"
+    },
+    {
+      "slug": "08-diagnostic",
+      "path": "/admin/conversation/learner/diagnostic",
+      "heading": "Apprenant — Diagnostic",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/admin/conversation/learner/diagnostic"
+    },
+    {
+      "slug": "09-reflective_afest",
+      "path": "/admin/conversation/learner/reflective_afest",
+      "heading": "Apprenant — Réflexif AFEST",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/admin/conversation/learner/reflective_afest"
+    },
+    {
+      "slug": "10-knowledge_review",
+      "path": "/admin/conversation/learner/knowledge_review",
+      "heading": "Apprenant — Buchage",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/admin/conversation/learner/knowledge_review"
+    },
+    {
+      "slug": "11-closing",
+      "path": "/admin/conversation/learner/closing",
+      "heading": "Apprenant — Clôture & évaluation",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/admin/conversation/learner/closing"
+    },
+    {
+      "slug": "12-tutor-prompts",
+      "path": "/tutor-prompts",
+      "heading": "TutorPrompt (CRUD)",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/tutor-prompts"
+    },
+    {
+      "slug": "13-conduct-profiles",
+      "path": "/conduct-profiles",
+      "heading": "TutorConductProfiles",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/conduct-profiles"
+    },
+    {
+      "slug": "14-referentials",
+      "path": "/referentials",
+      "heading": "Référentiels",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/referentials"
+    },
+    {
+      "slug": "15-group-referential",
+      "path": "/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential",
+      "heading": "Référentiel associé au groupe",
+      "tenantId": "dc1e8465-0ff2-4d66-bfbb-a0f8e7a23b3d",
+      "tenantLabel": "Demo Hugo Org",
+      "url": "http://localhost:5173/group/29e5cdb9-de89-49b3-a36e-53b4b9bbbc50/referential"
+    }
+  ]
+}
