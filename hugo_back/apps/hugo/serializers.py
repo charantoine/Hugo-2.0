@@ -11,6 +11,7 @@ from .models import (
     LearnerEvaluationRecord,
     LearnerState,
     OvhLlm,
+    PersonaConversationProfile,
     StarterPrompt,
     Trace,
     Evidence,
@@ -67,6 +68,96 @@ class TutorPromptSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "organisation", "created_at", "updated_at", "ovh_llm"]
 
 
+        read_only_fields = ["id", "organisation", "created_at", "updated_at", "ovh_llm"]
+
+
+class PersonaConversationProfileSerializer(serializers.ModelSerializer):
+    tutor_prompt = TutorPromptSerializer(read_only=True)
+    system_template = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    user_template = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    tutor_prompt_id = serializers.PrimaryKeyRelatedField(
+        source="tutor_prompt",
+        queryset=TutorPrompt.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = PersonaConversationProfile
+        fields = [
+            "id",
+            "organisation",
+            "persona",
+            "code",
+            "name",
+            "description",
+            "status",
+            "is_default",
+            "tutor_prompt",
+            "tutor_prompt_id",
+            "system_template",
+            "user_template",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "organisation", "created_at", "updated_at", "tutor_prompt"]
+
+    def _persona_scope(self, persona: str) -> str:
+        if persona == PersonaConversationProfile.Persona.TUTOR:
+            return TutorPrompt.PersonaScope.TUTOR
+        return TutorPrompt.PersonaScope.TRAINER
+
+    def create(self, validated_data):
+        system_template = validated_data.pop("system_template", None)
+        user_template = validated_data.pop("user_template", None)
+        tutor_prompt = validated_data.get("tutor_prompt")
+        org = validated_data.get("organisation")
+        if org is None:
+            org_id = validated_data.pop("organisation_id", None)
+            if org_id is not None:
+                from apps.accounts.models import Organisation
+
+                org = Organisation.objects.get(pk=org_id)
+                validated_data["organisation"] = org
+        persona = validated_data["persona"]
+        code = validated_data["code"]
+
+        if tutor_prompt is None:
+            if not system_template or not user_template:
+                raise serializers.ValidationError(
+                    {"system_template": "Requis si tutor_prompt_id absent."}
+                )
+            tutor_prompt, _ = TutorPrompt.objects.update_or_create(
+                organisation=org,
+                prompt_type=TutorPrompt.PromptType.AFEST_HUGO,
+                code=code,
+                defaults={
+                    "name": validated_data.get("name") or code,
+                    "system_template": system_template,
+                    "user_template": user_template,
+                    "persona_scope": self._persona_scope(persona),
+                    "is_active": True,
+                },
+            )
+            validated_data["tutor_prompt"] = tutor_prompt
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        system_template = validated_data.pop("system_template", None)
+        user_template = validated_data.pop("user_template", None)
+        instance = super().update(instance, validated_data)
+        if system_template is not None or user_template is not None:
+            prompt = instance.tutor_prompt
+            if system_template is not None:
+                prompt.system_template = system_template
+            if user_template is not None:
+                prompt.user_template = user_template
+            prompt.persona_scope = self._persona_scope(instance.persona)
+            prompt.save()
+        return instance
+
+
 class LearnerConversationGlobalProfileSummarySerializer(serializers.ModelSerializer):
     completeness = serializers.SerializerMethodField()
 
@@ -103,6 +194,16 @@ class HugoSessionSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    persona_conversation_profile = PersonaConversationProfileSerializer(read_only=True)
+    persona_conversation_profile_id = serializers.PrimaryKeyRelatedField(
+        source="persona_conversation_profile",
+        queryset=PersonaConversationProfile.objects.filter(
+            status=PersonaConversationProfile.Status.ACTIVE,
+        ),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
     deprecation_warnings = serializers.SerializerMethodField()
 
     class Meta:
@@ -115,6 +216,8 @@ class HugoSessionSerializer(serializers.ModelSerializer):
             "tutor_prompt_id",
             "learner_conversation_profile",
             "learner_conversation_profile_id",
+            "persona_conversation_profile",
+            "persona_conversation_profile_id",
             "resolved_conversation_profile_id",
             "deprecation_warnings",
             "first_learner_message",
@@ -144,6 +247,7 @@ class HugoSessionSerializer(serializers.ModelSerializer):
             "updated_at",
             "tutor_prompt",
             "learner_conversation_profile",
+            "persona_conversation_profile",
             "resolved_conversation_profile_id",
             "deprecation_warnings",
             "current_phase",

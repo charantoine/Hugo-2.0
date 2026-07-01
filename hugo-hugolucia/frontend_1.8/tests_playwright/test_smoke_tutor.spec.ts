@@ -7,7 +7,9 @@ test.describe('SMOKE_TUTOR', () => {
     await login(page, fx.users.smoke_tutor, fx.password, '/app/tutor')
 
     await expect(page.getByRole('heading', { name: 'Espace tuteur' })).toBeVisible()
-    await expect(page.getByText('sans verbatim non partagé')).toBeVisible()
+    await expect(
+      page.getByText(/Choisissez un groupe et un apprenant pour ouvrir un espace de réflexion contextualisé/i),
+    ).toBeVisible()
 
     await page.getByRole('button', { name: 'Voir les apprenants' }).first().click()
     await expect(page.getByRole('heading', { name: /Apprenants/ })).toBeVisible()

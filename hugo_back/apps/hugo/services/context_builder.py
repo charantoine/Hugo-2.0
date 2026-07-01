@@ -323,12 +323,19 @@ def _resolve_tutor_prompt(session: HugoSession, posture: str | None = None) -> T
     Resolve the TutorPrompt to use for this session.
 
     Priority:
+    - persona session (tuteur/formateur) via persona resolver — early return,
     - explicit session.tutor_prompt if set and active,
     - global learner profile slot for posture (if profile resolved),
     - default prompt on group (legacy default_tutor_prompt),
     - default TutorPrompt for organisation / AFEST_HUGO if any,
     - otherwise: None (caller may fall back to legacy behaviour).
     """
+    from apps.hugo.services.persona_session import resolve_persona_prompt_for_session
+
+    persona_prompt = resolve_persona_prompt_for_session(session, posture)
+    if persona_prompt is not None:
+        return persona_prompt
+
     if session.tutor_prompt and session.tutor_prompt.is_active:
         return session.tutor_prompt
 

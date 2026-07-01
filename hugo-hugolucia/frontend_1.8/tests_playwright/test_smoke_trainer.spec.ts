@@ -10,10 +10,14 @@ test.describe('SMOKE_TRAINER', () => {
     await expect(page.getByTestId('trainer-group-context')).toBeVisible()
     await expect(page.getByText('Smoke knowledge item for Playwright')).toBeVisible()
 
-    const validateBtn = page.getByRole('button', { name: /Valider/i }).first()
+    const smokeRow = page.getByRole('row').filter({ hasText: 'Smoke knowledge item for Playwright' })
+    await expect(smokeRow).toBeVisible()
+
+    const validateBtn = smokeRow.getByRole('button', { name: /^Valider$/ })
     if (await validateBtn.isVisible()) {
       await validateBtn.click()
-      await expect(page.getByText(/validé/i)).toBeVisible({ timeout: 10_000 })
+      await expect(page.getByText('Action enregistrée.')).toBeVisible({ timeout: 10_000 })
     }
+    await expect(smokeRow.getByText('Validé formateur')).toBeVisible()
   })
 })

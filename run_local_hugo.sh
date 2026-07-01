@@ -20,10 +20,39 @@ if [[ ! -x "$PY" ]]; then
   "$PIP" install -r "$BACK/requirements.txt"
 fi
 
+ensure_sqlite_smoke_schema() {
+  local db_file="$BACK/test.sqlite3"
+  if [[ ! -f "$db_file" ]]; then
+    return 0
+  fi
+  if ! "$PY" - <<'PY' 2>/dev/null
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.sqlite_test")
+django.setup()
+from django.db import connection
+
+with connection.cursor() as cursor:
+    if connection.vendor != "sqlite":
+        raise SystemExit(0)
+    description = connection.introspection.get_table_description(cursor, "trainer_knowledge_item")
+    columns = {col.name for col in description}
+    if "meta" not in columns:
+        raise SystemExit(1)
+PY
+  then
+    echo "    SQLite smoke obsolète (schéma trainer_knowledge_item) — régénération de test.sqlite3"
+    rm -f "$db_file"
+  fi
+}
+
 echo "==> Migrations + fixtures smoke"
 cd "$BACK"
+ensure_sqlite_smoke_schema
 "$PY" manage.py print_runtime_stack
 "$PY" manage.py migrate --run-syncdb
+"$PY" manage.py ensure_sqlite_persona_schema
 "$PY" manage.py bootstrap_smoke_playwright
 "$PY" manage.py bootstrap_profile_migration_smoke
 
@@ -93,4 +122,7 @@ Stack locale démarrée.
 
 Arrêt :
   kill \$(cat $LOG_DIR/backend.pid 2>/dev/null) \$(cat $LOG_DIR/frontend.pid 2>/dev/null) 2>/dev/null || true
+
+Pytest local (baseline B sqlite) :
+  cd hugo_back && ./scripts/run_pytest_local.sh apps/hugo/tests/test_trainer_*.py
 EOF

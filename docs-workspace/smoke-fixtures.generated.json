@@ -1,11 +1,19 @@
 {
-  "organisation_id": "e4b3e984-9794-438f-924d-366dfeb0cd4b",
+  "organisation_id": "e272807d-5e25-46ab-99ae-4b111a5a7817",
   "organisation_name": "Smoke Playwright Org",
   "group_name": "Smoke Group",
-  "group_id": "0ff5014c-ff9b-4363-b613-e03bbdc033b8",
-  "learner_id": "1248232a-f2f5-4c0a-9e72-18111e454724",
-  "session_id": "deecbacc-d0b3-4f3c-9cfe-e8bbeb88d0e6",
-  "trace_id": "175c0c2b-f208-46f0-a792-6d2b839bea0c",
+  "group_id": "c60a0a5e-2650-4608-a925-1dbfe2f0b970",
+  "learner_id": "4f5b47b9-6942-4ae3-bcc1-3ca38c51201b",
+  "session_id": "0b3521b3-fe28-42a9-8eac-ef61fe0bf74b",
+  "trainer_session_id": "288537cc-14f2-4964-861b-9a461e6b26e4",
+  "tutor_workspace_session_id": "ea68ce70-7f73-4f62-a158-e8bbfd7ec7fa",
+  "tutor_workspace_profiles": {
+    "tutor_workspace_prep": "a482e467-c95b-41c6-956a-37b48f9f4e9a",
+    "tutor_workspace_diagnostic": "0f6e643d-efae-4633-90f7-136618d5d7b9",
+    "tutor_workspace_coreflex": "5c29d366-10e7-45ba-96f4-d2932fc14241",
+    "tutor_workspace_journal": "68a263eb-2ff3-4cb5-8ef2-faf679770b6a"
+  },
+  "trace_id": "2ecd1a51-a1d3-46e3-885d-3f5aae33436d",
   "knowledge_item_id": "1",
   "password": "smoke-pass-2026",
   "users": {
@@ -18,8 +26,8 @@
   },
   "verbatim_marker": "VERBATIM_SECRET_SMOKE_DO_NOT_SHOW",
   "cluster16_sessions": {
-    "youth": "16d95c02-e15e-4e83-876c-5259fc5b385f",
-    "adult": "4527fd37-795e-4d61-80a2-70ac2b913948",
-    "professional": "f4b69d8c-cef0-4418-ae61-059a1d191b2c"
+    "youth": "61620b26-f97e-4800-84ee-48292406094e",
+    "adult": "9b72c925-d86e-4f08-8867-22a7ff6e159f",
+    "professional": "98ad6898-1acd-4b31-ac83-0ef02ee057d2"
   }
 }

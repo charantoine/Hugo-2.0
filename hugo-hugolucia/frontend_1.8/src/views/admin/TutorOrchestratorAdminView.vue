@@ -1,7 +1,6 @@
 <script setup>
 /**
- * Phase 1 — Orchestrateur tuteur : hub de liens + périmètre documenté.
- * Arbitrage produit requis avant config prompts tuteur (cible 2.0 = lecture/interprétation).
+ * Pass 2 — hub orchestrateur tuteur avec lien vers profils persona.
  */
 </script>
 
@@ -18,16 +17,27 @@
     <header class="mb-4">
       <h1 class="h4 mb-1">Tuteur — Orchestrateur</h1>
       <p class="text-muted mb-0">
-        Couche d’accompagnement humain : progression, traces partagées, signaux — sans pilotage direct du moteur apprenant.
+        Profils conversationnels persona tuteur (templates system/user) — hors périmètre apprenant.
       </p>
     </header>
 
-    <div class="alert alert-warning small">
-      <strong>Phase 1 :</strong> pas de modèle backend « orchestrateur tuteur » configurable (prompts/comportement).
-      La cible 2.0 privilégie la lecture et l’interprétation. Arbitrage produit nécessaire avant Phase 2.
+    <div class="alert alert-info small">
+      <strong>Pass 2 (baseline B) :</strong> configuration des profils persona tuteur via l’admin.
+      Le moteur apprenant et les profils <code>LearnerConversationGlobalProfile</code> ne sont pas modifiés.
     </div>
 
     <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100 border-primary">
+          <div class="card-body">
+            <h2 class="h6">Profils conversationnels tuteur</h2>
+            <p class="small text-muted">CRUD, duplication, archivage, prévisualisation sans LLM.</p>
+            <router-link to="/admin/conversation/tutor/profiles" class="btn btn-sm btn-primary">
+              Gérer les profils tuteur
+            </router-link>
+          </div>
+        </div>
+      </div>
       <div class="col-md-6">
         <div class="card shadow-sm h-100">
           <div class="card-body">
@@ -51,9 +61,9 @@
       <div class="col-md-6">
         <div class="card shadow-sm h-100">
           <div class="card-body">
-            <h2 class="h6">Espace testeur</h2>
-            <p class="small text-muted">Timeline apprenant, traces, calibration (mode testeur).</p>
-            <router-link to="/dashboard" class="btn btn-sm btn-outline-secondary">Dashboard testeur</router-link>
+            <h2 class="h6">Legacy prompts apprenant</h2>
+            <p class="small text-muted">TutorPrompt apprenant (ne pas confondre avec profils persona).</p>
+            <router-link to="/tutor-prompts" class="btn btn-sm btn-outline-secondary">Prompts legacy</router-link>
           </div>
         </div>
       </div>

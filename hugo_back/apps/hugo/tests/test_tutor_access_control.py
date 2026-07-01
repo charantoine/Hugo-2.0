@@ -177,3 +177,9 @@ class TutorAccessControlTests(TestCase):
     def test_trace_validation_for_linked_learner_is_allowed(self):
         response = self.client.post(f"/traces/{self.linked_trace.id}/validate/")
         self.assertEqual(response.status_code, 200)
+
+    def test_memory_summary_for_linked_learner_session_forbidden_for_tutor(self):
+        response = self.client.get(
+            f"/hugo/sessions/{self.linked_session.id}/memory-summary/"
+        )
+        self.assertEqual(response.status_code, 404)

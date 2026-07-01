@@ -338,6 +338,16 @@ def _base_vars(
     if competence_brief:
         vars_dict["competence_brief"] = competence_brief
 
+    from apps.hugo.services.persona_session import build_persona_context_block, resolve_session_persona
+
+    persona = resolve_session_persona(session)
+    if persona:
+        persona_block = build_persona_context_block(session, persona)
+        vars_dict["persona_context_block"] = persona_block
+        vars_dict["tutor_context_block"] = persona_block
+        if persona == "trainer":
+            vars_dict["trainer_context_block"] = persona_block
+
     return vars_dict
 
 

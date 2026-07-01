@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 
 import {
   TRAINER_BACK_TO_ORCHESTRATOR_LABEL,
+  TRAINER_CHAT_LABEL,
+  TRAINER_CHAT_PATH,
   TRAINER_ORCHESTRATOR_PATH,
   TRAINER_ORCHESTRATOR_ROUTE_NAME,
 } from './trainerNavigation.js'
@@ -11,4 +13,6 @@ test('trainer orchestrator hub route constants', () => {
   assert.equal(TRAINER_ORCHESTRATOR_ROUTE_NAME, 'ProdTrainerKnowledge')
   assert.equal(TRAINER_ORCHESTRATOR_PATH, '/app/trainer/knowledge')
   assert.equal(TRAINER_BACK_TO_ORCHESTRATOR_LABEL, 'Retour orchestrateur')
+  assert.equal(TRAINER_CHAT_PATH, '/app/trainer/chat')
+  assert.equal(TRAINER_CHAT_LABEL, 'Mon chat')
 })

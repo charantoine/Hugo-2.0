@@ -1,17 +1,16 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import api, { fetchWithAuth } from '../../api/client'
+import api from '../../api/client'
 import PostureSelector from './PostureSelector.vue'
 import LearnerMemoryPanel from './LearnerMemoryPanel.vue'
 import LearnerSceneContextBar from './LearnerSceneContextBar.vue'
 import HugoProgressPanel from './HugoProgressPanel.vue'
 import LearnerActionSidebar from './LearnerActionSidebar.vue'
 import LearnerConversationFeed from './LearnerConversationFeed.vue'
-import { extractNumberedQuestions, resolveAssistantContent } from '../../utils/assistantVariants'
 import { buildEngagementUiModel } from '../../utils/engagementUiModel'
 import { frontendFeatures } from '../../utils/frontendConfig'
-import { consumeSseBuffer, parseSseEventBlock } from '../../utils/messageStream'
+import { useHugoSessionChat } from '../../composables/useHugoSessionChat.js'
 import { useAuthStore } from '../../stores/auth'
 
 const learnerUiV2 = frontendFeatures.learner_ui_v2
@@ -25,110 +24,64 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const sessionIdRef = computed(() => props.sessionId)
 
-const loading = ref(true)
-const refreshing = ref(false)
-const sendingMessage = ref(false)
 const generatingTrace = ref(false)
-const isStreaming = ref(false)
-const hasStreamingChunk = ref(false)
-const session = ref(null)
-const messages = ref([])
 const traces = ref([])
 const evidence = ref([])
-const groups = ref([])
-const sessionUiState = ref(null)
 const groupReferentialConfig = ref(null)
 const requestingSynthesis = ref(false)
 const requestingEvaluation = ref(false)
 const actionFeedback = ref(null)
 const synthesisResult = ref(null)
 const evaluationResult = ref(null)
-const error = ref('')
-const streamError = ref('')
-const streamingText = ref('')
-const streamStartedAt = ref('')
-const streamAbortController = ref(null)
-const streamStatusTimer = ref(null)
-const streamStatusIndex = ref(0)
-const streamStatusLabel = ref('')
-const streamStatusMessageText = ref('')
-const streamStatusPhaseLabel = ref('')
-const hasBackendStreamStatus = ref(false)
-const messageContent = ref('')
 const shareFlags = ref({
   share_summary: false,
   share_evidence: false,
   share_verbatim: false,
 })
-const threadRef = ref(null)
-const conversationFeedRef = ref(null)
-const isThreadPinnedToBottom = ref(true)
 
-const STREAMING_STATUS_MESSAGES = [
-  'Hugo analyse ta réponse...',
-  'Hugo réfléchit...',
-  'Hugo prépare sa réponse...',
-]
-
-const STREAMING_STATUS_BADGES = [
-  'Analyse',
-  'Réflexion',
-  'Réponse',
-]
-
-const streamingStatusMessage = computed(() => {
-  if (hasBackendStreamStatus.value && streamStatusMessageText.value) return streamStatusMessageText.value
-  return STREAMING_STATUS_MESSAGES[streamStatusIndex.value] || STREAMING_STATUS_MESSAGES[0]
-})
-const streamingStatusBadge = computed(() => (
-  streamStatusLabel.value || STREAMING_STATUS_BADGES[streamStatusIndex.value] || STREAMING_STATUS_BADGES[0]
-))
-const streamingStatusMode = computed(() => (
-  hasBackendStreamStatus.value ? 'Signal réel' : 'Préparation'
-))
-const shouldAnchorThread = computed(() => isStreaming.value && !hasStreamingChunk.value)
-
-const streamingAssistantMessage = computed(() => {
-  if (!isStreaming.value) return null
-  const content = hasStreamingChunk.value
-    ? streamingText.value
-    : streamingStatusMessage.value
-  return {
-    id: 'streaming-assistant',
-    role: 'ASSISTANT',
-    content,
-    displayContent: content,
-    created_at: streamStartedAt.value || new Date().toISOString(),
-    isStreaming: true,
-    isPlaceholder: !hasStreamingChunk.value,
-  }
+const {
+  loading,
+  refreshing,
+  sendingMessage,
+  isStreaming,
+  session,
+  groups,
+  sessionUiState,
+  error,
+  streamError,
+  messageContent,
+  conversationFeedRef,
+  displayMessages,
+  questionHints,
+  shouldAnchorThread,
+  streamingStatusBadge,
+  streamingStatusMode,
+  updateThreadPinnedState,
+  loadWorkspace,
+  sendMessage: sendChatMessage,
+  loadSessionUiState,
+} = useHugoSessionChat(sessionIdRef, {
+  loadUiState: true,
+  loadLearnerArtifacts: true,
+  streamingPersona: 'learner',
+  getUiStateParams: () => uiStateRequestParams(),
+  onSessionLoaded: async (data) => {
+    shareFlags.value = {
+      share_summary: Boolean(data?.share_summary),
+      share_evidence: Boolean(data?.share_evidence),
+      share_verbatim: Boolean(data?.share_verbatim),
+    }
+    await loadGroupReferentialConfig()
+  },
 })
 
-const displayMessages = computed(() => {
-  const persisted = messages.value.map((message) => ({
-    ...message,
-    displayContent: resolveAssistantContent(message),
-  }))
-  if (streamingAssistantMessage.value) persisted.push(streamingAssistantMessage.value)
-  return persisted
-})
-
-const lastAssistantMessage = computed(() => {
-  for (let index = displayMessages.value.length - 1; index >= 0; index -= 1) {
-    const message = displayMessages.value[index]
-    if (message.role === 'ASSISTANT') return message
-  }
-  return null
-})
-
-const questionHints = computed(() => (
-  isStreaming.value ? [] : extractNumberedQuestions(lastAssistantMessage.value?.displayContent || '')
-))
 const engagementModel = computed(() => buildEngagementUiModel({
   featureFlags: frontendFeatures,
   sessionUiState: sessionUiState.value,
 }))
+
 const sceneContextModel = computed(() => ({
   ...engagementModel.value,
   sessionGroupName: groupName.value !== 'Groupe' ? groupName.value : null,
@@ -137,7 +90,9 @@ const sceneContextModel = computed(() => ({
   sessionPostureLabel: engagementModel.value.conversationMode?.label || null,
   isLegacySession: Boolean(session.value?.tutor_prompt && !session.value?.learner_conversation_profile),
 }))
+
 const isProgressActionBusy = computed(() => requestingSynthesis.value || requestingEvaluation.value)
+
 const productHeaderBadges = computed(() => {
   const badges = [
     { id: 'scene', label: 'Scène', value: engagementModel.value.currentStep.label },
@@ -189,20 +144,6 @@ const composerPlaceholder = computed(() => {
   return 'Écris ce que tu vis, ce que tu as testé, ou ce qui te bloque.'
 })
 
-function formatDate(value) {
-  if (!value) return ''
-  try {
-    return new Date(value).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return String(value)
-  }
-}
-
 function rewardClass(reward) {
   return reward.unlocked ? 'prod-reward prod-reward--unlocked' : 'prod-reward'
 }
@@ -214,33 +155,6 @@ function uiStateRequestParams() {
   const resolvedProfile = sessionUiState.value?.learner_display_profile
   if (resolvedProfile) params.learner_display_profile = resolvedProfile
   return params
-}
-
-function resolveThreadElement() {
-  const exposed = conversationFeedRef.value?.threadRef
-  if (exposed) return exposed.value ?? exposed
-  return threadRef.value
-}
-
-function updateThreadPinnedState() {
-  const element = resolveThreadElement()
-  if (!element) return
-  const { scrollTop, clientHeight, scrollHeight } = element
-  isThreadPinnedToBottom.value = scrollTop + clientHeight >= scrollHeight - 24
-}
-
-async function scrollThreadToBottom({ force = false } = {}) {
-  await nextTick()
-  const element = resolveThreadElement()
-  if (element && (force || isThreadPinnedToBottom.value)) {
-    element.scrollTop = element.scrollHeight
-    updateThreadPinnedState()
-  }
-}
-
-async function loadGroups() {
-  const { data } = await api.get('/groups/')
-  groups.value = Array.isArray(data) ? data : (data.results || [])
 }
 
 async function loadGroupReferentialConfig() {
@@ -257,34 +171,6 @@ async function loadGroupReferentialConfig() {
   }
 }
 
-async function loadSession() {
-  const { data } = await api.get(`/hugo/sessions/${props.sessionId}/`)
-  session.value = data
-  shareFlags.value = {
-    share_summary: Boolean(data?.share_summary),
-    share_evidence: Boolean(data?.share_evidence),
-    share_verbatim: Boolean(data?.share_verbatim),
-  }
-  await loadGroupReferentialConfig()
-}
-
-async function loadMessages() {
-  const { data } = await api.get(`/hugo/sessions/${props.sessionId}/messages/`)
-  messages.value = data.messages || []
-  await scrollThreadToBottom()
-}
-
-async function loadSessionUiState() {
-  try {
-    const { data } = await api.get(`/hugo/sessions/${props.sessionId}/ui-state/`, {
-      params: uiStateRequestParams(),
-    })
-    sessionUiState.value = data || null
-  } catch {
-    sessionUiState.value = null
-  }
-}
-
 async function loadTracesAndEvidence() {
   const [{ data: tracesData }, { data: evidenceData }] = await Promise.all([
     api.get('/learners/traces/'),
@@ -298,33 +184,15 @@ async function onPostureChanged() {
   await loadSessionUiState()
 }
 
-async function loadWorkspace({ silent = false } = {}) {
-  if (silent) refreshing.value = true
-  else loading.value = true
-  error.value = ''
+async function loadLearnerWorkspace({ silent = false } = {}) {
+  await loadWorkspace({ silent })
   try {
-    await Promise.all([
-      loadGroups(),
-      loadSession(),
-      loadMessages(),
-      loadSessionUiState(),
-      loadTracesAndEvidence(),
-    ])
+    await loadTracesAndEvidence()
   } catch (err) {
-    error.value = err.response?.data?.detail || 'Impossible de charger cette session.'
-  } finally {
-    if (silent) refreshing.value = false
-    else loading.value = false
+    if (!silent) {
+      error.value = err.response?.data?.detail || 'Impossible de charger les traces.'
+    }
   }
-}
-
-async function refreshConversationWorkspace() {
-  await Promise.all([
-    loadSession(),
-    loadMessages(),
-    loadSessionUiState(),
-    loadTracesAndEvidence(),
-  ])
 }
 
 function storeActionArtifact(kind, payload) {
@@ -342,210 +210,9 @@ function setActionFeedback(type, message) {
   actionFeedback.value = message ? { type, message } : null
 }
 
-function resetStreamingState() {
-  isStreaming.value = false
-  hasStreamingChunk.value = false
-  streamError.value = ''
-  streamingText.value = ''
-  streamStartedAt.value = ''
-  streamStatusIndex.value = 0
-  streamStatusLabel.value = ''
-  streamStatusMessageText.value = ''
-  streamStatusPhaseLabel.value = ''
-  hasBackendStreamStatus.value = false
-  if (streamStatusTimer.value) {
-    clearInterval(streamStatusTimer.value)
-    streamStatusTimer.value = null
-  }
-  streamAbortController.value = null
-}
-
-function abortStreaming() {
-  if (streamAbortController.value) {
-    streamAbortController.value.abort()
-  }
-}
-
-function isAbortError(errorLike) {
-  return errorLike?.name === 'AbortError'
-}
-
-function shouldFallbackToNonStreaming(errorLike) {
-  const statusCode = Number(errorLike?.status || errorLike?.response?.status || 0)
-  return [404, 405, 406, 415, 501].includes(statusCode) || errorLike?.code === 'stream_unsupported'
-}
-
-function toErrorMessage(errorLike, fallbackMessage) {
-  return errorLike?.response?.data?.detail || errorLike?.message || fallbackMessage
-}
-
-async function sendMessageNonStreaming(content) {
-  await api.post(`/hugo/sessions/${props.sessionId}/messages/`, { content })
-}
-
-async function sendMessageWithStreaming(content) {
-  isStreaming.value = true
-  hasStreamingChunk.value = false
-  streamError.value = ''
-  streamingText.value = ''
-  streamStartedAt.value = new Date().toISOString()
-  streamStatusIndex.value = 0
-  streamStatusLabel.value = STREAMING_STATUS_BADGES[0]
-  streamStatusMessageText.value = ''
-  streamStatusPhaseLabel.value = engagementModel.value.conversationMode?.label || ''
-  hasBackendStreamStatus.value = false
-  const controller = new AbortController()
-  streamAbortController.value = controller
-  await scrollThreadToBottom({ force: true })
-  if (streamStatusTimer.value) clearInterval(streamStatusTimer.value)
-  streamStatusTimer.value = setInterval(() => {
-    if (hasStreamingChunk.value) return
-    streamStatusIndex.value = (streamStatusIndex.value + 1) % STREAMING_STATUS_MESSAGES.length
-    scrollThreadToBottom()
-  }, 1800)
-
-  const response = await fetchWithAuth(`/hugo/sessions/${props.sessionId}/messages/stream/`, {
-    method: 'POST',
-    signal: controller.signal,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ content }),
-  })
-
-  if ([404, 405, 406, 415, 501].includes(response.status)) {
-    const error = new Error('Streaming indisponible sur ce backend.')
-    error.status = response.status
-    throw error
-  }
-
-  if (!response.ok) {
-    let detail = 'Le streaming a échoué.'
-    const contentType = String(response.headers.get('content-type') || '')
-    try {
-      if (contentType.includes('application/json')) {
-        const payload = await response.json()
-        detail = payload?.detail || detail
-      } else {
-        const text = await response.text()
-        if (text) detail = text
-      }
-    } catch {
-      /* ignore parse errors */
-    }
-    const error = new Error(detail)
-    error.status = response.status
-    throw error
-  }
-
-  const contentType = String(response.headers.get('content-type') || '')
-  if (!contentType.includes('text/event-stream')) {
-    const error = new Error('Réponse non streaming.')
-    error.code = 'stream_unsupported'
-    error.status = response.status
-    throw error
-  }
-
-  const reader = response.body?.getReader()
-  if (!reader) {
-    const error = new Error('Flux navigateur indisponible.')
-    error.code = 'stream_unsupported'
-    throw error
-  }
-
-  const decoder = new TextDecoder()
-  let buffer = ''
-  let sawDone = false
-
-  const processEvent = async (eventPayload) => {
-    if (!eventPayload) return
-    if (eventPayload.event === 'status') {
-      hasBackendStreamStatus.value = true
-      streamStatusLabel.value = String(eventPayload.data?.label || streamStatusLabel.value || '')
-      streamStatusMessageText.value = String(eventPayload.data?.message || streamStatusMessageText.value || '')
-      streamStatusPhaseLabel.value = String(
-        eventPayload.data?.phase_label || streamStatusPhaseLabel.value || engagementModel.value.conversationMode?.label || '',
-      )
-      if (streamStatusTimer.value) {
-        clearInterval(streamStatusTimer.value)
-        streamStatusTimer.value = null
-      }
-      await scrollThreadToBottom()
-      return
-    }
-    if (eventPayload.event === 'chunk') {
-      const text = String(eventPayload.data?.text || '')
-      if (!text) return
-      hasStreamingChunk.value = true
-      streamingText.value += text
-      await scrollThreadToBottom()
-      return
-    }
-    if (eventPayload.event === 'error') {
-      streamError.value = String(eventPayload.data?.detail || 'Le streaming a rencontré une erreur.')
-      return
-    }
-    if (eventPayload.event === 'done') {
-      sawDone = true
-      const finalContent = String(eventPayload.data?.content || '')
-      if (finalContent) {
-        streamingText.value = finalContent
-        await scrollThreadToBottom()
-      }
-    }
-  }
-
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) break
-    buffer += decoder.decode(value, { stream: true })
-    const parsed = consumeSseBuffer(buffer)
-    buffer = parsed.remainder
-    for (const eventPayload of parsed.events) {
-      await processEvent(eventPayload)
-    }
-  }
-
-  buffer += decoder.decode()
-  if (buffer.trim()) {
-    await processEvent(parseSseEventBlock(buffer))
-  }
-
-  if (!sawDone && streamError.value) {
-    const error = new Error(streamError.value)
-    error.status = 502
-    throw error
-  }
-}
-
 async function sendMessage() {
-  const content = String(messageContent.value || '').trim()
-  if (!content || sendingMessage.value) return
-  sendingMessage.value = true
-  error.value = ''
-  streamError.value = ''
-  try {
-    try {
-      await sendMessageWithStreaming(content)
-    } catch (err) {
-      if (isAbortError(err)) return
-      if (shouldFallbackToNonStreaming(err)) {
-        resetStreamingState()
-        await sendMessageNonStreaming(content)
-      } else {
-        throw err
-      }
-    }
-    messageContent.value = ''
-    await refreshConversationWorkspace()
-  } catch (err) {
-    if (!isAbortError(err)) {
-      error.value = toErrorMessage(err, 'Ton message n’a pas pu être envoyé.')
-    }
-  } finally {
-    resetStreamingState()
-    sendingMessage.value = false
-  }
+  await sendChatMessage()
+  await loadTracesAndEvidence()
 }
 
 async function generateTrace() {
@@ -626,20 +293,6 @@ async function updateShare() {
 function goHome() {
   router.push({ name: 'ProdLearnerHome' })
 }
-
-watch(() => props.sessionId, () => {
-  abortStreaming()
-  resetStreamingState()
-  loadWorkspace()
-}, { immediate: false })
-
-onBeforeUnmount(() => {
-  abortStreaming()
-})
-
-onMounted(() => {
-  loadWorkspace()
-})
 </script>
 
 <template>
@@ -664,10 +317,15 @@ onMounted(() => {
           </div>
         </div>
         <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="refreshing" @click="loadWorkspace({ silent: true })">
+          <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="refreshing" @click="loadLearnerWorkspace({ silent: true })">
             Actualiser
           </button>
-          <button type="button" class="btn btn-sm btn-outline-primary" :disabled="generatingTrace" @click="generateTrace">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :disabled="generatingTrace"
+            @click="generateTrace"
+          >
             {{ generatingTrace ? 'Préparation...' : 'Préparer une trace' }}
           </button>
         </div>
@@ -777,10 +435,15 @@ onMounted(() => {
           </div>
 
           <div class="prod-session-header__actions">
-            <button type="button" class="btn btn-outline-primary" :disabled="refreshing" @click="loadWorkspace({ silent: true })">
+            <button type="button" class="btn btn-outline-primary" :disabled="refreshing" @click="loadLearnerWorkspace({ silent: true })">
               Actualiser
             </button>
-            <button type="button" class="btn btn-primary" :disabled="generatingTrace" @click="generateTrace">
+            <button
+              type="button"
+              class="btn btn-primary"
+              :disabled="generatingTrace"
+              @click="generateTrace"
+            >
               {{ generatingTrace ? 'Préparation...' : 'Préparer une trace' }}
             </button>
           </div>

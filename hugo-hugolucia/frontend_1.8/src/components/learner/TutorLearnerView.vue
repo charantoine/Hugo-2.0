@@ -1,16 +1,30 @@
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
+import { useTutorWorkspaceStore } from '../../stores/tutorWorkspace.js'
 import api from '../../api/client'
 import { resolveAssistantContent } from '../../utils/assistantVariants'
+import { formatTutorArtifactList } from '../../utils/tutorKnowledgeDisplay.js'
+import {
+  TUTOR_WORKSPACE_CTA_LABELS,
+  TUTOR_WORKSPACE_PROFILE_CODES,
+  findProfileIdByCode,
+  normalizeConversationProfilesResponse,
+} from '../../utils/tutorWorkspaceProfiles.js'
+import { openTutorWorkspaceChat } from '../../utils/tutorWorkspaceSession.js'
 
 const props = defineProps({
   groupId: { type: String, required: true },
   learnerId: { type: String, required: true },
 })
 const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
+const tutorStore = useTutorWorkspaceStore()
+const conversationProfiles = ref([])
+const openingChat = ref(false)
+const workspaceError = ref('')
 const learnerName = ref('')
 const timeline = ref({ sessions: [], traces: [] })
 const competences = ref([])
@@ -20,6 +34,49 @@ const canValidateTraces = computed(() => {
   const role = String(auth.user?.role || '').toUpperCase()
   return auth.isAdminLike || ['TUTOR', 'TRAINER', 'COORDO'].includes(role)
 })
+
+const tutorDraftEntries = computed(() => formatTutorArtifactList(
+  tutorStore.artifactsForLearner(props.groupId, props.learnerId),
+))
+
+const tutorCtaButtons = computed(() => [
+  TUTOR_WORKSPACE_PROFILE_CODES.PREP,
+  TUTOR_WORKSPACE_PROFILE_CODES.DIAGNOSTIC,
+  TUTOR_WORKSPACE_PROFILE_CODES.COREFLEX,
+  TUTOR_WORKSPACE_PROFILE_CODES.JOURNAL,
+])
+
+async function loadConversationProfiles() {
+  try {
+    const { data } = await api.get('/hugo/learner-conversation-profiles/')
+    conversationProfiles.value = normalizeConversationProfilesResponse(data)
+  } catch {
+    conversationProfiles.value = []
+  }
+  return conversationProfiles.value
+}
+
+async function openWorkspace(profileCode, sourceSessionId = '') {
+  if (openingChat.value) return
+  openingChat.value = true
+  workspaceError.value = ''
+  try {
+    if (!findProfileIdByCode(conversationProfiles.value, profileCode)) {
+      await loadConversationProfiles()
+    }
+    await openTutorWorkspaceChat(router, {
+      profileCode,
+      groupId: props.groupId,
+      learnerId: props.learnerId,
+      sourceSessionId,
+      conversationProfiles: conversationProfiles.value,
+    })
+  } catch (e) {
+    workspaceError.value = e?.message || e?.response?.data?.detail || 'Impossible d\'ouvrir l\'espace de réflexion.'
+  } finally {
+    openingChat.value = false
+  }
+}
 
 function formatDate(s) {
   if (!s) return ''
@@ -130,6 +187,7 @@ onMounted(() => {
   loadLearnerName()
   loadTimeline()
   loadCompetences()
+  loadConversationProfiles()
 })
 watch(() => [props.learnerId, props.groupId], () => {
   loadLearnerName()
@@ -148,6 +206,50 @@ watch(() => [props.learnerId, props.groupId], () => {
   </nav>
   <h1 class="h4 mb-4">Vue tuteur — {{ learnerName || '…' }}</h1>
   <p class="text-muted small">Données visibles uniquement si l'apprenant a activé le partage (résumé, preuves, verbatim).</p>
+  <div v-if="workspaceError" class="alert alert-warning small">{{ workspaceError }}</div>
+
+  <div class="card mb-4" data-testid="tutor-learner-cta-panel">
+    <div class="card-body">
+      <h2 class="h6 mb-2">Espace de réflexion tuteur</h2>
+      <p class="small text-muted mb-3">Préparer un entretien, formuler des hypothèses ou noter un point-clé — sans parler à la place de l'apprenant.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <button
+          v-for="code in tutorCtaButtons"
+          :key="code"
+          type="button"
+          class="btn btn-sm btn-outline-primary"
+          :disabled="openingChat"
+          :data-testid="`tutor-cta-${code}`"
+          @click="openWorkspace(code)"
+        >
+          {{ TUTOR_WORKSPACE_CTA_LABELS[code] }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section
+    v-if="tutorDraftEntries.length"
+    class="card mb-4"
+    data-testid="tutor-learner-drafts-panel"
+  >
+    <div class="card-header py-2 d-flex align-items-center gap-2">
+      <span class="small fw-semibold">Notes tutorales (session courante)</span>
+      <span class="badge text-bg-secondary">brouillon</span>
+      <span class="badge text-bg-light text-dark border">non durable</span>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li
+        v-for="row in tutorDraftEntries"
+        :key="row.item.id"
+        class="list-group-item small"
+      >
+        <div class="fw-semibold">{{ row.summary.title }}</div>
+        <div class="text-muted">{{ row.summary.line }}</div>
+      </li>
+    </ul>
+  </section>
+
   <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
 
   <div class="row">
@@ -167,6 +269,14 @@ watch(() => [props.learnerId, props.groupId], () => {
                   </div>
                   <div class="text-end">
                     <code class="small d-block">{{ s.id.slice(0, 8) }}</code>
+                    <button
+                      type="button"
+                      class="btn btn-link btn-sm p-0 mt-1"
+                      :data-testid="`tutor-prep-from-session-${s.id}`"
+                      @click="openWorkspace(TUTOR_WORKSPACE_PROFILE_CODES.PREP, s.id)"
+                    >
+                      Préparer depuis cette session
+                    </button>
                     <span
                       v-if="s.share_verbatim"
                       class="badge bg-info-subtle text-info-emphasis border mt-1"

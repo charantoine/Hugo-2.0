@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Page } from '@playwright/test'
+import { expect } from '@playwright/test'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -16,6 +17,9 @@ export type SmokeFixtures = {
   session_id: string
   users: Record<string, string>
   cluster16_sessions?: Record<'youth' | 'adult' | 'professional', string>
+  trainer_session_id?: string
+  tutor_workspace_session_id?: string
+  tutor_workspace_profiles?: Record<string, string>
 }
 
 export type TenantSmokeFixtures = {
@@ -112,4 +116,69 @@ export async function selectActiveTenant(page: Page, orgId: string) {
 export function uniqueE2eUsername(prefix: string): string {
   const stamp = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
   return `${prefix}_${stamp}`.slice(0, 150)
+}
+
+/** Appel API via proxy Vite (/api → backend local baseline B). */
+export async function apiFetchWithAuth(
+  page: Page,
+  path: string,
+  init: RequestInit = {},
+): Promise<{ status: number; body: unknown }> {
+  return page.evaluate(async ({ apiPath, requestInit }) => {
+    const token = localStorage.getItem('access')
+    const headers = {
+      ...(requestInit.headers as Record<string, string> | undefined),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    }
+    const response = await fetch(`/api${apiPath}`, { ...requestInit, headers })
+    let body: unknown = null
+    try {
+      body = await response.json()
+    } catch {
+      body = null
+    }
+    return { status: response.status, body }
+  }, { apiPath: path, requestInit: init })
+}
+
+export function tutorChatUrl(
+  sessionId: string,
+  fx: SmokeFixtures,
+  profileCode = 'tutor_workspace_journal',
+): string {
+  const params = new URLSearchParams({
+    learner_id: fx.learner_id,
+    group_id: fx.group_id,
+    profile_code: profileCode,
+  })
+  return `/app/tutor/chat/${sessionId}?${params.toString()}`
+}
+
+export function trainerChatUrl(sessionId: string): string {
+  return `/app/trainer/chat/${sessionId}`
+}
+
+export async function openTutorWorkspaceCta(
+  page: Page,
+  fx: SmokeFixtures,
+  profileCode: string,
+) {
+  await login(
+    page,
+    fx.users.smoke_tutor,
+    fx.password,
+    `/app/tutor/group/${fx.group_id}/learner/${fx.learner_id}`,
+  )
+  const cta = page.getByTestId(`tutor-cta-${profileCode}`)
+  await expect(cta).toBeVisible({ timeout: 15_000 })
+  await cta.click()
+  await expect(page).toHaveURL(/\/app\/tutor\/chat\//, { timeout: 15_000 })
+}
+
+/** Vérifie l'absence des blocs legacy apprenant sur un chat persona. */
+export async function expectNoLearnerWorkspaceBlocks(page: Page) {
+  await expect(page.getByTestId('session-posture-badge')).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /synthèse/i })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: /évaluation/i })).toHaveCount(0)
+  await expect(page.locator('.prod-quest-card')).toHaveCount(0)
 }

@@ -8,6 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test",
+    "test:reconf:unit": "node --test src/utils/tutor*.test.js src/utils/trainer*.test.js src/utils/role*.test.js src/utils/session*.test.js src/utils/Tutor*.test.js src/utils/Trainer*.test.js src/utils/Memory*.test.js",
+    "test:reconf:e2e": "playwright test -c tests_playwright/playwright.config.ts tests_playwright/test_smoke_tutor_workspace_labels.spec.ts tests_playwright/test_smoke_trainer_workspace_labels.spec.ts tests_playwright/test_tutor_prep_flow.spec.ts tests_playwright/test_tutor_diagnostic_flow.spec.ts tests_playwright/test_tutor_coreflex_flow.spec.ts tests_playwright/test_tutor_journal_flow.spec.ts tests_playwright/test_tutor_memory_readonly_panel.spec.ts tests_playwright/test_tutor_reload_no_durable_draft.spec.ts tests_playwright/test_trainer_elicitation_to_chat_flow.spec.ts tests_playwright/test_trainer_import_confirm_flow.spec.ts tests_playwright/test_trainer_knowledge_validation_non_regression.spec.ts tests_playwright/test_learner_chat_non_regression_after_tutor_trainer_changes.spec.ts tests_playwright/test_learner_evaluation_chain_non_regression.spec.ts tests_playwright/test_superadmin_edit_tutor_prompt_is_scoped.spec.ts tests_playwright/test_superadmin_edit_trainer_prompt_is_scoped.spec.ts tests_playwright/test_admin_profiles_list_and_filter_by_role.spec.ts",
     "test:e2e": "playwright test -c tests_playwright/playwright.config.ts",
     "test:smoke": "playwright test -c tests_playwright/playwright.config.ts",
     "test:protocol": "playwright test tests_playwright/e2e/protocol -c tests_playwright/playwright.config.ts",

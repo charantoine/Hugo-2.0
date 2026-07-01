@@ -30,7 +30,7 @@ function openGroup(group) {
     <header class="mb-4">
       <h1 class="h4 mb-1">Espace tuteur</h1>
       <p class="text-muted mb-0 small">
-        Progression et traces partageables — sans verbatim non partagé.
+        Choisissez un groupe et un apprenant pour ouvrir un espace de réflexion contextualisé.
       </p>
     </header>
 

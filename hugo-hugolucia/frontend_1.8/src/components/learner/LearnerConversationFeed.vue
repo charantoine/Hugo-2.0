@@ -1,7 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import ImportFromChatAction from '../trainer/ImportFromChatAction.vue'
+import TutorImportFromChatAction from '../tutor/TutorImportFromChatAction.vue'
+import { WORKSPACE_MODES } from '../../utils/chatWorkspaceMode.js'
 
-defineProps({
+const PERSONA_COPY = {
+  [WORKSPACE_MODES.LEARNER]: {
+    emptyTitle: 'La scène est prête à commencer.',
+    emptyBody: 'Décris un moment concret, une difficulté rencontrée ou une action que tu aimerais analyser avec Hugo.',
+    composerLabel: 'Ton message',
+    composerHint: 'Un seul message suffit. Hugo s’appuie ensuite sur le fil réel de la scène.',
+    userLabel: 'Toi',
+  },
+  [WORKSPACE_MODES.TUTOR]: {
+    emptyTitle: 'Conversation avec Hugo',
+    emptyBody: 'Échangez sur le contexte apprenant, vos observations ou votre préparation d\'accompagnement.',
+    composerLabel: 'Votre message',
+    composerHint: 'Hugo vous aide à préparer ou documenter votre réflexion tuteur.',
+    userLabel: 'Vous',
+  },
+  [WORKSPACE_MODES.TRAINER]: {
+    emptyTitle: 'Conversation avec Hugo',
+    emptyBody: 'Formulez une question métier, une explicitation pédagogique ou un arbitrage à préparer.',
+    composerLabel: 'Votre message',
+    composerHint: 'Les réponses peuvent être importées vers la base de connaissances après validation.',
+    userLabel: 'Vous',
+  },
+}
+
+const props = defineProps({
   engagementModel: { type: Object, required: true },
   displayMessages: { type: Array, default: () => [] },
   questionHints: { type: Array, default: () => [] },
@@ -15,9 +42,32 @@ defineProps({
   streamError: { type: String, default: '' },
   error: { type: String, default: '' },
   compactHeader: { type: Boolean, default: false },
+  personaMode: { type: String, default: WORKSPACE_MODES.LEARNER },
+  showTrainerImportActions: { type: Boolean, default: false },
+  showTutorImportActions: { type: Boolean, default: false },
+  tutorImportKinds: { type: Array, default: () => [] },
 })
 
-defineEmits(['update:messageContent', 'send', 'scroll'])
+defineEmits(['update:messageContent', 'send', 'scroll', 'trainer-import', 'tutor-import'])
+
+const copy = computed(() => PERSONA_COPY[props.personaMode] || PERSONA_COPY[WORKSPACE_MODES.LEARNER])
+
+const lastImportableAssistantMessage = computed(() => {
+  for (let index = props.displayMessages.length - 1; index >= 0; index -= 1) {
+    const message = props.displayMessages[index]
+    if (message.role === 'ASSISTANT' && !message.isPlaceholder && !message.isStreaming) {
+      return message
+    }
+  }
+  return null
+})
+
+const showPersonaTrainerToolbar = computed(() => (
+  props.compactHeader && props.showTrainerImportActions
+))
+const showPersonaTutorToolbar = computed(() => (
+  props.compactHeader && props.showTutorImportActions
+))
 
 const threadRef = ref(null)
 defineExpose({ threadRef })
@@ -60,8 +110,8 @@ function formatDate(value) {
       >
         <div class="prod-thread__content" :class="{ 'prod-thread__content--anchored': shouldAnchorThread }">
           <div v-if="!displayMessages.length" class="prod-thread__empty">
-            <strong>La scène est prête à commencer.</strong>
-            <p>Décris un moment concret, une difficulté rencontrée ou une action que tu aimerais analyser avec Hugo.</p>
+            <strong>{{ copy.emptyTitle }}</strong>
+            <p>{{ copy.emptyBody }}</p>
           </div>
 
           <article
@@ -74,7 +124,7 @@ function formatDate(value) {
             ]"
           >
             <div class="prod-message__meta">
-              <span>{{ message.role === 'ASSISTANT' ? 'Hugo' : 'Toi' }}</span>
+              <span>{{ message.role === 'ASSISTANT' ? 'Hugo' : copy.userLabel }}</span>
               <time>{{ message.isStreaming ? (message.isPlaceholder ? 'préparation...' : 'en direct') : formatDate(message.created_at) }}</time>
             </div>
             <div class="prod-message__bubble">
@@ -102,9 +152,59 @@ function formatDate(value) {
                 <span></span>
                 <span></span>
               </div>
+              <ImportFromChatAction
+                v-if="showTrainerImportActions && !compactHeader && message.role === 'ASSISTANT' && !message.isPlaceholder && !message.isStreaming"
+                :disabled="sendingMessage || isStreaming"
+                @import="$emit('trainer-import', { importKind: $event, message })"
+              />
+              <TutorImportFromChatAction
+                v-if="showTutorImportActions && !compactHeader && message.role === 'ASSISTANT' && !message.isPlaceholder && !message.isStreaming"
+                :disabled="sendingMessage || isStreaming"
+                :allowed-kinds="tutorImportKinds"
+                @import="$emit('tutor-import', { importKind: $event, message })"
+              />
             </div>
           </article>
         </div>
+      </div>
+
+      <div
+        v-if="showPersonaTrainerToolbar"
+        class="persona-import-toolbar border-top pt-3 mt-2"
+        data-testid="trainer-import-toolbar"
+      >
+        <p class="small text-muted mb-2">
+          <template v-if="lastImportableAssistantMessage">
+            Importer la dernière réponse de Hugo vers la base de connaissances
+          </template>
+          <template v-else>
+            Les boutons d'import apparaîtront après une première réponse de Hugo.
+          </template>
+        </p>
+        <ImportFromChatAction
+          :disabled="!lastImportableAssistantMessage || sendingMessage || isStreaming"
+          @import="$emit('trainer-import', { importKind: $event, message: lastImportableAssistantMessage })"
+        />
+      </div>
+
+      <div
+        v-if="showPersonaTutorToolbar"
+        class="persona-import-toolbar border-top pt-3 mt-2"
+        data-testid="tutor-import-toolbar"
+      >
+        <p class="small text-muted mb-2">
+          <template v-if="lastImportableAssistantMessage">
+            Enregistrer la dernière réponse de Hugo comme brouillon tuteur
+          </template>
+          <template v-else>
+            L'import tuteur sera disponible après une première réponse de Hugo.
+          </template>
+        </p>
+        <TutorImportFromChatAction
+          :disabled="!lastImportableAssistantMessage || sendingMessage || isStreaming"
+          :allowed-kinds="tutorImportKinds"
+          @import="$emit('tutor-import', { importKind: $event, message: lastImportableAssistantMessage })"
+        />
       </div>
 
       <div v-if="questionHints.length" class="prod-hints mt-3">
@@ -115,7 +215,7 @@ function formatDate(value) {
       </div>
 
       <form class="prod-composer mt-3" @submit.prevent="$emit('send')">
-        <label class="form-label" for="message-content">Ton message</label>
+        <label class="form-label" for="message-content">{{ copy.composerLabel }}</label>
         <textarea
           id="message-content"
           :value="messageContent"
@@ -125,7 +225,7 @@ function formatDate(value) {
           @input="$emit('update:messageContent', $event.target.value)"
         ></textarea>
         <div class="d-flex justify-content-between align-items-center gap-3 mt-3">
-          <p class="text-muted small mb-0">Un seul message suffit. Hugo s’appuie ensuite sur le fil réel de la scène.</p>
+          <p class="text-muted small mb-0">{{ copy.composerHint }}</p>
           <button type="submit" class="btn btn-primary" :disabled="sendingMessage || !messageContent.trim()">
             {{ isStreaming ? 'Réponse en cours...' : (sendingMessage ? 'Envoi...' : 'Envoyer à Hugo') }}
           </button>

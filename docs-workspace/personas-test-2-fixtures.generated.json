@@ -1,0 +1,58 @@
+{
+  "organisation_id": "6e255f3c-da8c-42ac-8781-952a8a3146f2",
+  "organisation_name": "orga_test_2",
+  "group_primary_id": "35734161-cb74-44ff-b591-79b1419cd13f",
+  "group_primary_name": "groupe_test_2_principal",
+  "group_secondary_id": "af556e0a-7188-48d6-84e1-cd195aefe3ea",
+  "group_secondary_name": "groupe_test_2_secondaire",
+  "learner_a_id": "daad260c-362e-4c0b-88c1-098b96995898",
+  "learner_b_id": "e7f4ca50-e083-4108-935a-f538014fa6bb",
+  "learner_session_a_id": "8f0c4727-d20b-4328-afd1-10e2d602b137",
+  "learner_session_b_id": "17cb4c45-60e6-4f43-b0a9-f587678a2c57",
+  "trainer_session_id": "9a0c5cfb-ba08-443e-9b09-2bd54e4535b9",
+  "trace_id": "ec0a34c3-18d8-49b9-a964-eb4849bbd2d8",
+  "tutor_workspace_profiles": {
+    "tutor_workspace_prep": "ce1303fe-f30b-450b-a3ee-0fdf7d5b1e43",
+    "tutor_workspace_diagnostic": "78df8cbd-20b8-4235-9176-485fe037aeb4",
+    "tutor_workspace_coreflex": "4dac85e3-a55a-4e97-82a4-942248bad250",
+    "tutor_workspace_journal": "8ac39f04-f3a7-45ee-a145-653dc1f4d06e"
+  },
+  "password": "demo123",
+  "users": {
+    "superadmin": "superadmin_test_2",
+    "orgadmin": "orgadmin_test_2",
+    "coordo": "coordo_test_2",
+    "trainer": "trainer_test_2",
+    "tutor": "tutor_test_2",
+    "learner_a": "learner_test_2_a",
+    "learner_b": "learner_test_2_b"
+  },
+  "created_flags": {
+    "organisation": true,
+    "user_superadmin": true,
+    "user_orgadmin": true,
+    "user_coordo": true,
+    "user_trainer": true,
+    "user_tutor": true,
+    "user_learner_a": true,
+    "user_learner_b": true,
+    "group_primary": true,
+    "group_secondary": true,
+    "tutor_link_a": true,
+    "session_learner_a": true,
+    "session_learner_b": true,
+    "session_trainer": true,
+    "session_tutor_workspace": true,
+    "trace_a": true,
+    "knowledge_item": true
+  },
+  "urls": {
+    "login": "http://localhost:5173/login",
+    "app_learner": "http://localhost:5173/app/session/8f0c4727-d20b-4328-afd1-10e2d602b137",
+    "app_trainer": "http://localhost:5173/app/trainer/knowledge",
+    "app_tutor": "http://localhost:5173/app/tutor",
+    "tutor_learner_a": "http://localhost:5173/app/tutor/group/35734161-cb74-44ff-b591-79b1419cd13f/learner/daad260c-362e-4c0b-88c1-098b96995898",
+    "admin_profiles": "http://localhost:5173/admin/conversation/learner/profiles",
+    "tutor_prompts": "http://localhost:5173/tutor-prompts"
+  }
+}

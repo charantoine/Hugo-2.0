@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api/client'
 import TrainerGroupContextPanel from '../components/trainer/TrainerGroupContextPanel.vue'
+import { TRAINER_CHAT_LABEL, TRAINER_CHAT_PATH } from '../utils/trainerNavigation.js'
+import { summarizeDecisionRationale } from '../utils/trainerKnowledgeDisplay.js'
 
 const router = useRouter()
 
@@ -29,6 +31,7 @@ const CONTENT_TYPE_LABELS = {
   reasoning_chain: 'Chaîne de raisonnement',
   reference_rule: 'Règle de référence',
   procedure: 'Procédure',
+  pedagogical_explication: 'Explicitation pédagogique',
 }
 
 function formatDate(value) {
@@ -50,7 +53,10 @@ async function loadItems() {
   try {
     const params = statusFilter.value ? { status: statusFilter.value } : {}
     const { data } = await api.get('/hugo/trainer/knowledge-items/', { params })
-    items.value = data.items || []
+    items.value = (data.items || []).map((item) => ({
+      ...item,
+      rationaleSummary: summarizeDecisionRationale(item),
+    }))
   } catch (e) {
     error.value = e.response?.data?.detail || 'Erreur chargement des items.'
     items.value = []
@@ -109,6 +115,9 @@ onMounted(loadItems)
         <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'ProdTrainerReferentials' }">
           Référentiels
         </router-link>
+        <router-link class="btn btn-sm btn-outline-primary" :to="TRAINER_CHAT_PATH" data-testid="trainer-mon-chat-link">
+          {{ TRAINER_CHAT_LABEL }}
+        </router-link>
         <button type="button" class="btn btn-sm btn-primary" @click="goToElicitation">
           Atelier d’élicitation
         </button>
@@ -160,6 +169,31 @@ onMounted(loadItems)
               </div>
               <div>{{ item.content }}</div>
               <div v-if="item.provenance_note" class="small text-muted mt-1">{{ item.provenance_note }}</div>
+              <div
+                v-if="item.rationaleSummary"
+                class="small mt-2 p-2 border rounded bg-light"
+                data-testid="trainer-decision-rationale-summary"
+              >
+                <div class="fw-semibold mb-1">
+                  Justification d'arbitrage
+                  <span class="badge text-bg-secondary ms-1">brouillon</span>
+                </div>
+                <div>
+                  <span class="text-muted">Décision envisagée :</span>
+                  {{ item.rationaleSummary.envisionedDecision }}
+                </div>
+                <div v-if="item.rationaleSummary.reasons" class="mt-1">
+                  <span class="text-muted">Raisons :</span>
+                  {{ item.rationaleSummary.reasons }}
+                </div>
+                <div v-if="item.rationaleSummary.risks" class="mt-1">
+                  <span class="text-muted">Risques :</span>
+                  {{ item.rationaleSummary.risks }}
+                </div>
+                <p class="text-muted mb-0 mt-2 small">
+                  Aide à la décision — ne remplace pas une validation institutionnelle.
+                </p>
+              </div>
             </td>
             <td>{{ contentTypeLabel(item.content_type) }}</td>
             <td><span class="badge bg-light text-dark border">{{ statusLabel(item.status) }}</span></td>

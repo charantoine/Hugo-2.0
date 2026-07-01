@@ -171,6 +171,19 @@ class TutorPrompt(models.Model):
 
     metadata = models.JSONField(default=dict, blank=True)
     is_active = models.BooleanField(default=True)
+
+    class PersonaScope(models.TextChoices):
+        LEARNER = "learner", "Learner"
+        TUTOR = "tutor", "Tutor"
+        TRAINER = "trainer", "Trainer"
+
+    persona_scope = models.CharField(
+        max_length=16,
+        choices=PersonaScope.choices,
+        default=PersonaScope.LEARNER,
+        help_text="Scope métier du prompt (apprenant vs persona tuteur/formateur).",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -227,6 +240,14 @@ class HugoSession(models.Model):
         null=True,
         blank=True,
         help_text="Optional global learner conversation profile for this session.",
+    )
+    persona_conversation_profile = models.ForeignKey(
+        "PersonaConversationProfile",
+        on_delete=models.SET_NULL,
+        related_name="sessions",
+        null=True,
+        blank=True,
+        help_text="Optional persona profile (tuteur/formateur) for this session.",
     )
     current_phase = models.CharField(
         max_length=32,
@@ -461,7 +482,7 @@ class Evidence(models.Model):
         ordering = ["-created_at"]
         constraints = [
             models.CheckConstraint(
-                check=(models.Q(trace_id__isnull=False) | models.Q(session_id__isnull=False)),
+                condition=(models.Q(trace_id__isnull=False) | models.Q(session_id__isnull=False)),
                 name="evidence_trace_or_session",
             )
         ]
@@ -803,6 +824,55 @@ class LearnerConversationGlobalProfile(models.Model):
         if profile is not None and profile.is_active:
             return profile
         return None
+
+
+class PersonaConversationProfile(models.Model):
+    """Profil conversationnel persona (tuteur ou formateur) — 1 prompt system/user."""
+
+    class Persona(models.TextChoices):
+        TUTOR = "tutor", "Tutor"
+        TRAINER = "trainer", "Trainer"
+
+    class Status(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        ACTIVE = "active", "Active"
+        INACTIVE = "inactive", "Inactive"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organisation = models.ForeignKey(
+        "accounts.Organisation",
+        on_delete=models.CASCADE,
+        related_name="persona_conversation_profiles",
+        null=False,
+    )
+    persona = models.CharField(max_length=16, choices=Persona.choices)
+    code = models.SlugField(max_length=100)
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, default="")
+    status = models.CharField(
+        max_length=16,
+        choices=Status.choices,
+        default=Status.ACTIVE,
+    )
+    is_default = models.BooleanField(
+        default=False,
+        help_text="Default persona profile for this organisation and persona kind.",
+    )
+    tutor_prompt = models.ForeignKey(
+        TutorPrompt,
+        on_delete=models.PROTECT,
+        related_name="persona_profiles",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "persona_conversation_profile"
+        ordering = ["organisation_id", "persona", "name"]
+        unique_together = [["organisation", "persona", "code"]]
+
+    def __str__(self) -> str:
+        return f"{self.organisation_id} / {self.persona} / {self.name}"
 
 
 class EvaluationPolicy(models.Model):

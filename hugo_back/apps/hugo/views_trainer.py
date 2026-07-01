@@ -60,6 +60,18 @@ def _usage_stats_for_item(item) -> dict:
     }
 
 
+_ALLOWED_CREATE_STATUSES = {
+    KnowledgeItemStatus.DECLARED.value,
+    KnowledgeItemStatus.DERIVED_PROVISIONAL.value,
+}
+
+
+def _merge_item_meta(item: TrainerKnowledgeItem, patch: dict) -> dict:
+    merged = dict(item.meta or {})
+    merged.update(patch or {})
+    return merged
+
+
 def _serialize_trainer_item(item) -> dict:
     validated_by = item.validated_by
     return {
@@ -101,13 +113,28 @@ class TrainerKnowledgeItemListView(APIView):
         if not content:
             return Response({"detail": "content required."}, status=status.HTTP_400_BAD_REQUEST)
         content_type = str(request.data.get("content_type") or "mastery_criterion").strip()
+        source_type = str(request.data.get("source_type") or "declared").strip()
         meta = request.data.get("meta") if isinstance(request.data.get("meta"), dict) else {}
+        status_value = str(request.data.get("status") or KnowledgeItemStatus.DECLARED.value).strip()
+        if status_value not in _ALLOWED_CREATE_STATUSES:
+            status_value = KnowledgeItemStatus.DECLARED.value
+        if source_type == "chat_import":
+            import_kind = str(meta.get("import_kind") or "").strip()
+            session_id = str(meta.get("session_id") or "").strip()
+            if not import_kind or not session_id:
+                return Response(
+                    {"detail": "meta.import_kind and meta.session_id required for chat_import."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        provenance_note = str(request.data.get("provenance_note") or "").strip()
         item = TrainerKnowledgeItem.objects.create(
             organisation_id=tenant_organisation_id(request),
             referential_item_id=str(request.data.get("referential_item_id") or "").strip(),
             content=content,
             content_type=content_type,
-            source_type=str(request.data.get("source_type") or "declared").strip(),
+            source_type=source_type,
+            status=status_value,
+            provenance_note=provenance_note,
             meta=meta,
         )
         return Response(_serialize_trainer_item(item), status=status.HTTP_201_CREATED)
@@ -130,8 +157,10 @@ class TrainerKnowledgeItemDetailView(APIView):
             item.content = str(request.data.get("content") or "").strip()
         if "content_type" in request.data:
             item.content_type = str(request.data.get("content_type") or item.content_type).strip()
+        if "provenance_note" in request.data:
+            item.provenance_note = str(request.data.get("provenance_note") or "").strip()
         if "meta" in request.data and isinstance(request.data.get("meta"), dict):
-            item.meta = dict(request.data.get("meta") or {})
+            item.meta = _merge_item_meta(item, request.data.get("meta") or {})
         item.save()
         return Response(_serialize_trainer_item(item))
 

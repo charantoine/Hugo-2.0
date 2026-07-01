@@ -740,6 +740,10 @@ class SessionRequestSynthesisView(APIView):
         session = _get_message_session(request, session_id)
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        from apps.hugo.services.persona_session import is_persona_session
+
+        if is_persona_session(session):
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         progress = _get_contract_progress(session)
         if not progress.synthesis_eligible:
             increment_session_analytics_counter(session, "cta_synthesis_blocked_count")
@@ -783,6 +787,10 @@ class SessionEvaluationReadinessView(APIView):
         session = _get_message_session(request, session_id)
         if not session:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        from apps.hugo.services.persona_session import is_persona_session
+
+        if is_persona_session(session):
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         progress = _get_contract_progress(session)
         return Response(resolve_evaluation_readiness(progress))
 
@@ -793,6 +801,10 @@ class SessionRequestEvaluationView(APIView):
     def post(self, request, session_id):
         session = _get_message_session(request, session_id)
         if not session:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        from apps.hugo.services.persona_session import is_persona_session
+
+        if is_persona_session(session):
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         progress = _get_contract_progress(session)
         policy = get_or_create_policy(session.organisation, session.group)

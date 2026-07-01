@@ -51,6 +51,14 @@ def learner_user(db, organisation):
     )
 
 
+@pytest.fixture
+def morning_reconf_baseline_b(db):
+    """Fixture complète reconfiguration chats tuteur/formateur — baseline B."""
+    from apps.hugo.tests.morning_reconf_fixtures import build_morning_reconf_baseline_b
+
+    return build_morning_reconf_baseline_b()
+
+
 if not HAS_PYTEST_DJANGO:
     @pytest.fixture
     def django_user_model():

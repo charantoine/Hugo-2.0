@@ -32,6 +32,24 @@ const routes = [
     meta: { layout: 'prod' },
   },
   {
+    path: '/app/tutor/chat/:sessionId',
+    name: 'ProdTutorChatSession',
+    component: () => import('../views/ProdTutorChatSessionView.vue'),
+    meta: { layout: 'prod', requiresTutorLike: true },
+  },
+  {
+    path: '/app/trainer/chat',
+    name: 'ProdTrainerChatHome',
+    component: () => import('../views/ProdTrainerChatHomeView.vue'),
+    meta: { layout: 'prod', requiresTrainerLike: true },
+  },
+  {
+    path: '/app/trainer/chat/:sessionId',
+    name: 'ProdTrainerChatSession',
+    component: () => import('../views/ProdTrainerChatSessionView.vue'),
+    meta: { layout: 'prod', requiresTrainerLike: true },
+  },
+  {
     path: '/app/tutor',
     name: 'ProdTutorHome',
     component: () => import('../views/ProdTutorHomeView.vue'),
@@ -186,9 +204,75 @@ const routes = [
     meta: { layout: 'tester', requiresOrgAdmin: true },
   },
   {
+    path: '/admin/conversation/tutor/profiles/new',
+    name: 'AdminTutorPersonaProfilesNew',
+    component: () => import('../views/admin/PersonaConversationProfilesView.vue'),
+    props: {
+      personaKind: 'tutor',
+      personaLabel: 'Tuteur',
+      orchestratorRoute: '/admin/conversation/tutor',
+    },
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/tutor/profiles/:profileId',
+    name: 'AdminTutorPersonaProfilesDetail',
+    component: () => import('../views/admin/PersonaConversationProfilesView.vue'),
+    props: {
+      personaKind: 'tutor',
+      personaLabel: 'Tuteur',
+      orchestratorRoute: '/admin/conversation/tutor',
+    },
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/tutor/profiles',
+    name: 'AdminTutorPersonaProfiles',
+    component: () => import('../views/admin/PersonaConversationProfilesView.vue'),
+    props: {
+      personaKind: 'tutor',
+      personaLabel: 'Tuteur',
+      orchestratorRoute: '/admin/conversation/tutor',
+    },
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
     path: '/admin/conversation/tutor',
     name: 'AdminTutorOrchestrator',
     component: () => import('../views/admin/TutorOrchestratorAdminView.vue'),
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/trainer/profiles/new',
+    name: 'AdminTrainerPersonaProfilesNew',
+    component: () => import('../views/admin/PersonaConversationProfilesView.vue'),
+    props: {
+      personaKind: 'trainer',
+      personaLabel: 'Formateur',
+      orchestratorRoute: '/admin/conversation/trainer',
+    },
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/trainer/profiles/:profileId',
+    name: 'AdminTrainerPersonaProfilesDetail',
+    component: () => import('../views/admin/PersonaConversationProfilesView.vue'),
+    props: {
+      personaKind: 'trainer',
+      personaLabel: 'Formateur',
+      orchestratorRoute: '/admin/conversation/trainer',
+    },
+    meta: { layout: 'tester', requiresOrgAdmin: true },
+  },
+  {
+    path: '/admin/conversation/trainer/profiles',
+    name: 'AdminTrainerPersonaProfiles',
+    component: () => import('../views/admin/PersonaConversationProfilesView.vue'),
+    props: {
+      personaKind: 'trainer',
+      personaLabel: 'Formateur',
+      orchestratorRoute: '/admin/conversation/trainer',
+    },
     meta: { layout: 'tester', requiresOrgAdmin: true },
   },
   {

@@ -3,6 +3,9 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { frontendFeatures, getGamificationProfileTheme } from '../utils/frontendConfig'
+import { resolveChatNavLabel, isPureTutorPersona, resolveProdBrandSubtitle as resolveTutorBrandSubtitle } from '../utils/tutorUiLabels'
+import { resolveProdBrandSubtitle, resolveTrainerChatNavLabel, isPureTrainerPersona } from '../utils/trainerUiLabels'
+import { TRAINER_CHAT_PATH } from '../utils/trainerNavigation'
 import PlatformVersionFooter from '../components/PlatformVersionFooter.vue'
 
 const learnerUiV2 = frontendFeatures.learner_ui_v2
@@ -13,6 +16,19 @@ const auth = useAuthStore()
 
 const theme = computed(() => getGamificationProfileTheme(frontendFeatures.gamification_profile))
 const showTopbar = computed(() => Boolean(auth.user) && !route.meta.public)
+const chatNavLabel = computed(() => {
+  if (isPureTutorPersona(auth.user)) return resolveChatNavLabel(auth.user)
+  return resolveTrainerChatNavLabel(auth.user)
+})
+const chatNavHref = computed(() => {
+  if (isPureTutorPersona(auth.user)) return '/app/tutor'
+  if (isPureTrainerPersona(auth.user)) return TRAINER_CHAT_PATH
+  return '/app'
+})
+const brandSubtitle = computed(() => {
+  if (isPureTutorPersona(auth.user)) return resolveTutorBrandSubtitle(auth.user, route.path)
+  return resolveProdBrandSubtitle(auth.user, route.path)
+})
 
 function logout() {
   auth.logout()
@@ -38,7 +54,7 @@ function logout() {
           <span class="prod-brand__avatar">H</span>
           <span>
             <strong>Hugo - Lucia</strong>
-            <small>Parcours apprenant</small>
+            <small>{{ brandSubtitle }}</small>
           </span>
         </router-link>
       </div>
@@ -70,9 +86,9 @@ function logout() {
       <div class="prod-topbar__actions">
         <router-link
           class="prod-topbar__link prod-topbar__link--subtle prod-topbar__link--trailing"
-          to="/app"
+          :to="chatNavHref"
         >
-          Chat apprenant
+          {{ chatNavLabel }}
         </router-link>
         <div v-if="!learnerUiV2" class="prod-pill">
           <span class="prod-pill__label">{{ theme.label }}</span>

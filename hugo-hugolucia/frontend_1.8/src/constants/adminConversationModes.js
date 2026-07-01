@@ -63,9 +63,15 @@ export const ADMIN_CONVERSATION_SECTIONS = [
     title: 'Conversation tuteur',
     items: [
       {
+        path: '/admin/conversation/tutor/profiles',
+        label: 'Profils conversationnels tuteur',
+        description: 'Templates system/user persona tuteur — CRUD, preview sans LLM.',
+        featured: true,
+      },
+      {
         path: '/admin/conversation/tutor',
         label: 'Orchestrateur tuteur',
-        description: 'Paramètres d’accompagnement et liens vers l’espace tuteur prod.',
+        description: 'Hub tuteur et liens vers l’espace prod.',
       },
     ],
   },
@@ -74,9 +80,15 @@ export const ADMIN_CONVERSATION_SECTIONS = [
     title: 'Conversation formateur',
     items: [
       {
+        path: '/admin/conversation/trainer/profiles',
+        label: 'Profils conversationnels formateur',
+        description: 'Templates system/user persona formateur — CRUD, preview sans LLM.',
+        featured: true,
+      },
+      {
         path: '/admin/conversation/trainer',
         label: 'Orchestrateur formateur',
-        description: 'Préparation du matériau pédagogique et base de connaissances.',
+        description: 'Hub formateur et base de connaissances.',
       },
     ],
   },

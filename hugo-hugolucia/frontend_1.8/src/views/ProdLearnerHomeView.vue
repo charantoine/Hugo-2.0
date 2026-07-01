@@ -12,10 +12,15 @@ import api from '../api/client'
 import ConversationProfileSelector from '../components/learner/ConversationProfileSelector.vue'
 import InitialPostureSelector from '../components/learner/InitialPostureSelector.vue'
 import { frontendFeatures, getGamificationProfileTheme } from '../utils/frontendConfig'
+import { useAuthStore } from '../stores/auth'
+import { isPureTrainerPersona, resolveTrainerHomeSessionCta } from '../utils/trainerUiLabels'
+import { isPureTutorPersona, resolveTutorHomeSessionCta } from '../utils/tutorUiLabels'
+import { isTutorWorkspaceProfileName } from '../utils/tutorWorkspaceProfiles.js'
 
 const learnerUiV2 = frontendFeatures.learner_ui_v2
 
 const router = useRouter()
+const auth = useAuthStore()
 
 const loading = ref(true)
 const creatingSession = ref(false)
@@ -34,9 +39,13 @@ const favoritesOnly = ref(false)
 
 const theme = computed(() => getGamificationProfileTheme(frontendFeatures.gamification_profile))
 const selectedGroup = computed(() => groups.value.find((group) => String(group.id) === String(selectedGroupId.value)) || null)
-const activeProfiles = computed(() => (
-  conversationProfiles.value.filter((profile) => String(profile?.status || '').toLowerCase() === 'active')
-))
+const activeProfiles = computed(() => {
+  const list = conversationProfiles.value.filter((profile) => String(profile?.status || '').toLowerCase() === 'active')
+  if (isPureTutorPersona(auth.user)) {
+    return list.filter((profile) => isTutorWorkspaceProfileName(profile?.name))
+  }
+  return list
+})
 const canCreateSession = computed(() => (
   Boolean(selectedGroupId.value || groups.value.length)
   && Boolean(selectedProfileId.value)
@@ -45,6 +54,13 @@ const canCreateSession = computed(() => (
 const groupDefaultProfileId = computed(() => (
   String(selectedGroup.value?.default_learner_conversation_profile || '').trim()
 ))
+const sessionCtaLabel = computed(() => {
+  if (learnerUiV2) {
+    if (isPureTutorPersona(auth.user)) return resolveTutorHomeSessionCta(auth.user) || 'Ouvrir mon espace de réflexion'
+    return resolveTrainerHomeSessionCta(auth.user)
+  }
+  return 'Lancer une nouvelle session'
+})
 
 const visibleSessions = computed(() => {
   const currentGroupId = String(selectedGroupId.value || '').trim()
@@ -218,7 +234,23 @@ watch(selectedGroupId, () => {
   syncProfileSelection()
 })
 
-onMounted(loadHome)
+function redirectPersonaHome() {
+  if (isPureTutorPersona(auth.user)) {
+    router.replace({ name: 'ProdTutorHome' })
+    return true
+  }
+  if (isPureTrainerPersona(auth.user)) {
+    router.replace({ name: 'ProdTrainerChatHome' })
+    return true
+  }
+  return false
+}
+
+onMounted(() => {
+  if (!redirectPersonaHome()) {
+    loadHome()
+  }
+})
 </script>
 
 <template>
@@ -286,7 +318,7 @@ onMounted(loadHome)
               :disabled="!canCreateSession || creatingSession || loadingProfiles"
               @click="createSession"
             >
-              {{ creatingSession ? 'Ouverture...' : (learnerUiV2 ? 'Démarrer ma session' : 'Lancer une nouvelle session') }}
+              {{ creatingSession ? 'Ouverture...' : sessionCtaLabel }}
             </button>
 
             <p v-if="!learnerUiV2 && selectedGroup" class="small text-muted mb-0 mt-3">

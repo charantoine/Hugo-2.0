@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Organisation, Role
 from apps.hugo.models import HugoMessage, HugoSession, Trace, TrainerKnowledgeItem
+from apps.hugo.services.tutor_workspace_bootstrap import ensure_tutor_workspace_profiles
 from apps.referentials.models import Group, GroupMembership, TutorLearnerLink
 
 
@@ -185,6 +186,87 @@ class Command(BaseCommand):
             defaults={"status": "declared", "content_type": "mastery_criterion"},
         )
 
+        trainer_session, _ = HugoSession.objects.get_or_create(
+            organisation=org,
+            learner=users["smoke_trainer"],
+            group=group,
+            defaults={
+                "share_verbatim": False,
+                "share_summary": True,
+                "posture": "reflective_afest",
+                "conversation_progress": {
+                    "session_id": "pending",
+                    "posture": "reflective_afest",
+                    "active_branches_count": 0,
+                    "overall_maturity": "orange",
+                    "synthesis_eligible": False,
+                    "evaluation_eligible": False,
+                    "reason_codes": [],
+                },
+            },
+        )
+        if trainer_session.conversation_progress.get("session_id") == "pending":
+            trainer_session.conversation_progress["session_id"] = str(trainer_session.id)
+            trainer_session.save(update_fields=["conversation_progress"])
+
+        HugoMessage.objects.filter(session=trainer_session).delete()
+        HugoMessage.objects.create(
+            organisation=org,
+            session=trainer_session,
+            role=HugoMessage.Role.LEARNER,
+            content="Question formateur smoke import",
+        )
+        HugoMessage.objects.create(
+            organisation=org,
+            session=trainer_session,
+            role=HugoMessage.Role.ASSISTANT,
+            content="Explicitation pédagogique smoke : sécuriser le chantier avant toute intervention.",
+        )
+
+        tutor_workspace_profiles = ensure_tutor_workspace_profiles(org)
+        prep_profile = tutor_workspace_profiles["tutor_workspace_prep"]
+
+        tutor_workspace_session, tw_created = HugoSession.objects.get_or_create(
+            organisation=org,
+            learner=users["smoke_tutor"],
+            group=group,
+            defaults={
+                "learner_conversation_profile": prep_profile,
+                "share_verbatim": False,
+                "share_summary": True,
+                "posture": "reflective_afest",
+                "conversation_progress": {
+                    "session_id": "pending",
+                    "posture": "reflective_afest",
+                    "active_branches_count": 0,
+                    "overall_maturity": "orange",
+                    "synthesis_eligible": False,
+                    "evaluation_eligible": False,
+                    "reason_codes": [],
+                },
+            },
+        )
+        if not tw_created:
+            tutor_workspace_session.learner_conversation_profile = prep_profile
+            tutor_workspace_session.save(update_fields=["learner_conversation_profile"])
+        if tutor_workspace_session.conversation_progress.get("session_id") == "pending":
+            tutor_workspace_session.conversation_progress["session_id"] = str(tutor_workspace_session.id)
+            tutor_workspace_session.save(update_fields=["conversation_progress"])
+
+        HugoMessage.objects.filter(session=tutor_workspace_session).delete()
+        HugoMessage.objects.create(
+            organisation=org,
+            session=tutor_workspace_session,
+            role=HugoMessage.Role.LEARNER,
+            content="Je prépare mon prochain entretien avec l'apprenant.",
+        )
+        HugoMessage.objects.create(
+            organisation=org,
+            session=tutor_workspace_session,
+            role=HugoMessage.Role.ASSISTANT,
+            content="Qu'avez-vous déjà observé chez cet apprenant depuis votre dernière rencontre ?",
+        )
+
         cluster16_sessions = {}
         for key, (group_name, profile) in CLUSTER16_GROUPS.items():
             c16_session = self._ensure_cluster16_session(
@@ -199,6 +281,11 @@ class Command(BaseCommand):
             "group_id": str(group.id),
             "learner_id": str(users["smoke_learner"].id),
             "session_id": str(session.id),
+            "trainer_session_id": str(trainer_session.id),
+            "tutor_workspace_session_id": str(tutor_workspace_session.id),
+            "tutor_workspace_profiles": {
+                code: str(profile.id) for code, profile in tutor_workspace_profiles.items()
+            },
             "trace_id": str(trace.id),
             "knowledge_item_id": str(item.id),
             "password": SMOKE_PASSWORD,

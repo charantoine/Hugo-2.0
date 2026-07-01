@@ -5,6 +5,7 @@ from . import (
     views_evaluation_config,
     views_learner_conversation_profiles,
     views_ovh_llm,
+    views_persona_conversation_profiles,
     views_sessions,
     views_starter_prompts,
     views_trainer,
@@ -58,6 +59,21 @@ urlpatterns = [
     ),
     path("conduct-profiles/", views_conduct_profiles.TutorConductProfileListCreate.as_view(), name="conduct_profile_list_create"),
     path("conduct-profiles/<int:id>/", views_conduct_profiles.TutorConductProfileDetail.as_view(), name="conduct_profile_detail"),
+    path(
+        "persona-conversation-profiles/",
+        views_persona_conversation_profiles.PersonaConversationProfileListCreate.as_view(),
+        name="persona_conversation_profile_list_create",
+    ),
+    path(
+        "persona-conversation-profiles/<uuid:id>/",
+        views_persona_conversation_profiles.PersonaConversationProfileDetail.as_view(),
+        name="persona_conversation_profile_detail",
+    ),
+    path(
+        "persona-conversation-profiles/<uuid:id>/preview-render/",
+        views_persona_conversation_profiles.PersonaConversationProfilePreviewView.as_view(),
+        name="persona_conversation_profile_preview",
+    ),
     path(
         "evaluation-prompt-profiles/",
         views_evaluation_config.EvaluationPromptProfileListCreate.as_view(),
