@@ -53,6 +53,8 @@ export function useHugoSessionChat(sessionIdRef, options = {}) {
   const messages = ref([])
   const groups = ref([])
   const sessionUiState = ref(null)
+  const uiStateLoading = ref(false)
+  const uiStateError = ref(null)
   const error = ref('')
   const streamError = ref('')
   const streamingText = ref('')
@@ -169,8 +171,14 @@ export function useHugoSessionChat(sessionIdRef, options = {}) {
     await scrollThreadToBottom()
   }
 
+  function hasValidUiStateContract(data) {
+    return Boolean(data && typeof data === 'object' && data.scene_label && data.conversation_mode)
+  }
+
   async function loadSessionUiState() {
     if (!loadUiState) return
+    uiStateLoading.value = true
+    uiStateError.value = null
     try {
       const extraParams = typeof options.getUiStateParams === 'function'
         ? options.getUiStateParams()
@@ -178,11 +186,26 @@ export function useHugoSessionChat(sessionIdRef, options = {}) {
       const { data } = await api.get(`/hugo/sessions/${resolvedSessionId.value}/ui-state/`, {
         params: extraParams,
       })
-      sessionUiState.value = data || null
-    } catch {
-      sessionUiState.value = null
+      if (hasValidUiStateContract(data)) {
+        sessionUiState.value = data
+      } else if (!sessionUiState.value) {
+        sessionUiState.value = null
+        uiStateError.value = 'Impossible de charger le pilotage pour l’instant.'
+      } else {
+        uiStateError.value = 'Impossible de charger le pilotage pour l’instant.'
+      }
+    } catch (err) {
+      if (!sessionUiState.value) {
+        sessionUiState.value = null
+      }
+      uiStateError.value = err.response?.data?.detail
+        || 'Impossible de charger le pilotage pour l’instant.'
+    } finally {
+      uiStateLoading.value = false
     }
   }
+
+  const reloadUiState = loadSessionUiState
 
   function resetStreamingState() {
     isStreaming.value = false
@@ -426,6 +449,8 @@ export function useHugoSessionChat(sessionIdRef, options = {}) {
     messages,
     groups,
     sessionUiState,
+    uiStateLoading,
+    uiStateError,
     error,
     streamError,
     messageContent,
@@ -440,6 +465,7 @@ export function useHugoSessionChat(sessionIdRef, options = {}) {
     refreshConversation,
     sendMessage,
     loadSessionUiState,
+    reloadUiState,
     abortStreaming,
     resetStreamingState,
   }

@@ -163,9 +163,9 @@ async function onPostureChange(event) {
     </div>
   </section>
 
-  <!-- UI 2.0 — boutons Diag / Réflexif / Bûchage -->
+  <!-- UI 2.0 — boutons Diag / Réflexif / Bûchage (legacy shell uniquement ; V2 canonique = LearnerActionSidebar) -->
   <section
-    v-else-if="conversationMode?.label && variant === 'buttons'"
+    v-else-if="conversationMode && variant === 'buttons'"
     class="learner-mode-buttons"
     :data-conversation-mode="currentCode || undefined"
     aria-label="Modes de conversation"
@@ -201,5 +201,18 @@ async function onPostureChange(event) {
     <div v-if="localError" class="alert alert-danger small mb-0 mt-2 py-2" role="alert">
       {{ localError }}
     </div>
+  </section>
+
+  <section
+    v-else
+    class="learner-mode-buttons learner-mode-buttons--unavailable"
+    aria-label="Modes de conversation"
+  >
+    <p class="small text-muted mb-2" role="status">
+      Pilotage de la conversation indisponible pour le moment.
+    </p>
+    <p class="small text-muted mb-0">
+      Actualise la session pour recharger les modes depuis le serveur.
+    </p>
   </section>
 </template>

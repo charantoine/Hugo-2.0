@@ -6,6 +6,10 @@ import {
   buildEngagementUiModel,
   buildEvaluationButtonFromCta,
   buildSynthesisButtonFromCta,
+  isContractCtaEvaluationEligible,
+  isContractCtaSynthesisEligible,
+  isContractUiStateReady,
+  parseContractConversationMode,
 } from './engagementUiModel.js'
 
 test('buildSynthesisButtonFromCta uses cta_synthesis as primary source', () => {
@@ -329,4 +333,46 @@ test('INV-07 and A1-08 expose conversation_mode label from UIState', () => {
   assert.equal(model.conversationMode.code, 'diagnostic')
   assert.equal(model.conversationMode.label, 'Diagnostic')
   assert.equal(model.conversationMode.switchWarning, 'Attention avant changement.')
+})
+
+test('parseContractConversationMode maps can_switch without recalculation', () => {
+  const mode = parseContractConversationMode({
+    conversation_mode: {
+      code: 'reflective_afest',
+      label: 'Réflexif AFEST',
+      can_switch: true,
+      allowed_posture_transitions: [
+        { code: 'diagnostic', label: 'Diagnostic', allowed: true, warning: null },
+      ],
+    },
+  })
+  assert.equal(mode.canSwitch, true)
+  assert.equal(mode.allowedPostureTransitions.length, 1)
+})
+
+test('isContractCtaEvaluationEligible follows evaluation_ready_status', () => {
+  assert.equal(isContractCtaEvaluationEligible({
+    evaluation_ready_status: 'eligible',
+    ui: { show_evaluation_button: true, button_disabled: false, advisory: true },
+  }), true)
+  assert.equal(isContractCtaEvaluationEligible({
+    evaluation_ready_status: 'blocked_other',
+    ui: { show_evaluation_button: true },
+  }), false)
+})
+
+test('isContractUiStateReady requires scene_label and conversation_mode', () => {
+  assert.equal(isContractUiStateReady({ scene_label: 'Raconter', conversation_mode: { code: 'diagnostic' } }), true)
+  assert.equal(isContractUiStateReady(null), false)
+})
+
+test('isContractCtaSynthesisEligible requires synthesis_ready_status eligible', () => {
+  assert.equal(isContractCtaSynthesisEligible({
+    synthesis_ready_status: 'eligible',
+    ui: { show_synthesis_button: true },
+  }), true)
+  assert.equal(isContractCtaSynthesisEligible({
+    synthesis_ready_status: 'blocked_not_enough_content',
+    ui: { show_synthesis_button: true },
+  }), false)
 })

@@ -105,6 +105,35 @@ function buildConversationMode(uiState) {
   }
 }
 
+/** Parse le bloc conversation_mode du contrat GET /ui-state/ (sans recalcul métier). */
+export function parseContractConversationMode(uiState) {
+  return buildConversationMode(uiState)
+}
+
+export function isContractUiStateReady(uiState) {
+  return Boolean(uiState?.scene_label && uiState?.conversation_mode?.code)
+}
+
+export function isContractCtaEvaluationEligible(ctaEvaluation) {
+  if (!ctaEvaluation?.ui) return false
+  return toText(ctaEvaluation.evaluation_ready_status) === 'eligible'
+    && ctaEvaluation.ui.show_evaluation_button !== false
+}
+
+export function isContractCtaSynthesisEligible(ctaSynthesis) {
+  if (!ctaSynthesis?.ui) return false
+  return toText(ctaSynthesis.synthesis_ready_status) === 'eligible'
+    && ctaSynthesis.ui.show_synthesis_button !== false
+}
+
+export function getContractCtaEvaluation(uiState) {
+  return uiState?.cta_evaluation || null
+}
+
+export function getContractCtaSynthesis(uiState) {
+  return uiState?.cta_synthesis || null
+}
+
 function buildLockedButton(label = 'Indisponible') {
   return {
     state: 'locked',

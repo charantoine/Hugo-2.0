@@ -8,7 +8,7 @@ import LearnerSceneContextBar from './LearnerSceneContextBar.vue'
 import HugoProgressPanel from './HugoProgressPanel.vue'
 import LearnerActionSidebar from './LearnerActionSidebar.vue'
 import LearnerConversationFeed from './LearnerConversationFeed.vue'
-import { buildEngagementUiModel } from '../../utils/engagementUiModel'
+import { buildEngagementUiModel, isContractCtaEvaluationEligible, isContractCtaSynthesisEligible, getContractCtaEvaluation, getContractCtaSynthesis } from '../../utils/engagementUiModel'
 import { frontendFeatures } from '../../utils/frontendConfig'
 import { useHugoSessionChat } from '../../composables/useHugoSessionChat.js'
 import { useAuthStore } from '../../stores/auth'
@@ -32,6 +32,7 @@ const evidence = ref([])
 const groupReferentialConfig = ref(null)
 const requestingSynthesis = ref(false)
 const requestingEvaluation = ref(false)
+const postureSwitching = ref(false)
 const actionFeedback = ref(null)
 const synthesisResult = ref(null)
 const evaluationResult = ref(null)
@@ -49,6 +50,8 @@ const {
   session,
   groups,
   sessionUiState,
+  uiStateLoading,
+  uiStateError,
   error,
   streamError,
   messageContent,
@@ -62,6 +65,7 @@ const {
   loadWorkspace,
   sendMessage: sendChatMessage,
   loadSessionUiState,
+  reloadUiState,
 } = useHugoSessionChat(sessionIdRef, {
   loadUiState: true,
   loadLearnerArtifacts: true,
@@ -180,8 +184,28 @@ async function loadTracesAndEvidence() {
   evidence.value = Array.isArray(evidenceData) ? evidenceData : (evidenceData.results || [])
 }
 
+async function changePosture(code) {
+  const nextPosture = String(code || '').trim()
+  if (!nextPosture || postureSwitching.value) return
+  postureSwitching.value = true
+  error.value = ''
+  try {
+    await api.post(`/hugo/sessions/${props.sessionId}/set-posture/`, { posture: nextPosture })
+    await reloadUiState()
+  } catch (err) {
+    const detail = err.response?.data?.detail
+    if (detail === 'transition_not_allowed') {
+      error.value = 'Ce changement de mode n’est pas autorisé pour l’instant.'
+    } else {
+      error.value = detail || 'Impossible de changer de mode pour le moment.'
+    }
+  } finally {
+    postureSwitching.value = false
+  }
+}
+
 async function onPostureChanged() {
-  await loadSessionUiState()
+  await reloadUiState()
 }
 
 async function loadLearnerWorkspace({ silent = false } = {}) {
@@ -222,7 +246,7 @@ async function generateTrace() {
   try {
     await api.post(`/hugo/sessions/${props.sessionId}/generate-trace/`)
     setActionFeedback('success', 'La trace a été préparée à partir de la session courante.')
-    await Promise.all([loadSessionUiState(), loadTracesAndEvidence()])
+    await Promise.all([reloadUiState(), loadTracesAndEvidence()])
   } catch (err) {
     error.value = err.response?.data?.detail || 'La trace n’a pas pu être générée.'
   } finally {
@@ -231,7 +255,11 @@ async function generateTrace() {
 }
 
 async function requestSynthesis() {
-  if (requestingSynthesis.value || engagementModel.value.synthesisButton.disabled) return
+  const cta = getContractCtaSynthesis(sessionUiState.value)
+  const canRequest = learnerUiV2
+    ? isContractCtaSynthesisEligible(cta)
+    : !engagementModel.value.synthesisButton.disabled
+  if (requestingSynthesis.value || !canRequest) return
   requestingSynthesis.value = true
   error.value = ''
   setActionFeedback(null, '')
@@ -243,7 +271,7 @@ async function requestSynthesis() {
     if (data?.ui_state) sessionUiState.value = data.ui_state
     storeActionArtifact('synthesis', data?.synthesis)
     setActionFeedback('success', 'La synthèse est disponible.')
-    await loadSessionUiState()
+    await reloadUiState()
   } catch (err) {
     const detail = err.response?.data?.detail
       || err.response?.data?.error
@@ -255,7 +283,11 @@ async function requestSynthesis() {
 }
 
 async function requestEvaluation() {
-  if (requestingEvaluation.value || engagementModel.value.evaluationButton.disabled) return
+  const cta = getContractCtaEvaluation(sessionUiState.value)
+  const canRequest = learnerUiV2
+    ? isContractCtaEvaluationEligible(cta) && !cta?.ui?.button_disabled
+    : !engagementModel.value.evaluationButton.disabled
+  if (requestingEvaluation.value || !canRequest) return
   requestingEvaluation.value = true
   error.value = ''
   setActionFeedback(null, '')
@@ -268,7 +300,7 @@ async function requestEvaluation() {
     storeActionArtifact('evaluation', data?.evaluation)
     if (data?.warning) setActionFeedback('warning', data.warning)
     else setActionFeedback('success', 'L’évaluation est disponible.')
-    await loadSessionUiState()
+    await reloadUiState()
   } catch (err) {
     const detail = err.response?.data?.detail
       || err.response?.data?.error
@@ -355,6 +387,10 @@ function goHome() {
 
       <LearnerActionSidebar
         :session-id="sessionId"
+        :session-ui-state="sessionUiState"
+        :ui-state-loading="uiStateLoading"
+        :ui-state-error="uiStateError"
+        :posture-switching="postureSwitching"
         :model="engagementModel"
         :busy="sendingMessage || isStreaming || refreshing || isProgressActionBusy"
         :action-feedback="actionFeedback"
@@ -364,7 +400,8 @@ function goHome() {
         :session-evidence-count="sessionEvidenceCount"
         :share-flags="shareFlags"
         hide-symbolic-rewards
-        @posture-changed="onPostureChanged"
+        @change-posture="changePosture"
+        @reload-ui-state="reloadUiState"
         @request-synthesis="requestSynthesis"
         @request-evaluation="requestEvaluation"
         @update-share="updateShare"

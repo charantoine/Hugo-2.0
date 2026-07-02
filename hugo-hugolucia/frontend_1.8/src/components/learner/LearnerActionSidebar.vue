@@ -1,9 +1,21 @@
 <script setup>
 import { computed } from 'vue'
-import PostureSelector from './PostureSelector.vue'
+import { LEARNER_POSTURES, postureBetaDescription, postureLabel, postureShortLabel } from '../../constants/conversationPostures'
+import {
+  getContractCtaEvaluation,
+  getContractCtaSynthesis,
+  isContractCtaEvaluationEligible,
+  isContractCtaSynthesisEligible,
+  isContractUiStateReady,
+  parseContractConversationMode,
+} from '../../utils/engagementUiModel'
 
 const props = defineProps({
   sessionId: { type: String, required: true },
+  sessionUiState: { type: Object, default: null },
+  uiStateLoading: { type: Boolean, default: false },
+  uiStateError: { type: String, default: null },
+  postureSwitching: { type: Boolean, default: false },
   model: { type: Object, required: true },
   busy: { type: Boolean, default: false },
   actionFeedback: { type: Object, default: null },
@@ -16,95 +28,217 @@ const props = defineProps({
 })
 
 const emit = defineEmits([
-  'posture-changed',
+  'change-posture',
   'request-synthesis',
   'request-evaluation',
+  'reload-ui-state',
   'update-share',
 ])
 
-const evaluationVisualState = computed(() => {
-  const button = props.model.evaluationButton
-  if (!button?.visible) return 'hidden'
-  if (button.disabled) return 'unavailable'
-  if (button.advisory) return 'discouraged'
-  if (button.highlighted || button.state === 'ready') return 'ok'
-  return 'discouraged'
+const conversationMode = computed(() => parseContractConversationMode(props.sessionUiState))
+const ctaEvaluation = computed(() => getContractCtaEvaluation(props.sessionUiState))
+const ctaSynthesis = computed(() => getContractCtaSynthesis(props.sessionUiState))
+
+const pilotageReady = computed(() => isContractUiStateReady(props.sessionUiState))
+
+const currentCode = computed(() => conversationMode.value?.code || '')
+const currentLabel = computed(() => (
+  conversationMode.value?.label || postureLabel(currentCode.value) || 'Mode non renseigné'
+))
+const currentDescription = computed(() => postureBetaDescription(currentCode.value))
+const canSwitch = computed(() => Boolean(conversationMode.value?.canSwitch) && !props.busy && !props.postureSwitching)
+
+const postureOptions = computed(() => {
+  const transitionMap = new Map()
+  for (const entry of conversationMode.value?.allowedPostureTransitions || []) {
+    if (entry?.code) transitionMap.set(entry.code, entry)
+  }
+  return LEARNER_POSTURES.map((entry) => {
+    const transition = transitionMap.get(entry.code)
+    const isCurrent = entry.code === currentCode.value
+    const allowed = isCurrent || Boolean(transition?.allowed)
+    return {
+      ...entry,
+      shortLabel: postureShortLabel(entry.code),
+      isCurrent,
+      allowed,
+      disabled: isCurrent || !allowed,
+      optionWarning: transition?.warning || null,
+    }
+  })
 })
 
-const synthesisVisualState = computed(() => {
-  const button = props.model.synthesisButton
-  if (!button?.visible) return 'hidden'
-  if (button.disabled) return 'unavailable'
-  return 'ok'
-})
+const showEvaluationCta = computed(() => isContractCtaEvaluationEligible(ctaEvaluation.value))
+const showSynthesisCta = computed(() => isContractCtaSynthesisEligible(ctaSynthesis.value))
+
+const evaluationLabel = computed(() => (
+  ctaEvaluation.value?.ui?.button_label || 'Demander une évaluation'
+))
+const evaluationAdvisory = computed(() => Boolean(ctaEvaluation.value?.ui?.advisory))
+const evaluationDisabled = computed(() => Boolean(ctaEvaluation.value?.ui?.button_disabled))
+const evaluationHelper = computed(() => (
+  ctaEvaluation.value?.ui?.helper_text
+  || ctaEvaluation.value?.blocking_reasons?.[0]
+  || null
+))
+
+const synthesisLabel = computed(() => (
+  ctaSynthesis.value?.ui?.button_label || 'Obtenir une synthèse'
+))
+const synthesisDisabled = computed(() => Boolean(ctaSynthesis.value?.ui?.button_disabled))
+const synthesisHelper = computed(() => (
+  ctaSynthesis.value?.ui?.helper_text
+  || ctaSynthesis.value?.blocking_reasons?.[0]
+  || null
+))
+
+const synthesisBlockedVisible = computed(() => (
+  !showSynthesisCta.value
+  && ctaSynthesis.value?.ui?.show_synthesis_button !== false
+  && ctaSynthesis.value?.ui?.button_label
+))
 
 function onShareChange() {
   emit('update-share')
+}
+
+function onPostureClick(code) {
+  if (!canSwitch.value || props.postureSwitching || code === currentCode.value) return
+  const target = postureOptions.value.find((option) => option.code === code)
+  if (target?.disabled) return
+  emit('change-posture', code)
 }
 </script>
 
 <template>
   <aside class="learner-action-sidebar card prod-panel h-100" aria-label="Actions de session">
     <div class="card-body d-flex flex-column gap-3">
-      <PostureSelector
-        :session-id="sessionId"
-        :conversation-mode="model.conversationMode"
-        :busy="busy"
-        variant="buttons"
-        @posture-changed="emit('posture-changed', $event)"
-      />
+      <section class="learner-pilotage-panel" aria-label="Pilotage de la conversation">
+        <h2 class="h6 mb-2">Pilotage de la conversation</h2>
 
-      <div
-        v-if="model.synthesisButton.visible || model.evaluationButton.visible"
-        class="learner-action-sidebar__cta-row"
-      >
-        <button
-          v-if="model.synthesisButton.visible"
-          type="button"
-          class="btn btn-sm learner-cta-btn"
-          :class="[
-            synthesisVisualState === 'ok' ? 'learner-cta-btn--ok' : 'learner-cta-btn--muted',
-            `hugo-btn--${model.synthesisButton.state}`,
-          ]"
-          :data-state="synthesisVisualState"
-          :disabled="busy || model.synthesisButton.disabled"
-          :title="model.synthesisButton.helperText || undefined"
-          @click="emit('request-synthesis')"
+        <div
+          v-if="uiStateLoading && !sessionUiState"
+          class="learner-pilotage-panel__state text-muted small d-flex align-items-center gap-2"
+          role="status"
         >
-          {{ model.synthesisButton.label }}
-        </button>
-        <button
-          v-if="model.evaluationButton.visible"
-          type="button"
-          class="btn btn-sm learner-cta-btn btn-evaluation"
-          :class="`learner-cta-btn--${evaluationVisualState}`"
-          :data-state="evaluationVisualState"
-          :disabled="busy || model.evaluationButton.disabled"
-          @click="emit('request-evaluation')"
-        >
-          {{ model.evaluationButton.label }}
-        </button>
-      </div>
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Chargement des contrôles…
+        </div>
 
-      <p
-        v-if="model.evaluationButton.visible && (model.evaluationButton.helperText || model.evaluationTriggerMessage)"
-        class="small text-muted mb-0 learner-action-sidebar__eval-hint"
-        role="status"
-      >
-        {{ model.evaluationButton.helperText || model.evaluationTriggerMessage }}
-      </p>
-      <p
-        v-if="model.synthesisButton.visible && model.synthesisButton.helperText"
-        class="small text-muted mb-0"
-      >
-        {{ model.synthesisButton.helperText }}
-      </p>
-      <ul
-        v-if="model.evaluationButton.blockingReasons?.length && model.evaluationButton.disabled"
-        class="small text-muted mb-0 ps-3"
-      >
-        <li v-for="reason in model.evaluationButton.blockingReasons" :key="reason">{{ reason }}</li>
-      </ul>
+        <div
+          v-else-if="uiStateError && !pilotageReady"
+          class="learner-pilotage-panel__state alert alert-warning py-2 small mb-0"
+          role="alert"
+        >
+          <p class="mb-2">Pilotage de la conversation indisponible pour le moment.</p>
+          <p v-if="uiStateError" class="mb-2 text-muted">{{ uiStateError }}</p>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            :disabled="uiStateLoading"
+            @click="emit('reload-ui-state')"
+          >
+            Réessayer
+          </button>
+        </div>
+
+        <template v-else-if="pilotageReady">
+          <p v-if="uiStateError" class="small text-warning mb-2" role="status">
+            Affichage sur dernier état connu — {{ uiStateError }}
+          </p>
+
+          <section
+            class="learner-mode-buttons"
+            :data-conversation-mode="currentCode || undefined"
+            aria-label="Modes de conversation"
+          >
+            <p class="small text-muted mb-2 mb-md-1">
+              Mode actuel : <strong>{{ currentLabel }}</strong>
+            </p>
+            <div class="learner-mode-buttons__row" role="group" aria-label="Choisir un mode">
+              <button
+                v-for="option in postureOptions"
+                :key="option.code"
+                type="button"
+                class="btn btn-sm learner-mode-buttons__btn"
+                :class="option.isCurrent ? 'learner-mode-buttons__btn--active' : 'btn-outline-secondary'"
+                :disabled="option.disabled || !canSwitch || postureSwitching"
+                :aria-pressed="option.isCurrent"
+                :aria-label="`Mode ${option.shortLabel}`"
+                :title="option.optionWarning || (option.disabled && !option.isCurrent ? 'Transition non autorisée' : undefined)"
+                @click="onPostureClick(option.code)"
+              >
+                {{ option.shortLabel }}
+              </button>
+            </div>
+            <p v-if="currentDescription" class="learner-mode-buttons__description small text-muted mb-0">
+              {{ currentDescription }}
+            </p>
+            <p v-if="postureSwitching" class="small text-muted mb-0 mt-1">Mise à jour du mode…</p>
+            <p
+              v-else-if="!conversationMode?.canSwitch"
+              class="small text-muted mb-0 mt-1"
+              role="status"
+            >
+              {{ conversationMode?.switchLockedReason || 'Le changement de mode n’est pas disponible dans le contexte actuel de la séance.' }}
+            </p>
+            <p
+              v-else-if="conversationMode?.switchWarning"
+              class="small text-warning mb-0 mt-1"
+              role="status"
+            >
+              {{ conversationMode.switchWarning }}
+            </p>
+          </section>
+
+          <div class="learner-action-sidebar__cta-row mt-3">
+            <button
+              v-if="showSynthesisCta"
+              type="button"
+              class="btn btn-sm learner-cta-btn learner-cta-btn--ok"
+              :disabled="busy || synthesisDisabled"
+              :title="synthesisHelper || undefined"
+              @click="emit('request-synthesis')"
+            >
+              {{ synthesisLabel }}
+            </button>
+            <button
+              v-else-if="synthesisBlockedVisible"
+              type="button"
+              class="btn btn-sm learner-cta-btn learner-cta-btn--muted"
+              disabled
+              :title="synthesisHelper || undefined"
+            >
+              {{ synthesisLabel }}
+            </button>
+            <button
+              v-if="showEvaluationCta"
+              type="button"
+              class="btn btn-sm learner-cta-btn btn-evaluation"
+              :class="evaluationAdvisory ? 'learner-cta-btn--discouraged' : 'learner-cta-btn--ok'"
+              :disabled="busy || evaluationDisabled"
+              @click="emit('request-evaluation')"
+            >
+              {{ evaluationLabel }}
+              <span v-if="evaluationAdvisory" class="ms-1">(conseillée)</span>
+            </button>
+          </div>
+
+          <p
+            v-if="showEvaluationCta && evaluationHelper"
+            class="small text-muted mb-0 learner-action-sidebar__eval-hint"
+            role="status"
+          >
+            {{ evaluationHelper }}
+          </p>
+          <p
+            v-if="(showSynthesisCta || synthesisBlockedVisible) && synthesisHelper"
+            class="small text-muted mb-0"
+          >
+            {{ synthesisHelper }}
+          </p>
+        </template>
+      </section>
 
       <div v-if="actionFeedback" class="alert py-2 small mb-0" :class="actionFeedback.type === 'success' ? 'alert-success' : 'alert-warning'">
         {{ actionFeedback.message }}
@@ -185,7 +319,6 @@ function onShareChange() {
           </label>
         </div>
 
-        <!-- BETA_HIDDEN: récompenses symboliques -->
         <div
           v-if="!hideSymbolicRewards && model.uiVisibilityFlags.symbolicRewardsEnabled"
           class="mt-3 symbolic-rewards-block"
